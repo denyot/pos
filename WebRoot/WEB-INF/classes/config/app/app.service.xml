@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 业务系统 -->
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="
+	http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+	http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd
+	http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd">
+	<!-- RFC 连接维护  -->
+	<bean id="sapRfcParamService" parent="baseTransactionProxyG4">
+		<property name="target">
+			<bean class="cn.longhaul.sap.service.impl.SapRfcParamServiceImpl">
+				<property name="g4Dao" ref="g4Dao" />
+			</bean>
+		</property>
+	</bean>
+	<!-- RFC 功能定义  -->
+	<bean id="sapRfcDefineService" parent="baseTransactionProxyG4">
+		<property name="target">
+			<bean class="cn.longhaul.sap.service.impl.SapRfcDefineServiceImpl">
+				<property name="g4Dao" ref="g4Dao" />
+			</bean>
+		</property>
+	</bean>	
+	<!-- RFC transfer 功能定义  -->
+	<bean id="sapTransferService" parent="baseTransactionProxyG4">
+		<property name="target">
+			<bean class="cn.longhaul.sap.service.impl.SapTransferServiceImpl">
+				<property name="g4Dao" ref="g4Dao" />
+			</bean>
+		</property>
+	</bean>	
+	
+	<!-- JOB 功能定义  -->
+	<bean id="jobMangerService" parent="baseTransactionProxyG4">
+		<property name="target">
+			<bean class="cn.longhaul.job.service.impl.JobMangerServiceImpl">
+				<property name="g4Dao" ref="g4Dao" />
+			</bean>
+		</property>
+	</bean>	
+
+	<!-- JOB 功能定义  -->
+	<bean id="managerService" parent="baseTransactionProxyG4">
+		<property name="target">
+			<bean class="cn.longhaul.authority.service.impl.ManagerServiceImpl">
+				<property name="g4Dao" ref="g4Dao" />
+			</bean>
+		</property>
+	</bean>	
+
+	
+	<!-- AIG POS 订单系统配置  -->
+	<bean id="orderConfigerService" parent="baseTransactionProxyG4">
+		<property name="target">
+			<bean class="cn.longhaul.ordersystem.service.OrderConfigerServiceImpl">
+				<property name="g4Dao" ref="g4Dao" />
+			</bean>
+		</property>
+	</bean>
+	<!--&lt;!&ndash;会员生日信息&ndash;&gt;-->
+	<!--<bean id="memberService" parent="baseTransactionProxyG4">-->
+		<!--<property name="target">-->
+			<!--<bean class="cn.longhaul.pos.member.service.MemberServiceImpl">-->
+				<!--<property name="g4Dao" ref="g4Dao" />-->
+			<!--</bean>-->
+		<!--</property>-->
+	<!--</bean>-->
+
+	<!-- AIG POS 订单系统配置  -->
+	<bean id="orderConfigerService2" parent="baseTransactionProxyG4">
+		<property name="target">
+			<bean class="cn.longhaul.pos.order.service.OrderConfigerServiceImpl">
+				<property name="g4Dao" ref="g4Dao" />
+			</bean>
+		</property>
+	</bean>	
+	
+	<!-- AIG POS 订单系统配置  -->
+	<bean id="orderConfigerService3" parent="baseTransactionProxyG4">
+		<property name="target">
+			<bean class="cn.longhaul.pos.order.service.OrderConfigerServiceImpl">
+				<property name="g4Dao" ref="g4Dao" />
+			</bean>
+		</property>
+	</bean>	
+	
+	
+	
+</beans>

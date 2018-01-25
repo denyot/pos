@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="commonsqlmap">
+	<typeAlias alias="dto" type="org.eredlab.g4.ccl.datastructure.impl.BaseDto" />
+	
+	<select id="getGoldTypeStr" parameterClass="String" resultClass="dto">
+		select * from z_rfc_store_09_it_jl where ZJLBN=#goldType# limit 1
+	</select>
+	
+	<select id="getToneTypeStr" parameterClass="String" resultClass="dto">
+		select * from z_rfc_store_09_it_sl where ZSLBM=#toneType# limit 1
+	</select>
+	
+	<select id="getToneNeatNessStr" parameterClass="String" resultClass="dto">
+		select * from z_rfc_store_09_it_zsjd where ZSLJD=#toneNeatNess# limit 1
+	</select>
+	
+	
+	<select id="getToneColorStr" parameterClass="String" resultClass="dto">
+		select * from z_rfc_store_09_it_slys where ZSLYS=#toneColor# limit 1
+	</select>
+	
+	
+	<select id="getLgortStr" parameterClass="dto" resultClass="dto">
+		select * from z_rfc_store_06_it_t001l where lgort=#lgort# and werks=#werks# limit 1
+	</select>
+	
+	<select id="getLgortFromWerks" parameterClass="dto" resultClass="dto">
+		select * from z_rfc_store_06_it_t001l where werks=#werks# 
+	</select>
+	
+	<select id="getWerksStr" parameterClass="dto" resultClass="dto">
+		select werks,name1 from z_rfc_store_06_it_t001w where werks=#werks# limit 1
+	</select>
+	
+	
+	<select id="getReasons" parameterClass="dto" resultClass="dto">
+		select * from aig_recievegooddiff
+	</select>
+	
+	<select id="getPostTypeStr" parameterClass="dto" resultClass="dto">
+		select * from z_rfc_store_27_it_zyjfs 
+		<dynamic>
+			<isNotEmpty property="postType">
+				where zyjfs=#postType# limit 1
+			</isNotEmpty>
+		</dynamic>
+	</select>
+	<select id="getGoodTypeStr" parameterClass="dto" resultClass="dto">
+		select * from z_rfc_store_27_it_zyjlx
+		<dynamic>
+			<isNotEmpty property="goodType">
+				where zyjlx=#goodType# limit 1
+			</isNotEmpty>
+		</dynamic>
+	</select>
+	
+	<select id="getAllRfcInfo" resultClass="dto" parameterClass="String">
+		SELECT  RFC_NAME,  SAPRFCNAME ,sortno
+		FROM sap_rfcclass where PARENT_ID=#parentId# order by sortno
+	</select>
+	
+	<select id="getLgort" parameterClass="dto" resultClass="dto">
+		select WERKS, LGORT VALUE, LGOBE VALUESTR from z_rfc_store_06_it_t001l
+	</select>
+	
+	<select id="getGoldType" parameterClass="dto" resultClass="dto">
+		select ZJLBN VALUE, ZJLMS VALUESTR from z_rfc_store_09_it_jl
+	</select>
+	<select id="getToneType" parameterClass="dto" resultClass="dto">
+		select ZSLBM VALUE, TSLBM VALUESTR from z_rfc_store_09_it_sl
+	</select>
+	<select id="getToneNeatNess" parameterClass="dto" resultClass="dto">
+		select ZSLJD VALUE, TSLJD VALUESTR from z_rfc_store_09_it_zsjd
+	</select>
+	<select id="getToneColor" parameterClass="dto" resultClass="dto">
+		select ZSLYS VALUE, TSLYS VALUESTR from z_rfc_store_09_it_slys
+	</select>
+	<select id="getWerks" parameterClass="dto" resultClass="dto">
+		select werks VALUE,name1 VALUESTR from z_rfc_store_06_it_t001w
+	</select>
+	<select id="getReason" parameterClass="dto" resultClass="dto">
+		select ID VALUE, DESCRIPTION VALUESTR from aig_recievegooddiff
+	</select>
+	<select id="getPostType" parameterClass="dto" resultClass="dto">
+		select ZYJFS VALUE,TYJFS VALUESTR from z_rfc_store_27_it_zyjfs 
+	</select>
+	<select id="getGoodType" parameterClass="dto" resultClass="dto">
+		select ZYJLX VALUE, TYJLX VALUESTR from z_rfc_store_27_it_zyjlx
+	</select>
+	<select id="getTechnics" parameterClass="dto" resultClass="dto">
+		select ATWRT VALUE, ATWTB VALUESTR from z_rfc_store_09_it_gy limit 1
+	</select>
+	<select id="getToneFireColor" parameterClass="dto" resultClass="dto">
+		select ZSLHC VALUE, TSLHC VALUESTR from z_rfc_store_07_it_ztslhc
+	</select>
+	<select id="getCertificate" parameterClass="dto" resultClass="dto">
+		select ZZSLX VALUE, TZSLX VALUESTR from z_rfc_store_07_it_ztzslx
+	</select>
+	
+	<select id="getNewString" parameterClass="dto" resultClass="dto">
+		select * from z_rfc_store_29_it_ztmszh
+	</select>
+	
+</sqlMap>

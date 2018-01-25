@@ -1,0 +1,481 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="aftersalesSystem">
+  <typeAlias alias="dto" type="org.eredlab.g4.ccl.datastructure.impl.BaseDto" />
+  <!--查询维修信息 -->
+  <select id="getServiceInfo" parameterClass="map" resultClass="dto">
+    SELECT 
+    date_format(accept_date,'%Y-%m-%d') accept_date, 
+    date_format(sell_date,'%Y-%m-%d') sell_date,
+    date_format(expected_pickup_date,'%Y-%m-%d') expected_pickup_date, 
+    date_format(receive_date,'%Y-%m-%d') receive_date, 
+    date_format(factory_receive_date,'%Y-%m-%d') factory_receive_date,
+    date_format(factory_expected_ship_date,'%Y-%m-%d') factory_expected_ship_date,
+    date_format(dept_receive_date,'%Y-%m-%d') dept_receive_date,
+    date_format(mailing_date,'%Y-%m-%d') mailing_date, 
+    date_format(to_cabinet_date,'%Y-%m-%d') to_cabinet_date,
+    date_format(customer_pickup_date,'%Y-%m-%d') customer_pickup_date,
+    date_format(to_purchase_date,'%Y-%m-%d') to_purchase_date,
+    date_format(record_date,'%Y-%m-%d') record_date, 
+    date_format(operator_first_time,'%Y-%m-%d') operator_first_time,
+    date_format(operator_second_time,'%Y-%m-%d') operator_second_time, 
+    date_format(operator_third_time,'%Y-%m-%d') operator_third_time,
+    date_format(good_recieve_date,'%Y-%m-%d') good_recieve_date,
+    sm.zmatnrt zmatnrt,
+    info.*,(case service_type when '1' then '维修' when '2' then '改款' when '3' then '配对' end) typestr,
+     s.description description, ast.name servicename, c.name cername, fb.style faceliftname,gm.name goldname,
+      zl.ZSLBM zlcode, zl.TSLBM zlname, ys.ZSLYS yscode, ys.TSLYS ysname,
+      jd.ZSLJD jdcode,jd.TSLJD jdname, st.NAME1 store_name,r.name replacement_name ,old_stone_weight,
+      (select ZMATNRT from z_rfc_store_03_it_charg where info.old_commodity_barcode = charg limit 1) charg_image ,
+      ifnull((select ZMATNRT from z_rfc_store_03_it_charg where info.prepared_commodity_barcode = charg limit 1),(select ZMATNRT from z_rfc_store_01_it_mara where info.mf_mold_number = MATNR limit 1)) new_charg_image 
+     FROM pos_sales_service info
+      left join pos_repair_status s on info.status=s.status_id 
+       left join pos_aftersales_type ast on info.service_type = ast.code 
+        left join pos_facelift_bag fb on info.facelift_bag = fb.code 
+         left join pos_goldmaterial gm on info.gold_material = gm.code 
+          left join pos_replacement r on info.replacement=r.code 
+           left join pos_certificate c on info.certificate_type = c.code 
+            left join z_rfc_store_06_it_t001w st on (info.store_number = st.WERKS)
+             left join z_rfc_store_09_it_sl zl on info.mf_stone_kind = zl.ZSLBM 
+              left join z_rfc_store_09_it_slys ys on info.mf_stone_color = ys.ZSLYS 
+               left join z_rfc_store_09_it_zsjd jd on info.mf_stone_clarity = jd.ZSLJD 
+               	left join z_rfc_store_01_it_mara sm on info.mf_mold_number = sm.matnr
+      where 1=1
+    <dynamic>
+      <isNotEmpty property="statusArray">
+        and status in
+        <iterate open="(" close=")" property="statusArray" conjunction=",">#statusArray[]#</iterate>
+      </isNotEmpty>
+      <isNotEmpty property="snsArray">
+        and service_number in
+        <iterate open="(" close=")" property="snsArray" conjunction=",">#snsArray[]#</iterate>
+      </isNotEmpty>
+      <isNotEmpty property="store_number" prepend="and ">(store_number =#store_number# or 1000 = #store_number#)</isNotEmpty>
+      <isNotEmpty property="service_type" prepend="and ">service_type =#service_type#</isNotEmpty>
+      <!-- 查询页面查询条件 -->
+      <isNotEmpty property="old_commodity_barcode" prepend="and ">old_commodity_barcode like '%$old_commodity_barcode$%'</isNotEmpty>
+      <isNotEmpty property="service_number" prepend="and ">service_number like '%$service_number$%'</isNotEmpty>
+      <isNotEmpty property="member_name" prepend="and ">member_name like '%$member_name$%'</isNotEmpty>
+      <isNotEmpty property="status" prepend="and ">status=#status#</isNotEmpty>
+      <isNotEmpty property="after_ss_project" prepend="and ">after_ss_project like '%$after_ss_project$%'</isNotEmpty>
+      
+      <isNotEqual property="werks" compareValue="1000">
+      	<isNotEmpty property="start_time" prepend="and ">dept_receive_date >= #start_time#</isNotEmpty>
+      	<isNotEmpty property="end_time" prepend="and ">
+        	<![CDATA[mailing_date <= #end_time# ]]>
+      	</isNotEmpty>
+      </isNotEqual>
+      <isEqual property="werks" compareValue="1000">
+      	<isNotEmpty property="start_time">
+      		<isNotEmpty property="end_time" prepend="and">
+      			<isEqual property="service_type" compareValue="2">
+      				dept_receive_date <![CDATA[>=]]> #start_time# and dept_receive_date <![CDATA[<=]]> #end_time# 
+      			</isEqual>
+      			<isEqual property="service_type" compareValue="3">
+      				dept_receive_date <![CDATA[>=]]> #start_time# and dept_receive_date <![CDATA[<=]]> #end_time# 
+      			</isEqual>
+      			<isEqual property="service_type" compareValue="1">
+      				receive_date <![CDATA[>=]]> #start_time# and receive_date <![CDATA[<=]]> #end_time#
+      			</isEqual>
+      			 
+      		</isNotEmpty>
+      	</isNotEmpty>
+      </isEqual>
+      
+      <isNotEmpty property="costs_type" prepend="and " >
+         <isEqual property = "costs_type" compareValue = "1" >
+          store_repair_costs > 0
+        </isEqual>
+        <isEqual property = "costs_type" compareValue = "2" >
+          repair_charges > 0
+        </isEqual>
+      </isNotEmpty>
+      <isNotEmpty property="is_rework" prepend="and " >
+        <isEqual property = "is_rework" compareValue = "1" >
+          factory_repair_number > 0
+        </isEqual>
+        <isEqual property = "is_rework" compareValue = "2" >
+          <![CDATA[(factory_repair_number < 1 or factory_repair_number is Null) ]]>
+        </isEqual>
+      </isNotEmpty>
+      <![CDATA[ and (is_delete is Null or is_delete < 1) ]]>
+    </dynamic>
+     order by info.record_date desc
+  </select>
+  
+  
+  <!-- 统计维修数量 -->
+  <select id="getServicePageCount" parameterClass="map"
+    resultClass="java.lang.Integer">
+    SELECT count(*) as count
+    from pos_sales_service WHERE 1=1
+   <dynamic>
+      <isNotEmpty property="statusArray">
+        and status in
+        <iterate open="(" close=")" property="statusArray" conjunction=",">#statusArray[]#</iterate>
+      </isNotEmpty>
+      <isNotEmpty property="store_number" prepend="and ">store_number =#store_number#</isNotEmpty>
+      <!-- 查询页面查询条件 -->
+      <isNotEmpty property="service_number" prepend="and ">service_number like '%$service_number$%'</isNotEmpty>
+      <isNotEmpty property="member_name" prepend="and ">member_name like '%$member_name$%'</isNotEmpty>
+      <isNotEmpty property="status" prepend="and ">status=#status#</isNotEmpty>
+      <isNotEmpty property="after_ss_project" prepend="and ">after_ss_project like '%$after_ss_project$%'</isNotEmpty>
+      <isNotEmpty property="start_time" prepend="and ">record_date >= #start_time#</isNotEmpty>
+      <isNotEmpty property="end_time" prepend="and ">
+        <![CDATA[record_date <= #end_time# ]]>
+      </isNotEmpty>
+      <isNotEmpty property="costs_type" prepend="and " >
+         <isEqual property = "costs_type" compareValue = "1" >
+          store_repair_costs > 0
+        </isEqual>
+        <isEqual property = "costs_type" compareValue = "2" >
+          repair_charges > 0
+        </isEqual>
+      </isNotEmpty>
+      <isNotEmpty property="is_rework" prepend="and " >
+        <isEqual property = "is_rework" compareValue = "1" >
+          factory_repair_number > 0
+        </isEqual>
+        <isEqual property = "is_rework" compareValue = "2" >
+          <![CDATA[(factory_repair_number < 1 or factory_repair_number is Null) ]]>
+        </isEqual>
+      </isNotEmpty>
+      <![CDATA[ and (is_delete is Null or is_delete < 1) ]]>
+    </dynamic>
+  </select>
+  <!-- 统计维修改款总数 -->
+  <select id="getTotalRepairCount" parameterClass="map" resultClass="int">
+  SELECT count(*) FROM pos_sales_service where 1=1 
+  <isNotEmpty property="store_number" prepend="and ">store_number =#store_number#</isNotEmpty>
+  </select>
+  <!-- 删除数据 -->
+  <delete id="delServiceInfo" parameterClass="map">
+    update pos_sales_service set is_delete = 1 where 1=1 and service_number in
+    <iterate open="(" close=")" property="idArray" conjunction=",">#idArray[]#</iterate>
+  </delete>
+  <!-- 更新维修数据 -->
+  <update id="updateServiceInfo" parameterClass="map">
+    UPDATE pos_sales_service
+    <dynamic prepend="SET">
+      <isNotEmpty prepend="," property="receive_date">receive_date=#receive_date#</isNotEmpty>
+      <isNotEmpty prepend="," property="weigh">weigh=#weigh#</isNotEmpty>
+      <isNotEmpty prepend="," property="stone_detection">stone_detection=#stone_detection#</isNotEmpty>
+      <isNotEmpty prepend="," property="factory_receive_date">factory_receive_date=#factory_receive_date#</isNotEmpty>
+      <isNotEmpty prepend="," property="factory_receive_people">factory_receive_people=#factory_receive_people#</isNotEmpty>
+      <isNotEmpty prepend="," property="factory_expected_ship_date">factory_expected_ship_date=#factory_expected_ship_date#</isNotEmpty>
+      <isNotEmpty prepend="," property="dept_receive_date">dept_receive_date=#dept_receive_date#</isNotEmpty>
+      <isNotEmpty prepend="," property="repair_after_weight">repair_after_weight=#repair_after_weight#</isNotEmpty>
+      <isNotEmpty prepend="," property="factory_repair_result">factory_repair_result=#factory_repair_result#</isNotEmpty>
+      <isNotEmpty prepend="," property="repair_charges">repair_charges=#repair_charges#</isNotEmpty>
+      <isNotEmpty prepend="," property="canadian_gold">canadian_gold=#canadian_gold#</isNotEmpty>
+      <isNotEmpty prepend="," property="gole_price">gole_price=#gole_price#</isNotEmpty>
+      <isNotEmpty prepend="," property="stone_costs">stone_costs=#stone_costs#</isNotEmpty>
+      <isNotEmpty prepend="," property="stone_process_fees">stone_process_fees=#stone_process_fees#</isNotEmpty>
+      <isNotEmpty prepend="," property="replacement_cost">replacement_cost=#replacement_cost#</isNotEmpty>
+      <isNotEmpty prepend="," property="factory_repair_number">factory_repair_number=#factory_repair_number#</isNotEmpty>
+      <isNotEmpty prepend="," property="mailing_date">mailing_date=#mailing_date#</isNotEmpty>
+      <isNotEmpty prepend="," property="loss_value">loss_value=#loss_value#</isNotEmpty>
+      <isNotEmpty prepend="," property="loss_rate">loss_rate=#loss_rate#</isNotEmpty>
+      <isNotEmpty prepend="," property="real_repair_amount">real_repair_amount=#real_repair_amount#</isNotEmpty>
+      <isNotEmpty prepend="," property="failed_reason">failed_reason=#failed_reason#</isNotEmpty>
+      
+      <isNotEmpty prepend="," property="goods_outward">goods_outward=#goods_outward#</isNotEmpty>
+      <isNotEmpty prepend="," property="repair_charges_cus">repair_charges_cus=#repair_charges_cus#</isNotEmpty>
+      <isNotEmpty prepend="," property="canadian_gold_cus">canadian_gold_cus=#canadian_gold_cus#</isNotEmpty>
+      <isNotEmpty prepend="," property="gole_price_cus">gole_price_cus=#gole_price_cus#</isNotEmpty>
+      <isNotEmpty prepend="," property="stone_costs_cus">stone_costs_cus=#stone_costs_cus#</isNotEmpty>
+      <isNotEmpty prepend="," property="stone_process_fees_cus">stone_process_fees_cus=#stone_process_fees_cus#</isNotEmpty>
+      <isNotEmpty prepend="," property="replacement_cost_cus">replacement_cost_cus=#replacement_cost_cus#</isNotEmpty>
+      <isNotEmpty prepend="," property="real_repair_amount_cus">real_repair_amount_cus=#real_repair_amount_cus#</isNotEmpty>
+  
+      <isNotEmpty prepend="," property="to_cabinet_date">to_cabinet_date=#to_cabinet_date#</isNotEmpty>
+      <isNotEmpty prepend="," property="real_customer_amount">real_customer_amount=#real_customer_amount#</isNotEmpty>
+      <isNotEmpty prepend="," property="satisfaction">satisfaction=#satisfaction#</isNotEmpty>
+      <isNotEmpty prepend="," property="not_satisfied_reason">not_satisfied_reason=#not_satisfied_reason#</isNotEmpty>
+      <isNotEmpty prepend="," property="customer_pickup_date">customer_pickup_date=#customer_pickup_date#</isNotEmpty>
+      <!-- facelift -->
+      <isNotEmpty prepend="," property="old_goods_weight">old_goods_weight=#old_goods_weight#</isNotEmpty>
+      <isNotEmpty prepend="," property="real_goods_weight">real_goods_weight=#real_goods_weight#</isNotEmpty>
+      <isNotEmpty prepend="," property="old_stone_weight">old_stone_weight=#old_stone_weight#</isNotEmpty>
+      <isNotEmpty prepend="," property="process_factory">process_factory=#process_factory#</isNotEmpty>
+      <isNotEmpty prepend="," property="counter_name">counter_name=#counter_name#</isNotEmpty>
+      <isNotEmpty prepend="," property="expect_picture">expect_picture=#expect_picture#</isNotEmpty>
+    <!--   <isNotEmpty prepend="," property="service_type">service_type=#service_type#</isNotEmpty> -->
+      <isNotEmpty prepend="," property="mf_mold_number">mf_mold_number=#mf_mold_number#</isNotEmpty>
+      <isNotEmpty prepend="," property="mf_gold_material">mf_gold_material=#mf_gold_material#</isNotEmpty>
+      <isNotEmpty prepend="," property="mf_stone">mf_stone=#mf_stone#</isNotEmpty>
+      <isNotEmpty prepend="," property="mf_stone_amount">mf_stone_amount=#mf_stone_amount#</isNotEmpty>
+      <isNotEmpty prepend="," property="mf_stone_detail">mf_stone_detail=#mf_stone_detail#</isNotEmpty>
+      <isNotEmpty prepend="," property="mf_stone_kind">mf_stone_kind=#mf_stone_kind#</isNotEmpty>
+      <isNotEmpty prepend="," property="mf_stone_format">mf_stone_format=#mf_stone_format#</isNotEmpty>
+      <isNotEmpty prepend="," property="mf_stone_clarity">mf_stone_clarity=#mf_stone_clarity#</isNotEmpty>
+      <isNotEmpty prepend="," property="mf_stone_weight">mf_stone_weight=#mf_stone_weight#</isNotEmpty>
+      <isNotEmpty prepend="," property="mf_stone_color">mf_stone_color=#mf_stone_color#</isNotEmpty>
+      <isNotEmpty prepend="," property="new_certificate_number">new_certificate_number=#new_certificate_number#</isNotEmpty>
+      <isNotEmpty prepend="," property="new_commodity_barcode">new_commodity_barcode=#new_commodity_barcode#</isNotEmpty>
+      <isNotEmpty prepend="," property="replacement_cost">replacement_cost=#replacement_cost#</isNotEmpty>
+      <isNotEmpty prepend="," property="to_purchase_date">to_purchase_date=#to_purchase_date#</isNotEmpty>
+      <isNotEmpty prepend="," property="purchase_receive_people">purchase_receive_people=#purchase_receive_people#</isNotEmpty>
+      <isNotEmpty prepend="," property="factory_receive_date">factory_receive_date=#factory_receive_date#</isNotEmpty>
+      <isNotEmpty prepend="," property="factory_receive_people">factory_receive_people=#factory_receive_people#</isNotEmpty>
+      <isNotEmpty prepend="," property="factory_expected_ship_date">factory_expected_ship_date=#factory_expected_ship_date#</isNotEmpty>
+      <isNotEmpty prepend="," property="ring">ring=#ring#</isNotEmpty>
+      <isNotEmpty prepend="," property="prepared_commodity_barcode">prepared_commodity_barcode=#prepared_commodity_barcode#</isNotEmpty>
+      <isNotEmpty prepend="," property="factory_repair_result">factory_repair_result=#factory_repair_result#</isNotEmpty>
+      <isNotEmpty prepend="," property="failed_reason">failed_reason=#failed_reason#</isNotEmpty>
+      
+      <isNotEmpty prepend="," property="old_gold_weight">old_gold_weight=#old_gold_weight#</isNotEmpty>
+      <isNotEmpty prepend="," property="new_gold_weight">new_gold_weight=#new_gold_weight#</isNotEmpty>
+      <isNotEmpty prepend="," property="mainstone_process_fees">mainstone_process_fees=#mainstone_process_fees#</isNotEmpty>
+      <isNotEmpty prepend="," property="total_vicestone_process_fees">total_vicestone_process_fees=#total_vicestone_process_fees#</isNotEmpty>
+      <isNotEmpty prepend="," property="old_gold_price">old_gold_price=#old_gold_price#</isNotEmpty>
+      <isNotEmpty prepend="," property="new_gold_price">new_gold_price=#new_gold_price#</isNotEmpty>
+      <isNotEmpty prepend="," property="vicestone_cost">vicestone_cost=#vicestone_cost#</isNotEmpty>
+      <isNotEmpty prepend="," property="version_cost">version_cost=#version_cost#</isNotEmpty>
+      <isNotEmpty prepend="," property="gold_material_loss">gold_material_loss=#gold_material_loss#</isNotEmpty>
+      <isNotEmpty prepend="," property="certificate_cost">certificate_cost=#certificate_cost#</isNotEmpty>
+      <isNotEmpty prepend="," property="real_facelift_amount">real_facelift_amount=#real_facelift_amount#</isNotEmpty>
+       <isNotEmpty prepend="," property="old_gold_weight_cus">old_gold_weight_cus=#old_gold_weight_cus#</isNotEmpty>
+      <isNotEmpty prepend="," property="new_gold_weight_cus">new_gold_weight_cus=#new_gold_weight_cus#</isNotEmpty>
+      <isNotEmpty prepend="," property="mainstone_process_fees_cus">mainstone_process_fees_cus=#mainstone_process_fees_cus#</isNotEmpty>
+      <isNotEmpty prepend="," property="total_vicestone_process_fees_cus">total_vicestone_process_fees_cus=#total_vicestone_process_fees_cus#</isNotEmpty>
+      <isNotEmpty prepend="," property="old_gold_price_cus">old_gold_price_cus=#old_gold_price_cus#</isNotEmpty>
+      <isNotEmpty prepend="," property="new_gold_price_cus">new_gold_price_cus=#new_gold_price_cus#</isNotEmpty>
+      <isNotEmpty prepend="," property="vicestone_cost_cus">vicestone_cost_cus=#vicestone_cost_cus#</isNotEmpty>
+      <isNotEmpty prepend="," property="version_cost_cus">version_cost_cus=#version_cost_cus#</isNotEmpty>
+      <isNotEmpty prepend="," property="gold_material_loss_cus">gold_material_loss_cus=#gold_material_loss_cus#</isNotEmpty>
+      <isNotEmpty prepend="," property="certificate_cost_cus">certificate_cost_cus=#certificate_cost_cus#</isNotEmpty>
+      <isNotEmpty prepend="," property="real_facelift_amount_cus">real_facelift_amount_cus=#real_facelift_amount_cus#</isNotEmpty>
+
+      <isNotEmpty prepend="," property="to_cabinet_date">to_cabinet_date=#to_cabinet_date#</isNotEmpty>
+      <isNotEmpty prepend="," property="satisfaction">satisfaction=#satisfaction#</isNotEmpty>
+      <isNotEmpty prepend="," property="real_customer_amount">real_customer_amount=#real_customer_amount#</isNotEmpty>
+      <isNotEmpty prepend="," property="not_satisfied_reason">not_satisfied_reason=#not_satisfied_reason#</isNotEmpty>
+      <isNotEmpty prepend="," property="customer_pickup_date">customer_pickup_date=#customer_pickup_date#</isNotEmpty>
+      <isNotEmpty prepend="," property="link_number">link_number=#link_number#</isNotEmpty>
+      <isNotEmpty prepend="," property="status">status=#status#</isNotEmpty>
+      <isNotEmpty prepend="," property="expect_commodity_barcode">expect_commodity_barcode=#expect_commodity_barcode#</isNotEmpty>
+      
+      <isNotEmpty prepend="," property="operator_second">operator_second=#operator_second#</isNotEmpty>
+      <isNotEmpty prepend="," property="operator_second_time">operator_second_time=#operator_second_time#</isNotEmpty>
+      <isNotEmpty prepend="," property="operator_third">operator_third=#operator_third#</isNotEmpty>
+      <isNotEmpty prepend="," property="operator_third_time">operator_third_time=#operator_third_time#</isNotEmpty>
+      <isNotEmpty prepend="," property="accept_people_second">accept_people_second=#accept_people_second#</isNotEmpty>
+      <isNotEmpty prepend="," property="accept_people_third">accept_people_third=#accept_people_third#</isNotEmpty>
+      <isNotEmpty prepend="," property="remark2">remark2=#remark2#</isNotEmpty>
+      <isNotEmpty prepend="," property="remark3">remark3=#remark3#</isNotEmpty>
+      <isNotEmpty prepend="," property="cw_receive_amount">cw_receive_amount=#cw_receive_amount#</isNotEmpty>
+      <isNotEmpty prepend="," property="accounting_documents">accounting_documents=#accounting_documents#</isNotEmpty>
+      <isNotEmpty prepend="," property="cw_receive_status">cw_receive_status=#cw_receive_status#</isNotEmpty>
+      
+      <isNotEmpty prepend="," property="cw_pay_amount">cw_pay_amount=#cw_pay_amount#</isNotEmpty>
+      <isNotEmpty prepend="," property="cw_pay_documents">cw_pay_documents=#cw_pay_documents#</isNotEmpty>
+      <isNotEmpty prepend="," property="cw_pay_status">cw_pay_status=#cw_pay_status#</isNotEmpty>
+      
+      <isNotEmpty prepend="," property="accept_people_cw">accept_people_cw=#accept_people_cw#</isNotEmpty>
+      <isNotEmpty prepend="," property="operator_date_cw">operator_date_cw=#operator_date_cw#</isNotEmpty>
+      <isNotEmpty prepend="," property="good_recieve_date">good_recieve_date=#good_recieve_date#</isNotEmpty>
+      <isNotEmpty prepend="," property="old_gold_type">old_gold_type=#old_gold_type#</isNotEmpty>
+      <isNotEmpty prepend="," property="new_good_weight">new_good_weight=#new_good_weight#</isNotEmpty>
+      <isNotEmpty prepend="," property="r_cus_price_loss">r_cus_price_loss=#r_cus_price_loss#</isNotEmpty>
+      <isNotEmpty prepend="," property="r_factory_loss">r_factory_loss=#r_factory_loss#</isNotEmpty>
+      <isNotEmpty prepend="," property="f_cus_price_parts">f_cus_price_parts=#f_cus_price_parts#</isNotEmpty>
+      <isNotEmpty prepend="," property="f_factory_ston_price">f_factory_ston_price=#f_factory_ston_price#</isNotEmpty>
+      <isNotEmpty prepend="," property="f_cus_ston_price">f_cus_ston_price=#f_cus_ston_price#</isNotEmpty>
+      
+    </dynamic>
+    WHERE service_number = #service_number#
+  </update>
+  
+   <!-- 查询最大维修g改款单号 -->
+  <select id="getMaxServiceNumber" parameterClass="map" resultClass="string">
+    select MAX(service_number) from pos_sales_service where 1=1 
+     <dynamic>
+      <isNotEmpty property="store_number" prepend="and ">store_number = #store_number#</isNotEmpty>
+    </dynamic>
+  </select>
+  
+  <!-- 统计返修次数 -->
+  <select id="countRepairTime" parameterClass="map" resultClass="int">
+    select count(old_commodity_barcode) rcount from pos_sales_service where old_commodity_barcode=#old_commodity_barcode#;
+  </select>
+ <!-- 插入返修记录 -->
+  <insert id="saveRepairFailedRecord" parameterClass="dto">
+    insert into pos_repair_failed_record 
+     <dynamic prepend=" " open="(" close=")">
+      <isNotEmpty prepend="," property="service_number">service_number</isNotEmpty>
+      <isNotEmpty prepend="," property="old_commodity_barcode">old_commodity_barcode</isNotEmpty>
+      <isNotEmpty prepend="," property="factory_receive_date">factory_receive_date</isNotEmpty>
+      <isNotEmpty prepend="," property="record_date">record_date</isNotEmpty>
+      <isNotEmpty prepend="," property="failed_reason">failed_reason</isNotEmpty>
+      <isNotEmpty prepend="," property="after_type">after_type</isNotEmpty>
+    </dynamic>
+    <dynamic open="(" close=")" prepend="VALUES">
+      <isNotEmpty prepend="," property="service_number">#service_number#</isNotEmpty>
+      <isNotEmpty prepend="," property="old_commodity_barcode">#old_commodity_barcode#</isNotEmpty>
+      <isNotEmpty prepend="," property="factory_receive_date">#factory_receive_date#</isNotEmpty>
+      <isNotEmpty prepend="," property="record_date">#record_date#</isNotEmpty>
+      <isNotEmpty prepend="," property="failed_reason">#failed_reason#</isNotEmpty>
+      <isNotEmpty prepend="," property="after_type">#after_type#</isNotEmpty>
+    </dynamic>
+  </insert>
+  <!-- 查询返修记录 -->
+   <select id="getRepairFailedRecord" parameterClass="map" resultClass="dto">
+      select date_format(factory_receive_date,'%Y-%m-%d') factory_receive_date, r.* from pos_repair_failed_record r where 1=1
+     <dynamic>
+      <isNotEmpty property="service_number" prepend="and ">service_number = #service_number#</isNotEmpty>
+      <isNotEmpty property="after_type" prepend="and ">after_type = #after_type#</isNotEmpty>
+    </dynamic>
+    order by record_date asc
+   </select>
+  
+  <!-- 插入维修数据 -->
+  <insert id="saveServiceInfo" parameterClass="dto">
+    INSERT INTO pos_sales_service
+    <dynamic prepend=" " open="(" close=")">
+      <isNotEmpty prepend="," property="service_number">service_number</isNotEmpty>
+      <isNotEmpty prepend="," property="member_name">member_name</isNotEmpty>
+      <isNotEmpty prepend="," property="telephone">telephone</isNotEmpty>
+      <isNotEmpty prepend="," property="accept_date">accept_date</isNotEmpty>
+      <isNotEmpty prepend="," property="sell_date">sell_date</isNotEmpty>
+      <isNotEmpty prepend="," property="after_ss_project">after_ss_project</isNotEmpty>
+      <isNotEmpty prepend="," property="replacement">replacement</isNotEmpty>
+      <isNotEmpty prepend="," property="gold_loss_ratio">gold_loss_ratio</isNotEmpty>
+      <isNotEmpty prepend="," property="store_repair_costs">store_repair_costs</isNotEmpty>
+      <isNotEmpty prepend="," property="member_cardnumber">member_cardnumber</isNotEmpty>
+      <isNotEmpty prepend="," property="complaints_number">complaints_number</isNotEmpty>
+      <isNotEmpty prepend="," property="expected_pickup_date">expected_pickup_date</isNotEmpty>
+      <isNotEmpty prepend="," property="clinch_price">clinch_price</isNotEmpty>
+      <isNotEmpty prepend="," property="trade_name">trade_name</isNotEmpty>
+      <isNotEmpty prepend="," property="cus_requirement">cus_requirement</isNotEmpty>
+      <isNotEmpty prepend="," property="expected_repair_costs">expected_repair_costs</isNotEmpty>
+      <isNotEmpty prepend="," property="replacement_cost">replacement_cost</isNotEmpty>
+      <isNotEmpty prepend="," property="repair_count">repair_count</isNotEmpty>
+      <isNotEmpty prepend="," property="product_image">product_image</isNotEmpty>
+      
+      <isNotEmpty prepend="," property="old_commodity_barcode">old_commodity_barcode</isNotEmpty>
+      <isNotEmpty prepend="," property="old_goods_weight">old_goods_weight</isNotEmpty>
+      <isNotEmpty prepend="," property="real_goods_weight">real_goods_weight</isNotEmpty>
+      <isNotEmpty prepend="," property="vicestone">vicestone</isNotEmpty>
+      <isNotEmpty prepend="," property="old_certificate_number">old_certificate_number</isNotEmpty>
+      <isNotEmpty prepend="," property="prepared_commodity_barcode">prepared_commodity_barcode</isNotEmpty>
+      <isNotEmpty prepend="," property="facelift_bag">facelift_bag</isNotEmpty>
+      <isNotEmpty prepend="," property="gold_material">gold_material</isNotEmpty>
+      <isNotEmpty prepend="," property="ring">ring</isNotEmpty>
+      <isNotEmpty prepend="," property="isfree_process_fees">isfree_process_fees</isNotEmpty>
+      <isNotEmpty prepend="," property="isdo_certificate">isdo_certificate</isNotEmpty>
+      <isNotEmpty prepend="," property="certificate_type">certificate_type</isNotEmpty>
+      <isNotEmpty prepend="," property="integral">integral</isNotEmpty>
+      <isNotEmpty prepend="," property="old_stone_weight">old_stone_weight</isNotEmpty>
+      <isNotEmpty prepend="," property="facelift_labor_charge">facelift_labor_charge</isNotEmpty>
+      <isNotEmpty prepend="," property="gold_material_loss">gold_material_loss</isNotEmpty>
+      <isNotEmpty prepend="," property="isincluding_vicestone">isincluding_vicestone</isNotEmpty>
+      <isNotEmpty prepend="," property="vicestone_process_fees">vicestone_process_fees</isNotEmpty>
+      <isNotEmpty prepend="," property="expected_cost">expected_cost</isNotEmpty>
+      <isNotEmpty prepend="," property="certificate_cost">certificate_cost</isNotEmpty>
+      <isNotEmpty prepend="," property="luodan_certificate_number">luodan_certificate_number</isNotEmpty>
+      <isNotEmpty prepend="," property="luodan_certificate_type">luodan_certificate_type</isNotEmpty>
+      <isNotEmpty prepend="," property="status">status</isNotEmpty>
+      <isNotEmpty prepend="," property="store_number">store_number</isNotEmpty>
+      <isNotEmpty prepend="," property="record_date">record_date</isNotEmpty>
+      <isNotEmpty prepend="," property="remark1">remark1</isNotEmpty>
+      <isNotEmpty prepend="," property="accept_people_first">accept_people_first</isNotEmpty>
+      <isNotEmpty prepend="," property="operator_first">operator_first</isNotEmpty>
+      <isNotEmpty prepend="," property="operator_first_time">operator_first_time</isNotEmpty>
+      <isNotEmpty prepend="," property="service_type">service_type</isNotEmpty>
+      <isNotEmpty prepend="," property="gold_material_quality">gold_material_quality</isNotEmpty>
+      <isNotEmpty prepend="," property="mf_mold_number">mf_mold_number</isNotEmpty>
+      <isNotEmpty prepend="," property="mf_stone">mf_stone</isNotEmpty>
+      <isNotEmpty prepend="," property="mf_stone_weight">mf_stone_weight</isNotEmpty>
+      <isNotEmpty prepend="," property="mainstone_process_fees">mainstone_process_fees</isNotEmpty>
+      
+    </dynamic>
+    <dynamic open="(" close=")" prepend="VALUES">
+      <isNotEmpty prepend="," property="service_number">#service_number#</isNotEmpty>
+      <isNotEmpty prepend="," property="member_name">#member_name#</isNotEmpty>
+      <isNotEmpty prepend="," property="telephone">#telephone#</isNotEmpty>
+      <isNotEmpty prepend="," property="accept_date">#accept_date#</isNotEmpty>
+      <isNotEmpty prepend="," property="sell_date">#sell_date#</isNotEmpty>
+      <isNotEmpty prepend="," property="after_ss_project">#after_ss_project#</isNotEmpty>
+      <isNotEmpty prepend="," property="replacement">#replacement#</isNotEmpty>
+      <isNotEmpty prepend="," property="gold_loss_ratio">#gold_loss_ratio#</isNotEmpty>
+      <isNotEmpty prepend="," property="store_repair_costs">#store_repair_costs#</isNotEmpty>
+      <isNotEmpty prepend="," property="member_cardnumber">#member_cardnumber#</isNotEmpty>
+      <isNotEmpty prepend="," property="complaints_number">#complaints_number#</isNotEmpty>
+      <isNotEmpty prepend="," property="expected_pickup_date">#expected_pickup_date#</isNotEmpty>
+      <isNotEmpty prepend="," property="clinch_price">#clinch_price#</isNotEmpty>
+      <isNotEmpty prepend="," property="trade_name">#trade_name#</isNotEmpty>
+      <isNotEmpty prepend="," property="cus_requirement">#cus_requirement#</isNotEmpty>
+      <isNotEmpty prepend="," property="expected_repair_costs">#expected_repair_costs#</isNotEmpty>
+      <isNotEmpty prepend="," property="replacement_cost">#replacement_cost#</isNotEmpty>
+      <isNotEmpty prepend="," property="repair_count">#repair_count#</isNotEmpty>
+      <isNotEmpty prepend="," property="product_image">#product_image#</isNotEmpty>
+      
+      <isNotEmpty prepend="," property="old_commodity_barcode">#old_commodity_barcode#</isNotEmpty>
+      <isNotEmpty prepend="," property="old_goods_weight">#old_goods_weight#</isNotEmpty>
+      <isNotEmpty prepend="," property="real_goods_weight">#real_goods_weight#</isNotEmpty>
+      <isNotEmpty prepend="," property="vicestone">#vicestone#</isNotEmpty>
+      <isNotEmpty prepend="," property="old_certificate_number">#old_certificate_number#</isNotEmpty>
+      <isNotEmpty prepend="," property="prepared_commodity_barcode">#prepared_commodity_barcode#</isNotEmpty>
+      <isNotEmpty prepend="," property="facelift_bag">#facelift_bag#</isNotEmpty>
+      <isNotEmpty prepend="," property="gold_material">#gold_material#</isNotEmpty>
+      <isNotEmpty prepend="," property="ring">#ring#</isNotEmpty>
+      <isNotEmpty prepend="," property="isfree_process_fees">#isfree_process_fees#</isNotEmpty>
+      <isNotEmpty prepend="," property="isdo_certificate">#isdo_certificate#</isNotEmpty>
+      <isNotEmpty prepend="," property="certificate_type">#certificate_type#</isNotEmpty>
+      <isNotEmpty prepend="," property="integral">#integral#</isNotEmpty>
+      <isNotEmpty prepend="," property="old_stone_weight">#old_stone_weight#</isNotEmpty>
+      <isNotEmpty prepend="," property="facelift_labor_charge">#facelift_labor_charge#</isNotEmpty>
+      <isNotEmpty prepend="," property="gold_material_loss">#gold_material_loss#</isNotEmpty>
+      <isNotEmpty prepend="," property="isincluding_vicestone">#isincluding_vicestone#</isNotEmpty>
+      <isNotEmpty prepend="," property="vicestone_process_fees">#vicestone_process_fees#</isNotEmpty>
+      <isNotEmpty prepend="," property="expected_cost">#expected_cost#</isNotEmpty>
+      <isNotEmpty prepend="," property="certificate_cost">#certificate_cost#</isNotEmpty>
+      <isNotEmpty prepend="," property="luodan_certificate_number">#luodan_certificate_number#</isNotEmpty>
+      <isNotEmpty prepend="," property="luodan_certificate_type">#luodan_certificate_type#</isNotEmpty>
+      <isNotEmpty prepend="," property="status">#status#</isNotEmpty>
+      <isNotEmpty prepend="," property="store_number">#store_number#</isNotEmpty>
+      <isNotEmpty prepend="," property="record_date">#record_date#</isNotEmpty>
+      <isNotEmpty prepend="," property="remark1">#remark1#</isNotEmpty>
+      <isNotEmpty prepend="," property="accept_people_first">#accept_people_first#</isNotEmpty>
+      <isNotEmpty prepend="," property="operator_first">#operator_first#</isNotEmpty>
+      <isNotEmpty prepend="," property="operator_first_time">#operator_first_time#</isNotEmpty>
+      <isNotEmpty prepend="," property="service_type">#service_type#</isNotEmpty>
+      <isNotEmpty prepend="," property="gold_material_quality">#gold_material_quality#</isNotEmpty>
+      <isNotEmpty prepend="," property="mf_mold_number">#mf_mold_number#</isNotEmpty>
+      <isNotEmpty prepend="," property="mf_stone">#mf_stone#</isNotEmpty>
+      <isNotEmpty prepend="," property="mf_stone_weight">#mf_stone_weight#</isNotEmpty>
+      <isNotEmpty prepend="," property="mainstone_process_fees">#mainstone_process_fees#</isNotEmpty>
+    </dynamic>
+  </insert>
+  
+  
+  
+   <select id="getServiceInfoToTranferToSAP" parameterClass="String" resultClass="dto">
+    <!--  SELECT * FROM pos_sales_service info where service_number = #service_number# -->
+     SELECT info.*,b.ZJLBM old_gold_type,b.ZSLBM old_tone_type,b.matnr old_matnr_number,
+	 (select ZSLYS from z_rfc_store_08_it_zslit where TMHNN=info.old_commodity_barcode and ZZFST=1 limit 1) old_tone_color,
+	 (select labor from z_rfc_store_08_it_zslit where TMHNN=info.old_commodity_barcode and ZZFST=1 limit 1) old_stone_labor, 
+	 c.MAKTX new_matnr_name FROM pos_sales_service info
+	 left join z_rfc_store_03_it_charg a on info.old_commodity_barcode = a.charg
+	 left join z_rfc_store_01_it_mara b on a.MATNR = b.MATNR
+	 left join z_rfc_store_01_it_mara c on info.mf_mold_number= c.MATNR
+	 where service_number = #service_number#
+  </select>
+  
+  <select id="getMaxCharg" resultClass="String" parameterClass="String">
+		select max(old_commodity_barcode) from pos_sales_service where old_commodity_barcode like '$mycharg$%'
+  </select>
+  
+  
+  <update id="updateEmployeeBuilding" parameterClass="dto">
+  	update z_rfc_store_05_gt_vip set BUILDING = BUILDING-1 where SORT2 = #member_cardnumber#
+  </update>
+  
+  <select id="getEmployeeBuilding" parameterClass="dto" resultClass="Integer">
+  		select BUILDING from  z_rfc_store_05_gt_vip where SORT2 = #member_cardnumber#
+  </select>
+  
+  
+  
+</sqlMap>

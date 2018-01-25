@@ -1,0 +1,280 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<!-- 资源模型手工映射SQL语句 -->
+<sqlMap namespace="SapRfcParam">
+	<typeAlias alias="dto"
+		type="org.eredlab.g4.ccl.datastructure.impl.BaseDto" />
+	<!-- 读取RFC视图到内存 -->
+	<select id="getRfcViewList" parameterClass="map" resultClass="dto">
+		SELECT *
+		FROM sap_rfcuser order by pk , sysid
+	</select>
+
+
+
+	<!-- RFC数据管理 -->
+	<select id="getRfcListForPage" parameterClass="map" resultClass="dto">
+		SELECT *
+		FROM sap_rfcuser
+		<dynamic>
+			<isNotEmpty prepend=" WHERE " property="queryParam">
+				pk LIKE
+				'%$queryParam$%'
+				OR sysid LIKE '%$queryParam$%'
+			</isNotEmpty>
+			<isNotEmpty prepend="  AND " property="enabled">
+				enabled = #enabled#
+			</isNotEmpty>
+		</dynamic>
+		ORDER BY pk DESC, sysid desc
+	</select>
+
+	<select id="getRfcListForPageCount" parameterClass="map"
+		resultClass="java.lang.Integer">
+		SELECT count(*)
+		FROM sap_rfcuser
+		<dynamic>
+			<isNotEmpty prepend=" WHERE " property="queryParam">
+				pk LIKE
+				'%$queryParam$%'
+				OR sysid LIKE '%$queryParam$%'
+			</isNotEmpty>
+			<isNotEmpty prepend="  AND " property="enabled">
+				enabled = #enabled#
+			</isNotEmpty>
+		</dynamic>
+		ORDER BY pk DESC, sysid desc
+	</select>
+
+	<!-- 插入一条代码对照记录 -->
+	<insert id="createRfcDomain" parameterClass="dto">
+		INSERT INTO
+		<dynamic prepend="SAP_RFCUSER" open="(" close=")">
+			<isNotEmpty prepend="," property="client">
+				client
+		 </isNotEmpty>
+			<isNotEmpty prepend="," property="host">
+				host
+		 </isNotEmpty>
+			<isNotEmpty prepend="," property="sysid">
+				sysid
+		 </isNotEmpty>
+			<isNotEmpty prepend="," property="sysno">
+				sysno
+		 </isNotEmpty>
+			<isNotEmpty prepend="," property="lang">
+				lang
+		 </isNotEmpty>
+			<isNotEmpty prepend="," property="user">
+				user
+		 </isNotEmpty>
+			<isNotEmpty prepend="," property="pass">
+				pass
+		 </isNotEmpty>
+			<isNotEmpty prepend="," property="crea_date">
+				crea_date
+		 </isNotEmpty>
+			<isNotEmpty prepend="," property="pk">
+				pk
+		 </isNotEmpty>
+			<isNotEmpty prepend="," property="mhost">
+				mhost
+		 </isNotEmpty>
+			<isNotEmpty prepend="," property="sapgroup">
+				sapgroup
+		 </isNotEmpty>
+			<isNotEmpty prepend="," property="pool_capacity">
+				pool_capacity
+		 </isNotEmpty>
+			<isNotEmpty prepend="," property="peak_limit">
+				peak_limit
+		 </isNotEmpty>
+			<isNotEmpty prepend="," property="saprouter">
+				saprouter
+		 </isNotEmpty>
+			<isNotEmpty prepend="," property="enabled">
+				enabled
+		 </isNotEmpty>
+			<isNotEmpty prepend="," property="editmode">
+				editmode
+		 </isNotEmpty>
+		</dynamic>
+		<dynamic open="(" close=")" prepend="VALUES">
+			<isNotEmpty prepend="," property="client">
+				#client#
+		 </isNotEmpty>
+			<isNotEmpty prepend="," property="host">
+				#host#
+		 </isNotEmpty>
+			<isNotEmpty prepend="," property="sysid">
+				#sysid#
+		 </isNotEmpty>
+			<isNotEmpty prepend="," property="sysno">
+				#sysno#
+		 </isNotEmpty>
+			<isNotEmpty prepend="," property="lang">
+				#lang#
+		 </isNotEmpty>
+			<isNotEmpty prepend="," property="user">
+				#user#
+		 </isNotEmpty>
+			<isNotEmpty prepend="," property="pass">
+				#pass#
+		 </isNotEmpty>
+			<isNotEmpty prepend="," property="crea_date">
+				#crea_date#
+		 </isNotEmpty>
+			<isNotEmpty prepend="," property="pk">
+				#pk#
+		 </isNotEmpty>
+			<isNotEmpty prepend="," property="mhost">
+				#mhost#
+		 </isNotEmpty>
+			<isNotEmpty prepend="," property="sapgroup">
+				#sapgroup#
+		 </isNotEmpty>
+			<isNotEmpty prepend="," property="pool_capacity">
+				#pool_capacity#
+		 </isNotEmpty>
+			<isNotEmpty prepend="," property="peak_limit">
+				#peak_limit#
+		 </isNotEmpty>
+			<isNotEmpty prepend="," property="saprouter">
+				#saprouter#
+		 </isNotEmpty>
+			<isNotEmpty prepend="," property="enabled">
+				#enabled#
+		 </isNotEmpty>
+			<isNotEmpty prepend="," property="editmode">
+				#editmode#
+		 </isNotEmpty>
+		</dynamic>
+	</insert>
+
+	<!-- 根据唯一索引进行唯一性校验 -->
+	<select id="checkRfcByIndex" parameterClass="map" resultClass="dto">
+		SELECT *
+		FROM sap_rfcuser
+		WHERE pk = #pk# 
+	</select>
+	<!-- 校验数据是否更改 -->
+	<select id="checkRfcItem" parameterClass="map" resultClass="dto">
+		SELECT *
+		FROM sap_rfcuser
+		<dynamic prepend="WHERE">
+		   <isNotEmpty prepend="AND" property="pk">
+				pk = #pk#
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="client">
+				client = #client#
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="host">
+				host = #host#
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="sysid">
+				sysid = #sysid#
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="sysno">
+				sysno = #sysno#
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="lang">
+				lang = #lang#
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="user">
+				user = #user#
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="pass">
+				pass = #pass#
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="mhost">
+				mhost = #mhost#
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="sapgroup">
+				sapgroup = #sapgroup#
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="pool_capacity">
+				pool_capacity = #pool_capacity#
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="peak_limit">
+				peak_limit = #peak_limit#
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="saprouter">
+				saprouter = #saprouter#
+	        </isNotEmpty>
+			<isNotEmpty prepend="AND" property="enabled">
+				enabled = #enabled#
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="editmode">
+				editmode = #editmode#
+			</isNotEmpty>
+		</dynamic>
+	</select>
+	
+	<!-- 根据主键查询RFC表 -->
+	<select id="getRfcByKey" parameterClass="map" resultClass="dto">
+		SELECT *
+		FROM sap_rfcuser
+		WHERE pk = #pk#
+	</select>
+
+	<!-- 删除代码对照 -->
+	<delete id="deleteRfcItem" parameterClass="map">
+		DELETE
+		FROM sap_rfcuser
+		WHERE pk = #pk#
+	</delete>
+
+	<!-- 根据主键更新RFC表 -->
+	<update id="updateRfcItem" parameterClass="dto">
+		UPDATE sap_rfcuser
+		<dynamic prepend="SET">
+			<isNotEmpty prepend="," property="client">
+				client = #client#
+			</isNotEmpty>
+			<isNotEmpty prepend="," property="host">
+				host = #host#
+			</isNotEmpty>
+			<isNotEmpty prepend="," property="sysid">
+				sysid = #sysid#
+			</isNotEmpty>
+			<isNotEmpty prepend="," property="sysno">
+				sysno = #sysno#
+			</isNotEmpty>
+			<isNotEmpty prepend="," property="lang">
+				lang = #lang#
+			</isNotEmpty>
+			<isNotEmpty prepend="," property="user">
+				user = #user#
+			</isNotEmpty>
+			<isNotEmpty prepend="," property="pass">
+				pass = #pass#
+			</isNotEmpty>
+			<isNotEmpty prepend="," property="crea_date">
+				crea_date = #crea_date#
+			</isNotEmpty>
+			<isNotEmpty prepend="," property="mhost">
+				mhost = #mhost#
+			</isNotEmpty>
+			<isNotEmpty prepend="," property="sapgroup">
+				sapgroup = #sapgroup#
+			</isNotEmpty>
+			<isNotEmpty prepend="," property="pool_capacity">
+				pool_capacity = #pool_capacity#
+			</isNotEmpty>
+			<isNotEmpty prepend="," property="peak_limit">
+				peak_limit = #peak_limit#
+			</isNotEmpty>
+			<isNotEmpty prepend="," property="saprouter">
+				saprouter = #saprouter#
+	        </isNotEmpty>
+			<isNotEmpty prepend="," property="enabled">
+				enabled = #enabled#
+			</isNotEmpty>
+			<isNotEmpty prepend="," property="editmode">
+				editmode = #editmode#
+			</isNotEmpty>
+		</dynamic>
+		WHERE pk = #pk#
+	</update>
+
+</sqlMap>

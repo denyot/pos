@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="membersystem">
+	<typeAlias alias="dto"
+		type="org.eredlab.g4.ccl.datastructure.impl.BaseDto" />
+	<!--订单原因 -->
+	<select id="getMemberInfo" parameterClass="map" resultClass="dto">
+		SELECT a.KUNNR, SORTL, LOEVM, STCD1, STCD2, NAME1, NAME2, NAME3, NAME4, STRAS, PSTLZ, TELF1, 
+		TELF2, ANRED, WERKS, REGIO, TELFX, ADRNR, NAME_CO, SORT2, STR_SUPPL2, STR_SUPPL3, LOCATION, 
+		CITY2, HOME_CITY, REMARK, SMTP_ADDR, BEZEI, LAND1, SPRAS, ORT01, KTOKD, CURRDATE, ZHYJB, 
+    	ZFDDJ, ZLJXF, ZKDJ, ZDJPJ, ZDCZD, ZNDJF, ZWDHJF, ZJFJL, ZJFTZ, ZYDJF, ZGMPC, ZGMJS, b.ZVIP_FLAG, ZDJRQ, ZJDRQ, ZCZR 
+		FROM z_rfc_store2_05_it_vip a left join z_rfc_store2_11_it_jf b on a.KUNNR = b.KUNNR
+		 where WERKS=#store_number# 
+		<dynamic >
+			<isNotEmpty prepend="and" property="kunnr">
+				a.KUNNR like '$kunnr$%'
+			</isNotEmpty>
+			<isNotEmpty prepend="and" property="sortl">
+				SORTL like '$sortl$%'
+			</isNotEmpty>
+			<isNotEmpty prepend="and" property="name1">
+				NAME1 like '$name1$%'
+			</isNotEmpty>
+			<isNotEmpty prepend="and" property="name2">
+				NAME2 like '$name2$%' 
+			</isNotEmpty>
+			<isNotEmpty prepend="and" property="zhyjb">
+				ZHYJB like '$zhyjb$%' 
+			</isNotEmpty>
+			<isNotEmpty prepend="and" property="telf1">
+				TELF1 like '$telf1$%'
+			</isNotEmpty>
+			<isEqual property="used" compareValue="2" prepend="and">
+				SORTL='' and name1=''
+			</isEqual>
+			<isEqual property="used" compareValue="1" prepend="and">
+				 <![CDATA[ SORTL<>'' and name1<>'' ]]>
+			</isEqual>
+		</dynamic>
+	</select>
+	
+	<select id="getMemberCount" parameterClass="map" resultClass="int">
+		SELECT count(*) FROM z_rfc_store2_05_it_vip where WERKS=#store_number#
+		<dynamic >
+			<isNotEmpty prepend="and" property="kunnr">
+				KUNNR like '$kunnr$%'
+			</isNotEmpty>
+			<isNotEmpty prepend="and" property="sortl">
+				SORTL like '$sortl$%'
+			</isNotEmpty>
+			<isNotEmpty prepend="and" property="name1">
+				NAME1 like '$name1$%'
+			</isNotEmpty>
+			<isNotEmpty prepend="and" property="name2">
+				NAME2 like '$name2$%' 
+			</isNotEmpty>
+			<isNotEmpty prepend="and" property="zhyjb">
+				ZHYJB like '$zhyjb$%' 
+			</isNotEmpty>
+			<isNotEmpty prepend="and" property="telf1">
+				TELF1 like '$telf1$%'
+			</isNotEmpty>
+			<isEqual property="used" compareValue="2" prepend="and">
+				SORTL='' and name1=''
+			</isEqual>
+			<isEqual property="used" compareValue="1" prepend="and">
+				 <![CDATA[ SORTL<>'' and name1<>'' ]]>
+			</isEqual>
+		</dynamic>
+	</select>
+	
+	<update id="updateMember" parameterClass="map">
+		update z_rfc_store2_05_it_vip set sortl = #sortl#, 
+		stcd1 = #stcd1#, stcd2 = #stcd2#, name1 = #name1#, name2 = #name2#, 
+		name3 = #name3#, name4 = #name4#, stras = #stras#, pstlz = #pstlz#, 
+		telf1 = #telf1#, telf2 = #telf2#, anred = #anred#, werks = #werks#, 
+		regio = #regio#, telfx = #telfx#, adrnr = #adrnr#, name_co = #name_co#,
+		sort2 = #sort2#, str_suppl2 = #str_suppl2#, str_suppl3 = #str_suppl3#, 
+		location = #location#, city2 = #city2#, home_city = #home_city#, 
+		remark = #remark#, smtp_addr = #smtp_addr#, bezei = #bezei#, land1 = #land1#, 
+		spras = #spras#, ort01 = #ort01#, ktokd = #ktokd#, currdate = #currdate#,zvip_flag = #zvip_flag#
+ 		where kunnr = #kunnr# and werks=#store_number#
+	</update>
+	
+
+</sqlMap>

@@ -1,0 +1,1448 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="report">
+	<typeAlias alias="dto"
+		type="org.eredlab.g4.ccl.datastructure.impl.BaseDto" />
+
+	<select id="getGoldType" parameterClass="map" resultClass="dto">
+	</select>
+
+	<select id="getSallingInfoByKondm" parameterClass="map"
+		resultClass="dto">
+		SELECT KONDM,(select VTEXT from z_rfc_store_09_it_t178t WHERE KONDM =
+		b.KONDM) kondmtext, SUM(SALESQUANTITY) QUARTY,
+		SUM(if((TOTALAMOUNT = ''
+		|| TOTALAMOUNT IS NULL) ,NETPRICE ,TOTALAMOUNT)) TOTAL FROM
+		aig_orderitem a
+		inner join z_rfc_store_01_it_mara b on
+		a.MATERIALNUMBER
+		= b.MATNR
+		inner join
+		aig_orderhead c on a.SALESORDERID = c.SALESORDERID
+		where c.SALEDATE
+		BETWEEN #dateFrom# and #dateTo# and c.storeid =
+		#werks#
+		and b.kondm not
+		in ('18') and c.SAPSALESORDERID <![CDATA[<>]]>
+		''
+		GROUP BY KONDM
+	</select>
+
+	<select id="getSallingInfoByKondmFor1000" parameterClass="map"
+		resultClass="dto">
+		SELECT KONDM,(select VTEXT from z_rfc_store_09_it_t178t WHERE KONDM =
+		b.KONDM) kondmtext, SUM(SALESQUANTITY) QUARTY,
+		SUM(if((TOTALAMOUNT = ''
+		|| TOTALAMOUNT IS NULL) ,NETPRICE ,TOTALAMOUNT)) TOTAL FROM
+		aig_orderitem a
+		inner join z_rfc_store_01_it_mara b on
+		a.MATERIALNUMBER
+		= b.MATNR
+		inner join
+		aig_orderhead c on a.SALESORDERID = c.SALESORDERID
+		where c.SALEDATE
+		BETWEEN #dateFrom# and #dateTo# and c.storeid <![CDATA[<>]]>
+		#werks#
+		and b.kondm not in ('18','17') and c.SAPSALESORDERID <![CDATA[<>]]>
+		''
+		GROUP BY KONDM
+	</select>
+
+	<select id="getSHGoodsByMatnr" parameterClass="map" resultClass="dto">
+		select b.recievedate,a.id, b.werks, a.menge,a.lgort,c.hpzl,d.meins
+		,(select
+		kbstat from z_rfc_store_04_gt_zpcjg where KUNRE LIKE
+		'$werks$%'
+		and #charg# = charg and datab <![CDATA[<=]]>#currentDate#
+		and datbi >= #currentDate#) kbstat,
+		(select kbetr from
+		z_rfc_store_04_gt_zpcjg where KUNRE LIKE '%$werks$%'
+		and #charg# =
+		charg and datab <![CDATA[<=]]>#currentDate#
+		and datbi >= #currentDate#) total
+		from
+		aig_receiveinfodetail a LEFT JOIN
+		aig_receiveinfoheader b on a.id = b.id
+		left join
+		z_rfc_store_03_it_charg c on c.charg = a.charg
+		left join
+		z_rfc_store_01_it_mara d on d.matnr = c.matnr
+		where a.charg = #charg#
+		and
+		b.werks = #werks#
+	</select>
+
+
+	<select id="getDanHistory" parameterClass="map" resultClass="dto">
+		select * from sap_rfcinvokedmsg where inparam like
+		CONCAT("%",#danhao#,"%")
+	</select>
+
+	<select id="getTJGoodsByMatnr" parameterClass="map" resultClass="dto">
+		select ZTJRQ,ZTJDH,WERKS,(select hpzl from z_rfc_store_03_it_charg
+		where charg = #charg#) hpzl,ZRKJG,(select
+		kbstat from
+		z_rfc_store_04_gt_zpcjg
+		where KUNRE LIKE '$werks$%'
+		and #charg# = charg
+		and datab <![CDATA[<=]]>#currentDate#
+		and datbi >= #currentDate#) kbstat
+		from
+		z_rfc_store_29_it_zttj where
+		charg = #charg# and WERKS =
+		#werks#
+	</select>
+
+	<select id="getPDGoodsByMatnr" parameterClass="map" resultClass="dto">
+		select b.starttime, a.id , a.werks,(select hpzl from
+		z_rfc_store_03_it_charg where charg = #charg#) labst,
+		a.iftaking,a.lgort,c.kbetr
+		,(select
+		kbstat from z_rfc_store_04_gt_zpcjg
+		where KUNRE LIKE
+		'$werks$%'
+		and #charg# = charg and datab <![CDATA[<=]]>#currentDate#
+		and datbi >= #currentDate#) kbstat
+		from
+		aig_stocktakingdetail a LEFT
+		JOIN aig_stocktakinghead b on a.id = b.id
+		left join
+		z_rfc_store_04_gt_zpcjg c on c.charg = a.charg
+		where a.charg = #charg#
+		and b.werks = #werks#
+	</select>
+
+	<select id="getDCGoodsByMatnr" parameterClass="map" resultClass="dto">
+		SELECT
+		b.stockdate,a.outid,b.outwerks,a.goodscount,a.tagprice,a.outstock,c.hpzl,d.meins,(select
+		kbstat from z_rfc_store_04_gt_zpcjg where KUNRE LIKE '$werks$%'
+		and
+		#charg# = charg and datab <![CDATA[<=]]>#currentDate#
+		and datbi >= #currentDate#) kbstat
+		from
+		aig_storagetransferdetail a
+		LEFT
+		JOIN aig_storagetransferheader b on a.outid = b.outid
+		left join
+		z_rfc_store_03_it_charg c on c.charg = a.charg
+		left join
+		z_rfc_store_01_it_mara d on d.matnr = c.matnr
+		where a.charg = #charg#
+		and b.inwerks = #werks#
+	</select>
+
+	<select id="getXSGoodsByMatnr" parameterClass="map" resultClass="dto">
+		select b.OPERATEDATETIME,a.SALESORDERID,b.OPERATOR,b.AMOUNTCOLLECTED,
+		a.NETPRICE ,a.STORAGELOCATION,c.hpzl, (select
+		kbstat from
+		z_rfc_store_04_gt_zpcjg where KUNRE LIKE '$werks$%'
+		and #charg# = charg
+		and datab <![CDATA[<=]]>#currentDate#
+		and datbi >= #currentDate#) kbstat
+		from
+		aig_orderitem a INNER JOIN
+		aig_orderhead b on a.SALESORDERID =
+		b.SALESORDERID
+		left join
+		z_rfc_store_03_it_charg c on c.charg = a.batchnumber
+		where
+		a.batchnumber = #charg# and
+		b.OPERATOR = #werks#
+	</select>
+
+	<select id="getTakesDiversity" parameterClass="map" resultClass="dto">
+		select a.charg,a.id,a.goldweight,a.remark,a.realitycount,(select hpzl
+		from z_rfc_store_03_it_charg where charg = a.charg limit 1) labst,
+		(select maktx from z_rfc_store_01_it_mara where a.matnr = matnr limit
+		1) maktx ,
+		(select kbetr from z_rfc_store_04_gt_zpcjg where a.charg =
+		charg limit 1)
+		kbetr
+		from aig_stocktakingdetail a left join
+		aig_stocktakinghead h on a.id =
+		h.id
+		where a.werks = #werks# and
+		a.iftaking is null
+		<dynamic>
+			<isNotEmpty property="pdno" prepend="and">
+				a.id = #pdno#
+			</isNotEmpty>
+			<isNotEmpty property="pdtime" prepend="and">
+				replace(h.starttime,'-','') like '$pdtime$%'
+			</isNotEmpty>
+		</dynamic>
+
+	</select>
+
+	<select id="getTakesDiversityCount" parameterClass="map"
+		resultClass="Integer">
+		select count(*) from aig_stocktakingdetail a left join
+		aig_stocktakinghead h on a.id = h.id
+		where a.werks = #werks# and
+		a.iftaking is null
+		<dynamic>
+			<isNotEmpty property="pdno" prepend="and">
+				a.id = #pdno#
+			</isNotEmpty>
+			<isNotEmpty property="pdtime" prepend="and">
+				replace(h.starttime,'-','') like '$pdtime$%'
+			</isNotEmpty>
+		</dynamic>
+	</select>
+
+	<select id="getByDate" parameterClass="map" resultClass="dto">
+		select *
+		from aig_stocktakinghead where replace(starttime,'-','') like
+		'$pdtime$%' and werks = #werks#
+	</select>
+
+	<select id="getValiAD" parameterClass="map" resultClass="dto">
+		select a.*,b.recievedate,c.description,(select sum(kbetr) from
+		z_rfc_store_04_gt_zpcjg where charg = a.charg and kunre like
+		'$werks$%') totalprice from aig_receiveinfodetail a
+		left join
+		aig_receiveinfoheader b on a.id = b.id
+		left join aig_recievegooddiff c
+		on c.id = a.reason
+		where b.headReason != '' and b.werks = #werks#
+		<dynamic>
+			<isNotEmpty property="recievetype" prepend="and">
+				b.goodtype =
+				#recievetype#
+			</isNotEmpty>
+			<isNotEmpty property="bdate">
+				<isNotEmpty property="edate" prepend="and">
+					b.recievedate
+					between #bdate# and #edate#
+				</isNotEmpty>
+			</isNotEmpty>
+
+		</dynamic>
+	</select>
+
+	<select id="getValiAJ" parameterClass="map" resultClass="dto">
+		select a.charg,a.goodscount,a.outid,b.recievetime,b.goodscount
+		hgoodscount,c.description,a.explain1,a.manage,a.manageresult from
+		aig_storagetransferdetail a
+		left join aig_storagetransferheader b on
+		a.outid = b.outid
+		left join
+		aig_recievegooddiff c on a.reason = c.id
+		where b.inwerks = #werks# and
+		b.headreason != ''
+
+		<dynamic>
+			<isNotEmpty property="recievetype" prepend="and">
+				<isEqual property="recievetype" compareValue="A">
+					b.goodtype
+					between 1 and 7
+				</isEqual>
+				<isEqual property="recievetype" compareValue="G">
+					b.goodtype = 8
+				</isEqual>
+				<isEqual property="recievetype" compareValue="H">
+					b.goodtype = 8
+				</isEqual>
+			</isNotEmpty>
+			<isNotEmpty property="bdate">
+				<isNotEmpty property="edate" prepend="and">
+					b.recievetime
+					between #bdate# and #edate#
+				</isNotEmpty>
+			</isNotEmpty>
+
+		</dynamic>
+	</select>
+
+	<select id="getADCount" parameterClass="map" resultClass="dto">
+		select a.charg,a.menge from aig_receiveinfodetail a
+		left join
+		aig_receiveinfoheader b on a.id = b.id
+		left join aig_recievegooddiff c
+		on c.id = a.reason
+		where b.headReason != '' and b.werks = #werks#
+		<dynamic>
+			<isNotEmpty property="recievetype" prepend="and">
+				b.goodtype =
+				#recievetype#
+			</isNotEmpty>
+			<isNotEmpty property="bdate">
+				<isNotEmpty property="edate" prepend="and">
+					b.recievedate
+					between #bdate# and #edate#
+				</isNotEmpty>
+			</isNotEmpty>
+
+		</dynamic>
+	</select>
+
+	<select id="getADTotalCount" parameterClass="map" resultClass="dto">
+		select a.charg,a.menge from aig_receiveinfodetail a
+		left join
+		aig_receiveinfoheader b on a.id = b.id
+		where b.werks = #werks#
+		<dynamic>
+			<isNotEmpty property="recievetype" prepend="and">
+				b.goodtype =
+				#recievetype#
+			</isNotEmpty>
+			<isNotEmpty property="bdate">
+				<isNotEmpty property="edate" prepend="and">
+					b.recievedate
+					between #bdate# and #edate#
+				</isNotEmpty>
+			</isNotEmpty>
+
+		</dynamic>
+	</select>
+
+	<!--按件查询时间内差异收货数量 -->
+	<select id="getAJCount" parameterClass="map" resultClass="dto">
+		select a.charg,a.goodscount from aig_storagetransferdetail a
+		left join
+		aig_storagetransferheader b on a.outid = b.outid
+		left join
+		aig_recievegooddiff c on a.reason = c.id
+		where b.inwerks = #werks# and
+		b.headReason != ''
+		<dynamic>
+			<isNotEmpty property="recievetype" prepend="and">
+				<isEqual property="recievetype" compareValue="A">
+					b.goodtype
+					between 1 and 7
+				</isEqual>
+				<isEqual property="recievetype" compareValue="G">
+					b.goodtype = 8
+				</isEqual>
+				<isEqual property="recievetype" compareValue="H">
+					b.goodtype = 8
+				</isEqual>
+			</isNotEmpty>
+			<isNotEmpty property="bdate">
+				<isNotEmpty property="edate" prepend="and">
+					b.recievetime
+					between #bdate# and #edate#
+				</isNotEmpty>
+			</isNotEmpty>
+
+		</dynamic>
+	</select>
+
+	<!--按件查询时间内所有收货数量 -->
+	<select id="getAJTotalCount" parameterClass="map" resultClass="dto">
+		select a.charg,a.goodscount from aig_storagetransferdetail a
+		left join
+		aig_storagetransferheader b on a.outid = b.outid
+		left join
+		aig_recievegooddiff c on a.reason = c.id
+		where b.inwerks = #werks#
+		<dynamic>
+			<isNotEmpty property="recievetype" prepend="and">
+				<isEqual property="recievetype" compareValue="A">
+					b.goodtype
+					between 1 and 7
+				</isEqual>
+				<isEqual property="recievetype" compareValue="G">
+					b.goodtype = 8
+				</isEqual>
+				<isEqual property="recievetype" compareValue="H">
+					b.goodtype = 8
+				</isEqual>
+			</isNotEmpty>
+			<isNotEmpty property="bdate">
+				<isNotEmpty property="edate" prepend="and">
+					b.recievetime
+					between #bdate# and #edate#
+				</isNotEmpty>
+			</isNotEmpty>
+
+		</dynamic>
+	</select>
+
+	<!--按条件查询促销活动 -->
+	<select id="getSalesSummary" parameterClass="map" resultClass="dto">
+		select sum(a.SALESQUANTITY)count,sum(a.TOTALAMOUNT) price,b.SALEDATE
+		saletime,(select sum(d.SALESQUANTITY) from aig_orderitem d
+		left join
+		aig_orderhead e on d.SALESORDERID = e.SALESORDERID where
+		e.SALEDATE
+		BETWEEN #vkdab# and #vkdbi# and d.STOREID = #werks#)
+		totalcount,
+		(select sum(f.TOTALAMOUNT) from aig_orderitem f left join
+		aig_orderhead g on
+		f.SALESORDERID = g.SALESORDERID
+		where g.SALEDATE
+		BETWEEN #vkdab# and #vkdbi# and g.STOREID=#werks#)
+		totalprice,
+		c.AKTNR
+		from aig_orderitem a
+		left join aig_orderhead b on a.SALESORDERID =
+		b.SALESORDERID
+		right join z_rfc_store_23_gt_zcsmx c on c.AKTNR =
+		b.SALEPROMOTIONCODE
+		where c.OBJEK = #werks# and c.VKDAB <![CDATA[<=]]>
+		#vkdab# and c.VKDBI <![CDATA[>=]]>
+		#vkdbi# and b.SALEDATE BETWEEN #vkdab# and #vkdbi# group by
+		b.SALEDATE,c.AKTNR
+		<dynamic>
+			<isNotEmpty property="aktnr" prepend="and">
+				c.aktnr = #aktnr#
+			</isNotEmpty>
+		</dynamic>
+	</select>
+
+	<select id="getOutStockHeaderForNeedPrintLabel" parameterClass="map"
+		resultClass="dto">
+		SELECT *, ifnull(b.NAME1,outwerks) outwerks, ifnull(c.NAME1,inwerks)
+		inwerks, ifnull(remark,'无' ) remark,
+		totalprice total
+		<!--
+			, (select labst from z_rfc_store_46_it_stock where werks = #inwerks#
+			and labst > 0 and charg=(select charg from aig_storagetransferdetail
+			where outid=a.outid limit 1) limit 1) labst, (select sum(hpzl) from
+			z_rfc_store_03_it_charg where charg in (select charg from
+			aig_storagetransferdetail where outid=a.outid)) weight
+		-->
+		FROM
+		aig_storagetransferheader a left join z_rfc_store_06_it_t001w b on
+		a.outwerks=b.WERKS
+		left join z_rfc_store_06_it_t001w c on
+		a.inwerks=c.WERKS
+		where needprintlabel=2 and I_MBLNR is not null and
+		I_MBLNR != ''
+		<dynamic>
+			<isNotEmpty property="outtimeb" prepend="and">
+				a.stockdate <![CDATA[ >=  ]]>
+				substring(#outtimeb#,1,10)
+			</isNotEmpty>
+
+			<isNotEmpty property="outtimee" prepend="and">
+				a.stockdate <![CDATA[ <=  ]]>
+				substring(#outtimee#,1,10)
+			</isNotEmpty>
+			<isNotEmpty property="inwerks" prepend="and">
+				a.inwerks =
+				#inwerks#
+			</isNotEmpty>
+			<isNotEmpty property="outwerks" prepend="and">
+				a.outwerks =
+				#outwerks#
+			</isNotEmpty>
+		</dynamic>
+	</select>
+
+	<select id="getOutStockHeaderForNeedPrintLabelCount"
+		parameterClass="map" resultClass="Integer">
+		SELECT count(*)
+		FROM aig_storagetransferheader a
+		where needprintlabel=2
+		<dynamic>
+			<isNotEmpty property="outtimeb" prepend="and">
+				a.stockdate <![CDATA[ >=  ]]>
+				substring(#outtimeb#,1,10)
+			</isNotEmpty>
+
+			<isNotEmpty property="outtimee" prepend="and">
+				a.stockdate <![CDATA[ <=  ]]>
+				substring(#outtimee#,1,10)
+			</isNotEmpty>
+			<isNotEmpty property="inwerks" prepend="and">
+				inwerks = #inwerks#
+			</isNotEmpty>
+			<isNotEmpty property="outwerks" prepend="and">
+				outwerks =
+				#outwerks#
+			</isNotEmpty>
+		</dynamic>
+	</select>
+
+	<select id="getInStockDetailForValidate" parameterClass="map"
+		resultClass="dto">
+		SELECT *, CONCAT(ifnull((select maktx from z_rfc_store_29_it_zttj
+		where CHARG=b.charg and werks=#werks# order by
+		ZTJDH desc limit
+		1),maktx),(case b.ZFMNN when '' then '' when null then ''
+		ELSE
+		(select
+		CONCAT('(',YMIAOSHU,')') from z_rfc_store_07_it_zpumb where YBIANM =
+		b.ZFMNN limit 1) END)) maktx,
+		(select concat(zxsfs,'、',txsfs) from
+		z_rfc_store_27_it_ztxsfs where zxsfs =
+		b.ZXSFS) sealMethod,
+		(select
+		kbetr from z_rfc_store_04_gt_zpcjg where CHARG = a.charg
+		and kunre like
+		CONCAT( outwerks,'%')
+		and datab <![CDATA[<=]]>
+		CURRENT_DATE and datbi >= CURRENT_DATE limit 1 ) bqj,
+		(select kbetr
+		from z_rfc_store_04_gt_zpcjg where CHARG = a.charg
+		and kunre like
+		CONCAT( inwerks,'%')
+		and datab <![CDATA[<=]]>
+		CURRENT_DATE and datbi >= CURRENT_DATE limit 1 ) inwerksbqj,
+		(select
+		kbetr from z_rfc_store_26_it_zpcj where CHARG = a.charg limit 1)
+		companyPrice,
+		ifnull((SELECT KBETR/1000 FROM z_rfc_store_02_it_zpjg
+		where KSCHL='ZZK5' AND
+		CHARG=a.charg
+		AND KUNRE like CONCAT(outwerks,'%')
+		AND DATAB <![CDATA[<=]]>
+		CURRENT_DATE AND DATBI >=CURRENT_DATE limit 1)
+		,(SELECT KBETR/1000 FROM
+		z_rfc_store_02_it_zpjg where KSCHL='ZZK5' AND KONDM =
+		(select kondm
+		from z_rfc_store_01_it_mara where MATNR=a.matnr limit 1)
+		AND KUNRE like
+		CONCAT(outwerks,'%') AND DATAB <![CDATA[<=]]>
+		CURRENT_DATE AND DATBI >=CURRENT_DATE limit 1)) outwerksxs
+		,ifnull((SELECT KBETR/1000 FROM z_rfc_store_02_it_zpjg where
+		KSCHL='ZZK5' AND CHARG=a.charg
+		AND KUNRE like CONCAT(inwerks,'%') AND
+		DATAB <![CDATA[<=]]>
+		CURRENT_DATE AND DATBI >=CURRENT_DATE limit 1)
+		,(SELECT KBETR/1000 FROM
+		z_rfc_store_02_it_zpjg where KSCHL='ZZK5' AND KONDM =
+		(select kondm
+		from z_rfc_store_01_it_mara where MATNR=a.matnr limit 1)
+		AND KUNRE like
+		CONCAT(inwerks,'%') AND DATAB <![CDATA[<=]]>
+		CURRENT_DATE AND DATBI >=CURRENT_DATE limit 1)) inwerksxs
+		FROM
+		aig_storagetransferdetail a
+		inner join aig_storagetransferheader d on
+		d.outid=a.outid
+		left join z_rfc_store_03_it_charg b on a.charg =
+		b.charg
+		left join z_rfc_store_01_it_mara c on a.MATNR = c.MATNR
+		where
+		a.outid=#outid# order by a.ebelp
+	</select>
+
+	<select id="getOutStockHeaderForValidate" parameterClass="map"
+		resultClass="dto">
+		<!--
+			SELECT *, ifnull(b.NAME1,outwerks) outwerks, ifnull(c.NAME1,inwerks)
+			inwerks, ifnull(remark,'无' ) remark, totalprice total FROM
+			aig_storagetransferheader a left join z_rfc_store_06_it_t001w b on
+			a.outwerks=b.WERKS left join z_rfc_store_06_it_t001w c on
+			a.inwerks=c.WERKS
+		-->
+		SELECT outid, goodtype, outwerks, inwerks, stockdate, status,
+		posttime, remark, totalprice, i_mblnr,spppr,sptim,
+		gsyq,cssj,if(cssj
+		=''|| cssj is NULL,0,datediff(cssj,stockdate)) as sj
+		FROM
+		aig_storagetransferheader
+		where 1=1
+		<dynamic>
+			<isNotEmpty property="status" prepend="and">
+				<isEqual property="status" compareValue="0">
+					status between 1 and
+					10
+				</isEqual>
+				<isEqual property="status" compareValue="11">
+					status > #status#
+				</isEqual>
+			</isNotEmpty>
+			<isNotEmpty property="outtimeb" prepend="and">
+				stockdate <![CDATA[ >= ]]>
+				substring(#outtimeb#,1,10)
+			</isNotEmpty>
+			<isNotEmpty property="outtimee" prepend="and">
+				stockdate <![CDATA[ <= ]]>
+				substring(#outtimee#,1,10)
+			</isNotEmpty>
+			<isNotEmpty property="outwerks" prepend="and">
+				outwerks =
+				#outwerks#
+			</isNotEmpty>
+			<isNotEmpty property="inwerks" prepend="and">
+				inwerks = #inwerks#
+			</isNotEmpty>
+		</dynamic>
+		order by stockdate desc
+	</select>
+	<select id="getOutStockHeaderForValidateCount" parameterClass="map"
+		resultClass="Integer">
+		<!--
+			SELECT count(*) FROM aig_storagetransferheader a left join
+			z_rfc_store_06_it_t001w b on a.outwerks=b.WERKS left join
+			z_rfc_store_06_it_t001w c on a.inwerks=c.WERKS
+		-->
+		SELECT count(*)
+		FROM aig_storagetransferheader
+		where 1=1
+		<dynamic>
+			<isNotEmpty property="status" prepend="and">
+				<isEqual property="status" compareValue="0">
+					status between 1 and
+					10
+				</isEqual>
+				<isEqual property="status" compareValue="11">
+					status > #status#
+				</isEqual>
+			</isNotEmpty>
+			<isNotEmpty property="outtimeb">
+				<isNotEmpty property="outtimee" prepend="and">
+					stockdate between
+					#outtimeb# and #outtimee#
+				</isNotEmpty>
+			</isNotEmpty>
+			<isNotEmpty property="outwerks" prepend="and">
+				outwerks =
+				#outwerks#
+			</isNotEmpty>
+			<isNotEmpty property="inwerks" prepend="and">
+				inwerks = #inwerks#
+			</isNotEmpty>
+		</dynamic>
+	</select>
+	<select id="getInStockDetail" parameterClass="map" resultClass="dto">
+		SELECT a.charg, b.hpzl, c.meins, a.goodscount
+		FROM
+		aig_storagetransferdetail a
+		left join z_rfc_store_03_it_charg b on
+		b.charg = a.charg
+		left join z_rfc_store_01_it_mara c on a.MATNR =
+		c.MATNR
+		where a.outid=#outid# 
+	</select>
+
+	<select id="getZone" resultClass="dto" parameterClass="dto">
+		select
+		VKBUR,BEZEI from z_rfc_store_06_it_tvkbt 
+	</select>
+
+	<select id="getWerksInfo" resultClass="dto" parameterClass="dto">
+		select WERKS as mdid, NAME1 as mdname from z_rfc_store_06_it_t001w
+		where pfach <![CDATA[ <> ]]>
+		'00'
+	</select>
+
+	<select id="getBrandList" resultClass="dto" parameterClass="dto">
+		select * from aig_brand
+	</select>
+
+	<select id="ifExistBrandId" resultClass="dto" parameterClass="dto">
+		select * from aig_brand where id = #id#
+	</select>
+
+	<insert id="saveBrand" parameterClass="dto">
+		insert into aig_brand (id,
+		brand) values (#id#, #brand#)
+	</insert>
+
+	<update id="updateBrand" parameterClass="dto">
+		update aig_brand set
+		brand=#brand# where id=#id#
+	</update>
+
+	<delete id="deleteBrand" parameterClass="dto">
+		delete from aig_brand
+		where id in ($delStr$)
+	</delete>
+
+	<select id="getSalesRankingInfo" resultClass="dto"
+		parameterClass="dto">
+		select brand, kbetr from aig_salesranking where 1=1
+		<dynamic>
+			<isNotEmpty property="werks" prepend="and">
+				werks = #werks#
+			</isNotEmpty>
+			<isNotEmpty property="year" prepend="and">
+				year = #year#
+			</isNotEmpty>
+			<isNotEmpty property="month" prepend="and">
+				month = #month#
+			</isNotEmpty>
+		</dynamic>
+		order by ranking asc
+	</select>
+
+	<select id="getBrandRelationByWerks" resultClass="dto"
+		parameterClass="dto">
+		select a.*, b.brand as bname from aig_brandwerks a
+		inner join aig_brand b on a.brand = b.id where werks=#werks#
+	</select>
+
+	<delete id="deleteBrandRelationByWerks" parameterClass="dto">
+		delete
+		from aig_brandwerks where werks=#werks#
+	</delete>
+
+	<insert id="saveBrandRelationByWerks" parameterClass="dto">
+		insert into
+		aig_brandwerks (werks, brand) values (#werks#, #brand#)
+	</insert>
+
+	<select id="getBrandNameByBrand" resultClass="dto"
+		parameterClass="dto">
+		select brand from aig_brand where id=#brand#
+	</select>
+
+	<delete id="deleteSalesRanking" parameterClass="dto">
+		delete from
+		aig_salesranking where werks=#werks# and year=#year# and month=#month#
+	</delete>
+
+	<insert id="saveSalesRankingByWerks" parameterClass="dto">
+		insert into
+		aig_salesranking (werks, year, month, brand, kbetr, ranking,
+		createtime, createuser)
+		values (#werks#, #year#, #month#, #brand#,
+		#kbetr#, #ranking#, #createtime#,
+		#createuser#)
+	</insert>
+
+	<select id="getReceveDiffCount" resultClass="dto"
+		parameterClass="dto">
+		SELECT a.werks, (SELECT name1 FROM z_rfc_store_06_it_t001w WHERE werks
+		= a.werks ) AS name1
+		,(SELECT bezei FROM z_rfc_store_06_it_tvkbt a1
+		INNER JOIN
+		z_rfc_store_06_it_t001w b1 ON a1.vkbur = b1.vkbur WHERE
+		b1.werks =
+		a.werks ) AS bezei
+		,(SELECT tyjlx FROM
+		z_rfc_store_27_it_zyjlx WHERE zyjlx = a.goodtype ) AS
+		tyjlx
+		,a.vbeln,
+		b.charg
+		,CASE WHEN find_in_set('3', b.reason) <![CDATA[ <> ]]>
+		'' THEN '1' END AS 'dzy'
+		,CASE WHEN find_in_set('4', b.reason) <![CDATA[ <> ]]>
+		'' THEN '1' END AS 'dpm'
+		,CASE WHEN find_in_set('5', b.reason) <![CDATA[ <> ]]>
+		'' THEN '1' END AS 'dtm'
+		,CASE WHEN find_in_set('6', b.reason) <![CDATA[ <> ]]>
+		'' THEN '1' END AS 'dzl'
+		,CASE WHEN find_in_set('7', b.reason) <![CDATA[ <> ]]>
+		'' THEN '1' END AS 'djd'
+		,CASE WHEN find_in_set('8', b.reason) <![CDATA[ <> ]]>
+		'' THEN '1' END AS 'djg'
+		,CASE WHEN find_in_set('9', b.reason) <![CDATA[ <> ]]>
+		'' THEN '1' END AS 'dbq'
+		,CASE WHEN find_in_set('10', b.reason) <![CDATA[ <> ]]>
+		'' THEN '1' END AS 'dwg'
+		,CASE WHEN find_in_set('11', b.reason) <![CDATA[ <> ]]>
+		'' THEN '1' END AS 'dks'
+		,CASE WHEN find_in_set('12', b.reason) <![CDATA[ <> ]]>
+		'' THEN '1' END AS 'dtp'
+		,CASE WHEN find_in_set('13', b.reason) <![CDATA[ <> ]]>
+		'' THEN '1' END AS 'dsl'
+		,'' AS 'zsl'
+		,'' AS 'zje'
+		FROM
+		aig_receiveinfodetail b
+		INNER JOIN aig_receiveinfoheader a ON a.id =
+		b.id
+		WHERE b.reason <![CDATA[ <> ]]>
+		''
+		<dynamic>
+			<isNotEmpty property="dateForm" prepend="and">
+				a.recievedate <![CDATA[ >= ]]>
+				#dateForm#
+			</isNotEmpty>
+			<isNotEmpty property="dateTo" prepend="and">
+				a.recievedate <![CDATA[ <= ]]>
+				#dateTo#
+			</isNotEmpty>
+		</dynamic>
+		UNION ALL
+		SELECT werks, (SELECT name1 FROM z_rfc_store_06_it_t001w
+		WHERE werks =
+		aig_receiveinfoheader.werks ) AS name1
+		,(SELECT bezei FROM
+		z_rfc_store_06_it_tvkbt a1 INNER JOIN
+		z_rfc_store_06_it_t001w b1 ON
+		a1.vkbur = b1.vkbur WHERE b1.werks =
+		aig_receiveinfoheader.werks ) AS
+		bezei
+		,(SELECT tyjlx FROM z_rfc_store_27_it_zyjlx WHERE zyjlx =
+		aig_receiveinfoheader.goodtype ) AS tyjlx
+		,vbeln, '' AS charg
+		,'' AS
+		'dzy'
+		,'' AS 'dpm'
+		,'' AS 'dtm'
+		,'' AS 'dzl'
+		,'' AS 'djd'
+		,'' AS 'djg'
+		,''
+		AS 'dbq'
+		,'' AS 'dwg'
+		,'' AS 'dks'
+		,'' AS 'dtp'
+		,'' AS 'dsl'
+		,CASE WHEN
+		find_in_set('1', headReason) <![CDATA[ <> ]]>
+		'' THEN '1' END AS 'zsl'
+		,CASE WHEN find_in_set('2', headReason) <![CDATA[ <> ]]>
+		'' THEN '1' END AS 'zje'
+		FROM aig_receiveinfoheader
+		WHERE headReason <![CDATA[ <> ]]>
+		''
+		<dynamic>
+			<isNotEmpty property="dateForm" prepend="and">
+				a.recievedate <![CDATA[ >= ]]>
+				#dateForm#
+			</isNotEmpty>
+			<isNotEmpty property="dateTo" prepend="and">
+				a.recievedate <![CDATA[ <= ]]>
+				#dateTo#
+			</isNotEmpty>
+		</dynamic>
+		ORDER BY werks
+	</select>
+
+	<select id="getTransferDiffCount" resultClass="dto"
+		parameterClass="dto">
+		SELECT a.outwerks as werks, (SELECT name1 FROM z_rfc_store_06_it_t001w
+		WHERE werks = a.outwerks ) AS name1
+		,(SELECT bezei FROM
+		z_rfc_store_06_it_tvkbt a1 INNER JOIN
+		z_rfc_store_06_it_t001w b1 ON
+		a1.vkbur = b1.vkbur WHERE b1.werks =
+		a.outwerks ) AS bezei
+		,CASE
+		a.goodtype WHEN '1' THEN '镶嵌类' WHEN '2' THEN '银饰类' WHEN '3' THEN
+		'玉石类'
+		WHEN '4' THEN '18K金类' WHEN '5' THEN '铂金类'
+		WHEN '6' THEN '黄金类' WHEN '7'
+		THEN '钯金类' WHEN '8' THEN '赠品及包材' WHEN '9'
+		THEN '其他' END AS tyjlx
+		,a.i_mblnr as vbeln, b.charg
+		,CASE WHEN find_in_set('3', b.reason) <![CDATA[ <> ]]>
+		'' THEN '1' END AS 'dzy'
+		,CASE WHEN find_in_set('4', b.reason) <![CDATA[ <> ]]>
+		'' THEN '1' END AS 'dpm'
+		,CASE WHEN find_in_set('5', b.reason) <![CDATA[ <> ]]>
+		'' THEN '1' END AS 'dtm'
+		,CASE WHEN find_in_set('6', b.reason) <![CDATA[ <> ]]>
+		'' THEN '1' END AS 'dzl'
+		,CASE WHEN find_in_set('7', b.reason) <![CDATA[ <> ]]>
+		'' THEN '1' END AS 'djd'
+		,CASE WHEN find_in_set('8', b.reason) <![CDATA[ <> ]]>
+		'' THEN '1' END AS 'djg'
+		,CASE WHEN find_in_set('9', b.reason) <![CDATA[ <> ]]>
+		'' THEN '1' END AS 'dbq'
+		,CASE WHEN find_in_set('10', b.reason) <![CDATA[ <> ]]>
+		'' THEN '1' END AS 'dwg'
+		,CASE WHEN find_in_set('11', b.reason) <![CDATA[ <> ]]>
+		'' THEN '1' END AS 'dks'
+		,CASE WHEN find_in_set('12', b.reason) <![CDATA[ <> ]]>
+		'' THEN '1' END AS 'dtp'
+		,CASE WHEN find_in_set('13', b.reason) <![CDATA[ <> ]]>
+		'' THEN '1' END AS 'dsl'
+		,'' AS 'zsl','' AS 'zje'
+		FROM
+		aig_storagetransferdetail b
+		INNER JOIN aig_storagetransferheader a ON
+		a.outid = b.outid
+		WHERE b.reason <![CDATA[ <> ]]>
+		''
+		<dynamic>
+			<isNotEmpty property="dateForm" prepend="and">
+				a.recievetime<![CDATA[ >= ]]>
+				#dateForm#
+			</isNotEmpty>
+			<isNotEmpty property="dateTo" prepend="and">
+				a.recievetime <![CDATA[ <= ]]>
+				#dateTo#
+			</isNotEmpty>
+		</dynamic>
+		UNION ALL
+		SELECT outwerks as werks, (SELECT name1 FROM
+		z_rfc_store_06_it_t001w WHERE
+		werks =
+		aig_storagetransferheader.outwerks ) AS name1
+		,(SELECT bezei FROM
+		z_rfc_store_06_it_tvkbt a1 INNER JOIN
+		z_rfc_store_06_it_t001w b1 ON
+		a1.vkbur = b1.vkbur WHERE b1.werks =
+		aig_storagetransferheader.outwerks ) AS bezei
+		,(SELECT tyjlx FROM
+		z_rfc_store_27_it_zyjlx WHERE zyjlx =
+		aig_storagetransferheader.goodtype ) AS tyjlx,i_mblnr as vbeln, '' AS
+		charg
+		,'' AS 'dzy','' AS 'dpm','' AS 'dtm','' AS 'dzl','' AS 'djd',''
+		AS
+		'djg','' AS 'dbq','' AS 'dwg','' AS 'dks','' AS 'dtp','' AS 'dsl'
+		,CASE WHEN find_in_set('1', headReason) <![CDATA[ <> ]]>
+		'' THEN '1' END AS 'zsl'
+		,CASE WHEN find_in_set('2', headReason) <![CDATA[ <> ]]>
+		'' THEN '1' END AS 'zje'
+		FROM aig_storagetransferheader
+		WHERE headReason <![CDATA[ <> ]]>
+		''
+		<dynamic>
+			<isNotEmpty property="dateForm" prepend="and">
+				a.recievetime <![CDATA[ >= ]]>
+				#dateForm#
+			</isNotEmpty>
+			<isNotEmpty property="dateTo" prepend="and">
+				a.recievetime <![CDATA[ <= ]]>
+				#dateTo#
+			</isNotEmpty>
+		</dynamic>
+		ORDER BY werks
+	</select>
+
+	<!-- 门店对应所有商品定价组  -->
+	<select id="getKondmInfoByWerks" parameterClass="dto"
+		resultClass="dto">
+		select KONDM, VTEXT FROM z_rfc_store_09_it_t178t where kondm in
+		(select kondm FROM z_rfc_store_02_it_zpjg where KSCHL='ZZK5' AND KUNRE
+		= CONCAT(#werks#,'-01')
+		AND DATAB  <![CDATA[<=]]>
+		CURRENT_DATE AND DATBI <![CDATA[>=]]>
+		CURRENT_DATE)
+	</select>
+
+	<!-- 石料颜色  -->
+	<select id="getStoneColorList" resultClass="dto" parameterClass="dto">
+		select distinct zslys,tslys from z_rfc_store_24_it_ztslbm_ys where
+		zslbm = 'DI'
+	</select>
+
+	<!-- 石料净度  -->
+	<select id="getStoneLaborList" resultClass="dto" parameterClass="dto">
+		select zsljd,tsljd from z_rfc_store_09_it_zsjd 
+	</select>
+
+	<!-- 石料列表  -->
+	<select id="getStoneList" resultClass="dto" parameterClass="dto">
+		select distinct zslbm,tslbm from z_rfc_store_24_it_ztslbm_ys where
+		mandt = '800'
+	</select>
+
+	<!-- 金料列表  -->
+	<select id="getGoldList" resultClass="dto" parameterClass="dto">
+		select zjlbn,zjlms from z_rfc_store_27_it_ztjlnn where mandt = '800'
+	</select>
+
+	<!-- 货品款式列表  -->
+	<select id="getGoodStyleList" resultClass="dto" parameterClass="dto">
+		select extwg,ewbez from z_rfc_store_09_it_twew where mandt = '800'
+	</select>
+
+	<!-- 根据商品定价组查询进销存汇总 -->
+	<select id="getSaleAndStorageGroupKondm" resultClass="dto"
+		parameterClass="dto">
+		SELECT z.KONDM AS kondm, z1.VTEXT AS
+		kondmtext,a.slabst,a.sweight,a.skbetr,b.clabst,b.cweight,b.ckbetr,
+		c.rlabst,c.rweight,c.rkbetr,d.xlabst,d.xweight,d.xkbetr,e.jlabst,e.jweight,e.jkbetr
+		FROM z_rfc_store_02_it_zpjg z
+		LEFT JOIN (
+		SELECT a3.kondm AS kondm,
+		COUNT(a1.charg) AS slabst, SUM(a4.HPZL) AS
+		sweight, SUM(a5.KBETR) AS
+		skbetr
+		FROM aig_receiveinfodetail a1
+		INNER JOIN aig_receiveinfoheader a2
+		ON a1.id = a2.id
+		INNER JOIN z_rfc_store_01_it_mara a3 ON a3.MATNR =
+		a1.matnr
+		INNER JOIN z_rfc_store_03_it_charg a4 ON a4.CHARG = a1.charg
+		INNER JOIN z_rfc_store_04_gt_zpcjg a5 ON a5.CHARG = a1.charg AND
+		a5.MATNR =
+		a1.matnr
+		AND a5.KUNRE LIKE '$werks$%' AND a5.DATAB <![CDATA[<=]]>
+		a2.recievedate AND a5.DATBI <![CDATA[>]]>
+		a2.recievedate
+		WHERE a2.werks = #werks# AND a2.recievedate <![CDATA[>=]]>
+		#dateFrom# AND a2.recievedate <![CDATA[<=]]>
+		#dateTo#
+		GROUP BY a3.kondm
+		) a USING (kondm)
+		LEFT JOIN (
+		SELECT b3.kondm
+		AS kondm, COUNT(b1.charg) AS clabst, SUM(b4.HPZL) AS
+		cweight,
+		SUM(b5.KBETR) AS ckbetr
+		FROM aig_storagetransferdetail b1
+		INNER JOIN
+		aig_storagetransferheader b2 ON b1.outid = b2.outid
+		INNER JOIN
+		z_rfc_store_01_it_mara b3 ON b3.MATNR = b1.matnr
+		INNER JOIN
+		z_rfc_store_03_it_charg b4 ON b4.CHARG = b1.charg
+		INNER JOIN
+		z_rfc_store_04_gt_zpcjg b5 ON b5.CHARG = b1.charg AND b5.MATNR =
+		b1.matnr
+		AND b5.KUNRE LIKE '$werks$%' AND b5.DATAB <![CDATA[<=]]>
+		b2.stockdate AND b5.DATBI <![CDATA[>]]>
+		b2.stockdate
+		WHERE b2.outwerks = #werks# AND b2.stockdate <![CDATA[>=]]>
+		#dateFrom# AND b2.stockdate <![CDATA[<=]]>
+		#dateTo#
+		GROUP BY b3.kondm
+		) b USING (kondm)
+		LEFT JOIN (
+		SELECT c3.kondm
+		AS kondm, COUNT(c1.charg) AS rlabst, SUM(c4.HPZL) AS
+		rweight,
+		SUM(c5.KBETR) AS rkbetr
+		FROM aig_storagetransferdetail c1
+		INNER JOIN
+		aig_storagetransferheader c2 ON c1.outid = c2.outid
+		INNER JOIN
+		z_rfc_store_01_it_mara c3 ON c3.MATNR = c1.matnr
+		INNER JOIN
+		z_rfc_store_03_it_charg c4 ON c4.CHARG = c1.charg
+		INNER JOIN
+		z_rfc_store_04_gt_zpcjg c5 ON c5.CHARG = c1.charg AND c5.MATNR =
+		c1.matnr
+		AND c5.KUNRE LIKE '$werks$%' AND c5.DATAB <![CDATA[<=]]>
+		curdate() AND c5.DATBI <![CDATA[>=]]>
+		curdate()
+		WHERE c2.inwerks = #werks# AND c2.stockdate <![CDATA[>=]]>
+		#dateFrom# AND c2.stockdate <![CDATA[<=]]>
+		#dateTo#
+		GROUP BY c3.kondm
+		) c USING (kondm)
+		LEFT JOIN (
+		SELECT d3.kondm
+		AS kondm, SUM(d1.SALESQUANTITY) AS xlabst,
+		IFNULL(SUM(d4.HPZL),
+		SUM(d1.GOLDWEIGHT)) AS xweight,
+		SUM(d1.TOTALAMOUNT) AS xkbetr
+		FROM
+		aig_orderitem d1
+		LEFT JOIN aig_orderhead d2 ON d1.SALESORDERID =
+		d2.SALESORDERID
+		LEFT JOIN z_rfc_store_01_it_mara d3 ON d3.MATNR =
+		d1.MATERIALNUMBER
+		LEFT JOIN z_rfc_store_03_it_charg d4 ON d4.CHARG =
+		d1.batchnumber
+		WHERE d2.STOREID = #werks# AND d2.SALEDATE <![CDATA[>=]]>
+		#dateFrom# AND d2.SALEDATE <![CDATA[<=]]>
+		#dateTo#
+		GROUP BY d3.kondm
+		) d USING (kondm)
+		LEFT JOIN (
+		SELECT kondm,
+		SUM(jlabst) AS jlabst, SUM(jweight) AS jweight, SUM(jkbetr) AS
+		jkbetr
+		FROM (
+		SELECT e3.kondm AS kondm, COUNT(e1.charg) AS jlabst,
+		IFNULL(SUM(e4.HPZL),
+		SUM(e1.LABST)) AS jweight, SUM(e5.KBETR) AS jkbetr
+		FROM z_rfc_store_46_it_stock e1
+		INNER JOIN z_rfc_store_01_it_mara e3 ON
+		e3.MATNR = e1.matnr
+		LEFT JOIN z_rfc_store_03_it_charg e4 ON e4.CHARG =
+		e1.charg
+		LEFT JOIN z_rfc_store_04_gt_zpcjg e5 ON e5.CHARG = e1.charg
+		AND e5.MATNR =
+		e1.matnr
+		AND e5.KUNRE LIKE '$werks$%' AND e5.DATAB <![CDATA[<=]]>
+		CURDATE() AND e5.DATBI <![CDATA[>]]>
+		CURDATE()
+		WHERE e1.WERKS = #werks#
+		AND e1.LGORT <![CDATA[<>]]>
+		'0018' GROUP BY e3.kondm
+		UNION ALL
+		SELECT e3.kondm AS kondm,
+		COUNT(e1.charg) AS jlabst, SUM(e4.HPZL) AS
+		jweight, SUM(e5.KBETR) AS
+		jkbetr
+		FROM z_rfc_store_48_it_stock e1
+		INNER JOIN z_rfc_store_01_it_mara
+		e3 ON e3.MATNR = e1.matnr
+		LEFT JOIN z_rfc_store_03_it_charg e4 ON
+		e4.CHARG = e1.charg
+		LEFT JOIN z_rfc_store_04_gt_zpcjg e5 ON e5.CHARG =
+		e1.charg AND e5.MATNR =
+		e1.matnr
+		AND e5.KUNRE LIKE '$werks$%' AND
+		e5.DATAB <![CDATA[<=]]>
+		CURDATE() AND e5.DATBI <![CDATA[>]]>
+		CURDATE()
+		WHERE e1.WERKS = #werks#
+		AND e1.LGORT <![CDATA[<>]]>
+		'0018' GROUP BY e3.kondm
+		) e GROUP BY kondm
+		) e USING (kondm)
+		INNER JOIN
+		z_rfc_store_09_it_t178t
+		z1 ON z1.KONDM = z.KONDM
+		WHERE z.KSCHL = 'ZZK5'
+		AND z.KUNRE LIKE '$werks$%' AND DATAB <![CDATA[<=]]>
+		CURDATE() AND DATBI <![CDATA[>]]>
+		CURDATE()
+		ORDER BY Z.KONDM
+	</select>
+
+	<!-- 查询销售明细 -->
+	<select id="getSaleOrderList" resultClass="dto" parameterClass="dto">
+		select a.sapsalesorderid as vbeln, a.storeid, a.saledate, a.vipcard,
+		a.salesclerk, b.MATERIALNUMBER as matnr, a.remarks,
+		a.cash,
+		a.unionpay,a.shoppingcard,b.batchnumber as charg, b.SALESQUANTITY as
+		kwmeng, b.SALESORDERITEM as posnr,
+		b.ORDERITEMTYPE, b.MATERIALDESC as
+		maktx, b.PRODUCTPICTUREURL as imgurl,
+		b.salepromotion, b.NETPRICE,
+		b.TAGPRICE,
+		b.GOLDWEIGHT,
+		b.giftmethod,a.storereceipt,b.currentintegral,
+		(select bezei from
+		z_rfc_store_09_it_tvakt where auart = a.ordertype) as
+		ordertype
+		from
+		aig_orderhead a
+		inner join aig_orderitem b on a.salesorderid =
+		b.salesorderid
+		where 1=1
+		<dynamic>
+			<isNotEqual property="werks" compareValue="1000" prepend="and">
+				a.storeid = #werks# 
+			</isNotEqual>
+			<isNotEmpty property="vbeln" prepend="and">
+				a.sapsalesorderid =
+				#vbeln#
+			</isNotEmpty>
+			<isNotEmpty property="charg" prepend="and">
+				b.batchnumber =
+				#charg#
+			</isNotEmpty>
+			<isNotEmpty property="kunnr" prepend="and">
+				a.vipcard = #kunnr#
+			</isNotEmpty>
+			<isNotEmpty property="aktnr" prepend="and">
+				b.salepromotion =
+				#aktnr#
+			</isNotEmpty>
+			<isNotEmpty property="dateFrom" prepend="and">
+				<isNotEmpty property="dateTo">
+					a.saledate between
+					substring(#dateFrom#,1,10) and substring(#dateTo#,1,10)
+				</isNotEmpty>
+				<isEmpty property="dateTo">
+					a.saledate >= substring(#dateFrom#,1,10)
+				</isEmpty>
+			</isNotEmpty>
+			<isNotEmpty property="sales" prepend="and">
+				a.salesclerk like
+				'%$sales$%'
+			</isNotEmpty>
+			<isNotEmpty property="kondms" prepend="and">
+				(select kondm from z_rfc_store_01_it_mara where matnr =
+				b.MATERIALNUMBER) in
+				<iterate property="kondms" open="(" close=")" conjunction=",">
+					#kondms[]#
+				</iterate>
+			</isNotEmpty>
+			<isNotEmpty property="ordertype" prepend="and">
+				a.ordertype in
+				<iterate property="ordertype" open="(" close=")"
+					conjunction=",">
+					#ordertype[]#
+				</iterate>
+			</isNotEmpty>
+			<isNotEmpty property="hidebc" prepend="and">
+				b.batchnumber <![CDATA[<>]]>
+				''
+			</isNotEmpty>
+		</dynamic>
+		order by a.saledate desc
+	</select>
+
+	<!-- 查询销售明细记录数 -->
+	<select id="getSaleOrderListCount" resultClass="Integer"
+		parameterClass="dto">
+		select COUNT(b.salesorderid)
+		from aig_orderhead a
+		inner join
+		aig_orderitem b on a.salesorderid = b.salesorderid
+		where 1=1
+		<dynamic>
+			<isNotEqual property="werks" compareValue="1000" prepend="and">
+				a.storeid = #werks# 
+			</isNotEqual>
+			<isNotEmpty property="vbeln" prepend="and">
+				a.sapsalesorderid =
+				#vbeln#
+			</isNotEmpty>
+			<isNotEmpty property="charg" prepend="and">
+				b.batchnumber =
+				#charg#
+			</isNotEmpty>
+			<isNotEmpty property="kunnr" prepend="and">
+				a.vipcard = #kunnr#
+			</isNotEmpty>
+			<isNotEmpty property="aktnr" prepend="and">
+				b.salepromotion =
+				#aktnr#
+			</isNotEmpty>
+			<isNotEmpty property="dateFrom" prepend="and">
+				<isNotEmpty property="dateTo">
+					a.saledate between
+					substring(#dateFrom#,1,10) and substring(#dateTo#,1,10)
+				</isNotEmpty>
+				<isEmpty property="dateTo">
+					a.saledate >= substring(#dateFrom#,1,10)
+				</isEmpty>
+			</isNotEmpty>
+			<isNotEmpty property="sales" prepend="and">
+				a.salesclerk like
+				'%$sales$%'
+			</isNotEmpty>
+			<isNotEmpty property="kondms" prepend="and">
+				(select kondm from z_rfc_store_01_it_mara where matnr =
+				b.MATERIALNUMBER) in
+				<iterate property="kondms" open="(" close=")" conjunction=",">
+					#kondms[]#
+				</iterate>
+			</isNotEmpty>
+			<isNotEmpty property="ordertype" prepend="and">
+				a.ordertype in
+				<iterate property="ordertype" open="(" close=")"
+					conjunction=",">
+					#ordertype[]#
+				</iterate>
+			</isNotEmpty>
+			<isNotEmpty property="hidebc" prepend="and">
+				b.batchnumber <![CDATA[<>]]>
+				''
+			</isNotEmpty>
+		</dynamic>
+	</select>
+
+	<!-- 货品库存信息-->
+	<select id="getStoreInfoList" resultClass="dto" parameterClass="dto">
+		select a.matnr, a.charg, a.lgort, b.zjlbm, c.extwg, c.maktx,
+		b.zmatnrt, b.zccnn,
+		(select vtext from z_rfc_store_09_it_t178t where
+		kondm = c.kondm) as kondm,
+		substring(a.matnr, 8, 2) as stone, b.ztxt3,
+		b.ztxt4, b.zcitstomwg,
+		IF(a.meins = 'G', a.labst, b.hpzl) as labst,
+		(select ybzjg from z_rfc_store_42_it_zcharg_jg where charg = a.charg)
+		as
+		ybzjg,
+		(select KBETR FROM z_rfc_store_02_it_zpjg where KSCHL='ZZK5'
+		AND KONDM =
+		c.kondm AND KUNRE = CONCAT(#werks#,'-01')
+		AND DATAB  <![CDATA[<=]]>
+		CURRENT_DATE AND DATBI <![CDATA[>=]]>
+		CURRENT_DATE limit 1) as zckxs,
+		(select CONCAT(werks, '-', name1) FROM
+		z_rfc_store_06_it_t001w where werks =
+		a.werks and mandt = '800' limit
+		1) as 'werks'
+		from
+		z_rfc_store_46_it_stock a
+		inner join
+		z_rfc_store_03_it_charg b on a.charg = b.charg
+		inner join
+		z_rfc_store_01_it_mara c on a.matnr = c.matnr
+		where a.charg <![CDATA[<>]]>
+		'' and a.labst <![CDATA[>]]>
+		0 and a.lgort <![CDATA[<>]]>
+		'0018'
+		<dynamic>
+			<isNotEmpty property="matnr" prepend="and">
+				a.matnr = #matnr#
+			</isNotEmpty>
+			<isNotEmpty property="charg" prepend="and">
+				a.matnr = (select
+				matnr from z_rfc_store_03_it_charg where charg = #charg# limit 1)
+			</isNotEmpty>
+			<isNotEmpty property="kondms" prepend="and">
+				c.kondm in
+				<iterate property="kondms" open="(" close=")" conjunction=",">
+					#kondms[]#
+				</iterate>
+			</isNotEmpty>
+			<isNotEmpty property="styleTypes" prepend="and">
+				c.extwg in
+				<iterate property="styleTypes" open="(" close=")"
+					conjunction=",">
+					#styleTypes[]#
+				</iterate>
+			</isNotEmpty>
+			<isNotEmpty property="goldTypes" prepend="and">
+				b.zjlbm in
+				<iterate property="goldTypes" open="(" close=")"
+					conjunction=",">
+					#goldTypes[]#
+				</iterate>
+			</isNotEmpty>
+			<isNotEmpty property="stoneTypes" prepend="and">
+				substring(a.matnr, 8, 2) in
+				<iterate property="stoneTypes" open="(" close=")"
+					conjunction=",">
+					#stoneTypes[]#
+				</iterate>
+			</isNotEmpty>
+			<isNotEmpty property="stoneColors" prepend="and">
+				b.ztxt3 in
+				<iterate property="stoneColors" open="(" close=")"
+					conjunction=",">
+					#stoneColors[]#
+				</iterate>
+			</isNotEmpty>
+			<isNotEmpty property="stoneLabors" prepend="and">
+				b.ztxt4 in
+				<iterate property="stoneLabors" open="(" close=")"
+					conjunction=",">
+					#stoneLabors[]#
+				</iterate>
+			</isNotEmpty>
+			<isNotEqual property="zszFrom" compareValue="g" prepend="and">
+				<isNotEqual property="zszTo" compareValue="g">
+					b.zcitstomwg <![CDATA[>=]]>
+					$zszFrom$ and b.zcitstomwg <![CDATA[<=]]>
+					$zszTo$
+				</isNotEqual>
+				<isEqual property="zszTo" compareValue="g">
+					b.zcitstomwg <![CDATA[>=]]>
+					$zszFrom$
+				</isEqual>
+			</isNotEqual>
+			<isNotEqual property="ccFrom" compareValue="#" prepend="and">
+				<isNotEqual property="ccTo" compareValue="#">
+					b.zccnn <![CDATA[>=]]>
+					$ccFrom$ and b.zccnn <![CDATA[<=]]>
+					$ccTo$
+				</isNotEqual>
+				<isEqual property="zszTo" compareValue="#">
+					b.zccnn <![CDATA[>=]]>
+					$ccFrom$
+				</isEqual>
+			</isNotEqual>
+		</dynamic>
+		order by b.zdatum, a.werks desc
+	</select>
+
+	<!-- 货品库存信息记录数 -->
+	<select id="getStoreInfoListCount" resultClass="Integer"
+		parameterClass="dto">
+		select COUNT(a.charg)
+		from z_rfc_store_46_it_stock a
+		inner join
+		z_rfc_store_03_it_charg b on a.charg = b.charg
+		inner join
+		z_rfc_store_01_it_mara c on a.matnr = c.matnr
+		where a.charg <![CDATA[<>]]>
+		'' and a.labst <![CDATA[>]]>
+		0 and a.lgort <![CDATA[<>]]>
+		'0018'
+		<dynamic>
+			<isNotEmpty property="matnr" prepend="and">
+				a.matnr = #matnr#
+			</isNotEmpty>
+			<isNotEmpty property="charg" prepend="and">
+				a.matnr = (select
+				matnr from z_rfc_store_03_it_charg where charg = #charg# limit 1)
+			</isNotEmpty>
+			<isNotEmpty property="kondms" prepend="and">
+				c.kondm in
+				<iterate property="kondms" open="(" close=")" conjunction=",">
+					#kondms[]#
+				</iterate>
+			</isNotEmpty>
+			<isNotEmpty property="styleTypes" prepend="and">
+				c.extwg in
+				<iterate property="styleTypes" open="(" close=")"
+					conjunction=",">
+					#styleTypes[]#
+				</iterate>
+			</isNotEmpty>
+			<isNotEmpty property="goldTypes" prepend="and">
+				b.zjlbm in
+				<iterate property="goldTypes" open="(" close=")"
+					conjunction=",">
+					#goldTypes[]#
+				</iterate>
+			</isNotEmpty>
+			<isNotEmpty property="stoneTypes" prepend="and">
+				substring(a.matnr, 8, 2) in
+				<iterate property="stoneTypes" open="(" close=")"
+					conjunction=",">
+					#stoneTypes[]#
+				</iterate>
+			</isNotEmpty>
+			<isNotEmpty property="stoneColors" prepend="and">
+				b.ztxt3 in
+				<iterate property="stoneColors" open="(" close=")"
+					conjunction=",">
+					#stoneColors[]#
+				</iterate>
+			</isNotEmpty>
+			<isNotEmpty property="stoneLabors" prepend="and">
+				b.ztxt4 in
+				<iterate property="stoneLabors" open="(" close=")"
+					conjunction=",">
+					#stoneLabors[]#
+				</iterate>
+			</isNotEmpty>
+			<isNotEqual property="zszFrom" compareValue="g" prepend="and">
+				<isNotEqual property="zszTo" compareValue="g">
+					b.zcitstomwg <![CDATA[>=]]>
+					$zszFrom$ and b.zcitstomwg <![CDATA[<=]]>
+					$zszTo$
+				</isNotEqual>
+				<isEqual property="zszTo" compareValue="g">
+					b.zcitstomwg <![CDATA[>=]]>
+					$zszFrom$
+				</isEqual>
+			</isNotEqual>
+			<isNotEqual property="ccFrom" compareValue="#" prepend="and">
+				<isNotEqual property="ccTo" compareValue="#">
+					b.zccnn <![CDATA[>=]]>
+					$ccFrom$ and b.zccnn <![CDATA[<=]]>
+					$ccTo$
+				</isNotEqual>
+				<isEqual property="zszTo" compareValue="#">
+					b.zccnn <![CDATA[>=]]>
+					$ccFrom$
+				</isEqual>
+			</isNotEqual>
+		</dynamic>
+	</select>
+	<!-- 销售打印  -->
+	<select id="getSaleAndprintAll" resultClass="dto"
+		parameterClass="dto">
+		select a.salesorderid,date_format(a.saledate,'%Y-%m-%d') AS
+		saledate,DATE_FORMAT(a.insertdatetime,'%Y-%m-%d') as insertdatetime,a.sapsalesorderid,
+		a.storeid,b.cnt,b.date,b.remark,DATEDIFF(INSERTDATETIME,SALEDATE) as zhdate
+		from
+		aig_orderhead as a
+		LEFT join aig_print as b on b.SALESORDERID =
+		a.SALESORDERID
+		where 1=1
+		<dynamic prepend="and">
+			<isNotNull property="werkss">
+				a.storeid in
+				<iterate property="werkss" open="(" close=")" conjunction=",">
+					#werkss[]#
+		</iterate>
+			</isNotNull>
+		</dynamic>
+		and a.SALEDATE BETWEEN #dateFrom# and #dateTo#
+	</select>
+	<select id="getSaleAndprintAllWerks" resultClass="dto"
+		parameterClass="dto">
+		select werks ,name1 from z_rfc_store_06_it_t001w where ekorg = '1000'
+		and vkorg = '1000' and werks <![CDATA[<>]]>
+		'1000'
+	</select>
+	<update id="editSaleAndprint" parameterClass="dto">
+		update aig_print
+		set
+		remark=#editsaleRemark# where SALESORDERID=#editsale#
+	</update>
+	<select id="getSaleAndprintSinggle" resultClass="dto"
+		parameterClass="dto">
+		select * from  aig_print where SALESORDERID=#editsale#
+	</select>
+	<insert id="insertSaleAndprint"
+		parameterClass="dto">
+		Insert into aig_print(SALESORDERID,cnt) values (#editsale#,0) 
+	</insert>
+</sqlMap>

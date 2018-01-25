@@ -1,0 +1,289 @@
+body {
+	color: #4f6b72;
+	font-family: 宋体, Arial;
+	background: #E6EAE9;
+	font-size: 12px;
+	margin-left: 0px;
+	margin-top: 0px;
+	margin-right: 0px;
+	margin-bottom: 0px;
+}
+a{
+    color:#333;
+    text-decoration:none;
+}
+th {
+	font-family: 宋体, Arial;
+	font-size: 13px;
+	color: #4f6b72;
+	border-right: 0px solid #C1DAD7;
+	border-bottom: 0px solid #C1DAD7;
+	border-top: 0px solid #C1DAD7;
+	letter-spacing: 2px;
+	text-transform: uppercase;
+	text-align: center;
+	padding: 6px 6px 6px 12px;
+	background: #CAE8EA no-repeat;
+	cursor: pointer;
+}
+
+input {
+	background-color: expression((this.readOnly &&this.readOnly ==true)?"#f0f0f0":"" )
+}
+
+th.nobg {
+	border-top: 0;
+	border-left: 0;
+	border-right: 0px solid #C1DAD7;
+	background: none;
+}
+
+.tdclass {
+	border-right: 0px solid #C1DAD7;
+	border-bottom: 0px solid #C1DAD7;
+	background: #fff;
+	font-family: 宋体, Arial;
+	font-size: 12px;
+	padding: 2px 2px 2px 3px;
+	color: #4f6b72;
+	cursor: pointer;
+}
+
+.orderhead {
+	color: #FF3030;
+	font-family: 宋体, Arial;
+	font-size: 20px;
+}
+.orderheadpos {
+	color: #FF3030;
+	font-family: 宋体, Arial;
+	font-size: 12px;
+}
+
+.td.alt {
+	background: #F5FAFA;
+	color: #797268;
+}
+
+th.spec {
+	border-left: 0px solid #C1DAD7;
+	border-top: 0;
+	background: #fff no-repeat;
+	font-family: 宋体, Arial;
+	font-size: 12px;
+}
+
+th.specalt {
+	border-left: 0px solid #C1DAD7;
+	border-top: 0;
+	background: #f5fafa no-repeat;
+	font-family: 宋体, Arial;
+	font-size: 12px;
+	color: #797268;
+}
+
+.tdtoplevel {
+	border-right: 0px solid #C1DAD7;
+	border-bottom: 0px solid #C1DAD7;
+	background: #BCEE68;
+	font-family: 宋体, Arial;
+	font-size: 14px;
+	padding: 2px 2px 2px 3px;
+	color: #000000;
+	white-space:nowrap; overflow:hidden
+}
+
+.tdgiftlevel {
+	border-right: 0px solid #C1DAD7;
+	border-bottom: 0px solid #C1DAD7;
+	background: #BDB76B;
+	font-family: 宋体, Arial;
+	font-size: 14px;
+	padding: 2px 2px 2px 3px;
+	color: #000000;
+}
+
+.tdtotallevel {
+	border-right: 0px solid #C1DAD7;
+	border-bottom: 0px solid #C1DAD7;
+	background: #C5C1AA;
+	font-family: 宋体, Arial;
+	padding: 2px 2px 2px 3px;
+	color: #EE0000;
+}
+
+.show_tooltip li {
+	list-style: none;
+	display: inline;
+	padding: 2px 2px 2px 3px;
+}
+
+/* tooltip */
+#tooltip {
+	position: absolute;
+	border: 1px solid #333;
+	background: #f7f5d1;
+	padding: 3px 3px 3px 3px;
+	color: #333;
+	display: none;
+}
+/* tooltip */
+#tooltipdiv {
+	position: absolute;
+	border: 1px solid #333;
+	background: #f7f5d1;
+	padding: 3px 3px 3px 3px;
+	color: #333;
+	display: none;
+}
+
+.inputkey {
+	padding: 0;
+	height: 20px;
+	line-height: 15px;
+	width: 100px;
+	border: 1px solid #FF0000;
+}
+
+.inputnumberkey {
+	padding: 0;
+	height: 20px;
+	line-height: 15px;
+	width: 50px;
+	border: 1px solid #FF0000;
+}
+.inputreadonly {
+	padding: 0;
+	height: 20px;
+	line-height: 15px;
+	width: 100px;
+	border: 0px; 
+	background: #f0f0f0;
+}
+
+.inputnoboder {
+	padding: 0;
+	height: 20px;
+	line-height: 15px;
+	width: 120px;
+	border: 0px solid
+}
+
+.inputnoboder1 {
+	padding: 0;
+	height: 20px;
+	line-height: 15px;
+	width: 80px;
+	border: 0px solid
+}
+
+.inputnom {
+	padding: 0;
+	height: 20px;
+	line-height: 15px;
+	width: 100px;
+}
+
+.inputnumbernom {
+	padding: 0;
+	height: 20px;
+	line-height: 15px;
+	width: 30px;
+}
+
+.inputcharnom {
+	padding: 0;
+	height: 20px;
+	line-height: 15px;
+	width: 35px;
+}
+
+.inputattention {
+	padding: 0;
+	height: 20px;
+	line-height: 15px;
+	border: 1px solid #FFFF00;
+	font-size: 14px;
+	color: #121212;
+	background: #EEEED1;
+}
+
+.inputattention2 {
+	padding: 0;
+	height: 20px;
+	line-height: 15px;
+	border: 1px solid #FF0000;
+	font-size: 20px;
+	color: #FF0000;
+	width: 80px;
+	background: #EEEED1;
+}
+
+.kunnrjf {
+	border: 1px solid #FFFF00;
+	font-size: 16px;
+	color: #FF0000;
+}
+
+.statementaccount {
+	border: 1px solid;
+	font-size: 18px;
+	width: 130px;
+}
+
+.orersystembutton {
+	background-position: center center;
+	background-image: url(../images/button.png);
+	background-color: buttonface;
+	width: 80px;
+	height: 30px;
+	background-repeat: no-repeat;
+	cursor: pointer;
+}
+.oreropbutton {
+	background-position: center center;
+	background-image: url(../images/button.png);
+	background-color: buttonface;
+	width: 70px;
+	height: 25px;
+	background-repeat: no-repeat;
+	cursor: pointer;
+}
+
+.delbutton {
+	background-position: center;
+	background-image: url(../images/del.png);
+	width: 16px;
+	height: 16px;
+}
+
+.triped1 {
+	border: 1px solid #9FB6CD;
+	font-size: 16px;
+	font-family: 宋体, Arial;
+	background-color: #EEE9E9;
+}
+.triped2 {
+	border: 1px solid #9FB6CD;
+	font-size: 16px;
+	font-family: 宋体, Arial;
+	background-color: #FCFCFC;
+}
+
+.trover {
+	font-size: 16px;
+	background-color: gold;
+}
+.divmatnrdesc{
+   width:120px;overflow:hidden;
+   white-space:nowrap;
+   text-overflow:ellipsis;
+}
+.printinfo{
+    font-size: 14px;
+    font-weight:800;
+    color: red;
+}
+	
+
+ 

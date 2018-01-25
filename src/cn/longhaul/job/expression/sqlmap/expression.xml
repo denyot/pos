@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="express">
+	<typeAlias alias="dto"
+		type="org.eredlab.g4.ccl.datastructure.impl.BaseDto" />
+	<select id="getWerks" parameterClass="map" resultClass="string">
+		select werks from z_rfc_store2_06_it_t001w
+	</select>
+	<select id="getMemberNos" parameterClass="map" resultClass="string">
+		select KUNNR from z_rfc_store2_05_it_vip
+	</select>
+	
+	<select id="getMemberNosPageCount" parameterClass="map" resultClass="int">
+		select count(KUNNR) from z_rfc_store2_05_it_vip
+	</select>
+	
+</sqlMap>

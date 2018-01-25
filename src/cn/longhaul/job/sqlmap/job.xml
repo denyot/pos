@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="job">
+<typeAlias alias="dto"
+		type="org.eredlab.g4.ccl.datastructure.impl.BaseDto" />
+	<select id="getqrtz_triggers" parameterClass="map" resultClass="dto">
+		select * from QRTZ_TRIGGERS   a , qrtz_cron_triggers  b where  
+         a.TRIGGER_NAME =  b.TRIGGER_NAME   
+		<dynamic>
+			<isNotEmpty prepend="AND" property="queryParam">
+				a.trigger_name like '%$queryParam$%'
+			</isNotEmpty>
+		</dynamic>
+		order by a.start_time
+	</select>
+	<select id="countCatalogsForGridDemo" parameterClass="map"
+		resultClass="java.lang.Integer">
+		SELECT count(*) as count
+		FROM QRTZ_TRIGGERS a
+		<dynamic prepend="WHERE">
+			<isNotEmpty prepend="AND" property="queryParam">
+				a.trigger_name like '%$queryParam$%'
+			</isNotEmpty>
+		</dynamic>		
+	</select>
+	
+	<insert id="insertreport_history" parameterClass="dto">
+		INSERT INTO SAP_REPORTHISTORY(functionname,executestate,detail)
+		VALUES (#functionname#,#executestate#,#detail#)
+	</insert>
+	<select id="getreport_history" parameterClass="map" resultClass="dto">
+		select * from SAP_REPORTHISTORY  where  
+       	functionname = #functionname#
+		order by executetime desc
+	</select>	
+
+	<select id="getreport_historyCount" parameterClass="map"
+		resultClass="java.lang.Integer">
+		SELECT count(*) as count
+		FROM SAP_REPORTHISTORY a where  functionname = #functionname#
+	</select>	
+
+	<update id="updatereport_syncstate" parameterClass="map">
+		UPDATE SAP_RFCCLASS
+		SET SYNCSTATE = #syncstate#
+		where saprfcname = #saprfcname#
+	</update>		
+	
+	<update id="deletereport_syncstate" parameterClass="map">
+		UPDATE SAP_RFCCLASS
+		SET SYNCSTATE = #syncstate#
+		where saprfcname = #quartzname#
+	</update>	
+	
+	<select id="getqrtz_triggersbyname" parameterClass="map" resultClass="dto">
+		select * from QRTZ_TRIGGERS  where  
+		trigger_name like '%$functionname$%'
+	</select>	
+	
+	<select id="getTableDesc" parameterClass="map" resultClass="dto">
+		desc  $tablename$
+	</select>		
+	
+	
+	<delete id="deletereport_history" parameterClass="map" >
+		  DELETE 
+		  FROM SAP_REPORTHISTORY  
+		<dynamic prepend="WHERE">
+			<isNotEmpty prepend="AND" property="functionname">
+				functionname like '%$functionname$%'
+			</isNotEmpty>
+		</dynamic>		  
+	</delete>
+	
+</sqlMap>

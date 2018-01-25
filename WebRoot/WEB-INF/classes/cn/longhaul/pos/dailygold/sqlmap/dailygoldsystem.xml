@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="dailygoldsystem">
+	<typeAlias alias="dto"
+		type="org.eredlab.g4.ccl.datastructure.impl.BaseDto" />
+	<!--订单原因 -->
+	<select id="getAssistantPosition" parameterClass="map" resultClass="dto">
+		select * from aig_assistant_position
+	</select>
+	
+	<update id="saveDailyGoldInfo" parameterClass="map">
+		INSERT INTO aig_dailygold
+		(StoreNumbers, goldtype, goldvalue, golddate, remark) 
+		VALUES (#store_numbers#, #goldtype#, #goldvalue#, #golddate#, #remark#);
+	</update>
+	
+	<select id="getDailyGoldInfo" parameterClass="map" resultClass="dto">
+		SELECT id, StoreNumbers, (select zjlms from z_rfc_store_09_it_jl where ZJLBN =goldtype) goldtype, goldvalue, golddate, remark 
+			FROM aig_dailygold
+		 where 1=1 
+		 <dynamic>
+		 	<isNotEmpty property="store_numbers" prepend="and">
+		 		StoreNumbers=#store_numbers#
+		 	</isNotEmpty>
+		 	<isNotEmpty property="goldType" prepend="and">
+		 		goldtype like '%$goldType$%'
+		 	</isNotEmpty>
+		 </dynamic>
+		 
+		  order by golddate desc
+	</select>
+	
+	<select id="getTotalDailyGoldCount" parameterClass="map" resultClass="int">
+		SELECT count(*) 
+		FROM aig_dailygold where StoreNumbers=#store_numbers#
+	</select>
+	
+	
+	<delete id="delAssistantInfo" parameterClass="map">
+		delete from assistant_info where store_numbers=#store_numbers# 
+		and aig_assistant_name in 
+		<iterate open="(" close=")" property="assistant_names" conjunction=",">
+			#assistant_names[]#
+		</iterate>
+	</delete>
+	
+	<update id="updateAssistantInfo" parameterClass="map">
+		UPDATE aig_assistant_info 
+		SET store_numbers = #store_numbers# , assistant_name = #assistant_name#, 
+		telephone = #telephone#, position = #position#, remark = #remark# 
+		WHERE assistant_name = #oldname# and store_numbers= #store_numbers#
+	</update>
+
+</sqlMap>

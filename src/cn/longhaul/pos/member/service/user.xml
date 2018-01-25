@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap
+        PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+        "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap >
+    <!-- 为user类取个别名 -->
+    <typeAlias alias="UserAlias" type="cn.longhaul.pos.member.service.User"/>
+    <!-- 配置表和实体Bean之间的映射关系 -->
+    <resultMap id="userMap" class="cn.longhaul.pos.member.service.User">
+        <result property="appellation" column="appellation"/>
+        <result property="sort1" column="sort1"/>
+    </resultMap>
+    <!-- 查询所有当日过生日的会员 -->
+    <select id="getUserList" resultMap="userMap">
+        SELECT t.SORT1,
+CASE PARGE
+WHEN '1' THEN  CONCAT(t.NAME1,'先生')
+WHEN '2' THEN CONCAT(t.NAME1,'女士')
+ELSE t.NAME1
+END as appellation
+from z_rfc_store_05_gt_vip as t
+WHERE SUBSTR(t.GBDAT,6) = SUBSTR(CURDATE(),6)
+and t.GBDAT BETWEEN '1920-01-01' and CURDATE()
+and t.SORT1!='' and t.SORT1 is not NULL
+    </select>
+
+</sqlMap>

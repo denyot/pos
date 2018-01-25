@@ -1,0 +1,666 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<!-- 资源模型手工映射SQL语句 -->
+<sqlMap namespace="SapRfcDefine">
+	<typeAlias alias="dto"
+		type="org.eredlab.g4.ccl.datastructure.impl.BaseDto" />
+	<!-- 读取RFC视图到内存 -->
+	<select id="getRfcViewList" parameterClass="map" resultClass="dto">
+		SELECT *
+		FROM $rfctable$ order by rfc_id 
+	</select>
+
+	<!-- RFC数据管理 -->
+	<select id="getRfcListForPage" parameterClass="map" resultClass="dto">
+		SELECT *, (SELECT rfc_name FROM sap_rfcclass WHERE rfc_id =
+		a.parent_id) AS parentrfcname
+		FROM $rfctable$ a
+		<dynamic prepend=" WHERE ">
+			<isNotEmpty prepend="AND" property="queryParam">
+				rfc_name LIKE
+				'%$queryParam$%'
+				OR saprfcname LIKE '%$queryParam$%'
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="enabled">
+				enabled = #enabled#
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="leaf">
+				leaf = #leaf#
+			</isNotEmpty>
+		</dynamic>
+		ORDER BY rfcid, sortno
+	</select>
+
+	<select id="getRfcListForPageCount" parameterClass="map"
+		resultClass="java.lang.Integer">
+		SELECT count(*)
+		FROM $rfctable$
+		<dynamic prepend="WHERE">
+			<isNotEmpty prepend="AND" property="queryParam">
+				rfc_name LIKE
+				'%$queryParam$%'
+				OR saprfcname LIKE '%$queryParam$%'
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="enabled">
+				enabled = #enabled#
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="leaf">
+				leaf = #leaf#
+			</isNotEmpty>
+		</dynamic>
+		ORDER BY rf_cid, sortno
+	</select>
+
+	<!-- 插入一条代码对照记录 -->
+	<insert id="createRfcDomain" parameterClass="dto">
+		INSERT INTO $rfctable$
+		<dynamic prepend=" " open="(" close=")">
+			<isNotEmpty prepend="," property="rfc_id">
+				rfc_id
+		 </isNotEmpty>
+			<isNotEmpty prepend="," property="rfc_name">
+				rfc_name
+		 </isNotEmpty>
+			<isNotEmpty prepend="," property="parent_id">
+				parent_id
+		 </isNotEmpty>
+			<isNotEmpty prepend="," property="saprfcname">
+				saprfcname
+		 </isNotEmpty>
+			<isNotEmpty prepend="," property="para_id">
+				para_id
+		 </isNotEmpty>
+			<isNotEmpty prepend="," property="para_name">
+				para_name,aig_name
+			</isNotEmpty>
+			<isNotEmpty prepend="," property="para_type">
+				para_type,aig_type
+			</isNotEmpty>
+			<isNotEmpty prepend="," property="para_length">
+				para_length,aig_length
+			</isNotEmpty>
+			<isNotEmpty prepend="," property="para_desc">
+				para_desc,aig_desc
+			</isNotEmpty>
+			<isNotEmpty prepend="," property="para_optional">
+				para_optional
+			</isNotEmpty>
+			<isNotEmpty prepend="," property="sortno">
+				sortno
+		 </isNotEmpty>
+			<isNotEmpty prepend="," property="leaf">
+				leaf
+		 </isNotEmpty>
+			<isNotEmpty prepend="," property="remark">
+				remark
+		 </isNotEmpty>
+			<isNotEmpty prepend="," property="crea_date">
+				crea_date
+		 </isNotEmpty>
+			<isNotEmpty prepend="," property="enabled">
+				enabled
+		 </isNotEmpty>
+			<isNotEmpty prepend="," property="editmode">
+				editmode
+		 </isNotEmpty>
+			<isNotEmpty prepend="," property="cachemode">
+				cachemode
+		 </isNotEmpty>
+		 <isNotEmpty prepend="," property="para_decimals">
+				para_decimals
+		 </isNotEmpty>
+		 <isNotEmpty prepend="," property="aig_primarykey">
+				aig_primarykey
+		 </isNotEmpty>
+		 <isNotEmpty prepend="," property="aig_decimals">
+				aig_decimals
+		 </isNotEmpty>
+		</dynamic>
+		<dynamic open="(" close=")" prepend="VALUES">
+			<isNotEmpty prepend="," property="rfc_id">
+				#rfc_id#
+		 </isNotEmpty>
+			<isNotEmpty prepend="," property="rfc_name">
+				#rfc_name#
+		 </isNotEmpty>
+			<isNotEmpty prepend="," property="parent_id">
+				#parent_id#
+		 </isNotEmpty>
+			<isNotEmpty prepend="," property="saprfcname">
+				#saprfcname#
+		 </isNotEmpty>
+			<isNotEmpty prepend="," property="para_id">
+				#para_id#
+		 </isNotEmpty>
+			<isNotEmpty prepend="," property="para_name">
+				#para_name#
+			</isNotEmpty>
+			<isNotEmpty prepend="," property="aig_name">
+				#aig_name#
+			</isNotEmpty>
+			<isNotEmpty prepend="," property="para_type">
+				#para_type#,#para_type#
+			</isNotEmpty>
+			<isNotEmpty prepend="," property="para_length">
+				#para_length#,#para_length#
+		 </isNotEmpty>
+			<isNotEmpty prepend="," property="para_desc">
+				#para_desc#,#para_desc#
+			</isNotEmpty>
+			<isNotEmpty prepend="," property="para_optional">
+				#para_optional#
+			</isNotEmpty>
+			<isNotEmpty prepend="," property="sortno">
+				#sortno#
+		 </isNotEmpty>
+			<isNotEmpty prepend="," property="leaf">
+				#leaf#
+		 </isNotEmpty>
+			<isNotEmpty prepend="," property="remark">
+				#remark#
+		 </isNotEmpty>
+			<isNotEmpty prepend="," property="crea_date">
+				#crea_date#
+		 </isNotEmpty>
+			<isNotEmpty prepend="," property="enabled">
+				#enabled#
+		 </isNotEmpty>
+			<isNotEmpty prepend="," property="editmode">
+				#editmode#
+		 </isNotEmpty>
+			<isNotEmpty prepend="," property="cachemode">
+				#cachemode#
+		 </isNotEmpty>
+		 <isNotEmpty prepend="," property="para_decimals">
+				#para_decimals#
+		 </isNotEmpty>
+		 <isNotEmpty prepend="," property="aig_primarykey">
+				#aig_primarykey#
+		 </isNotEmpty>
+		 <isNotEmpty prepend="," property="aig_decimals">
+				#aig_decimals#
+		 </isNotEmpty>
+		</dynamic>
+	</insert>
+
+	<!-- 根据唯一索引进行唯一性校验 -->
+	<select id="checkRfcByIndex" parameterClass="map" resultClass="dto">
+		SELECT *
+		FROM $rfctable$
+		<dynamic prepend="WHERE">
+			<isNotEmpty prepend="AND" property="rfc_id">
+				rfc_id = #rfc_id#
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="para_id">
+				para_id = #para_id#
+			</isNotEmpty>
+		</dynamic>
+	</select>
+	<!-- 校验数据是否更改 -->
+	<select id="checkRfcItem" parameterClass="map" resultClass="dto">
+		SELECT *
+		FROM $rfctable$
+		<dynamic prepend="WHERE">
+			<isNotEmpty prepend="and" property="rfc_id">
+				rfc_id = #rfc_id#
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="para_id">
+				para_id = #para_id#
+			</isNotEmpty>
+			<isNotEmpty prepend="and" property="rfc_name">
+				rfc_name = #rfc_name#
+			</isNotEmpty>
+			<isNotEmpty prepend="and" property="parent_id">
+				parent_id = #parent_id#
+			</isNotEmpty>
+			<isNotEmpty prepend="and" property="saprfcname">
+				saprfcname =
+				#saprfcname#
+		 </isNotEmpty>
+			<isNotEmpty prepend="and" property="para_name">
+				para_name = #para_name#
+			</isNotEmpty>
+			<isNotEmpty prepend="and" property="aig_name">
+				aig_name = #aig_name#
+			</isNotEmpty>
+			<isNotEmpty prepend="and" property="para_type">
+				para_type = #para_type#
+			</isNotEmpty>
+			<isNotEmpty prepend="and" property="aig_type">
+				aig_type = #aig_type#
+			</isNotEmpty>
+			<isNotEmpty prepend="and" property="para_length">
+				para_length =
+				#para_length#
+		 </isNotEmpty>
+			<isNotEmpty prepend="and" property="aig_length">
+				aig_length =
+				#aig_length#
+		 </isNotEmpty>
+			<isNotEmpty prepend="and" property="para_desc">
+				para_desc = #para_desc#
+			</isNotEmpty>
+			<isNotEmpty prepend="and" property="aig_desc">
+				aig_desc = #aig_desc#
+			</isNotEmpty>
+			<isNotEmpty prepend="and" property="para_optional">
+				para_optional =
+				#para_optional#
+		 </isNotEmpty>
+			<isNotEmpty prepend="and" property="sortno">
+				sortno = #sortno#
+			</isNotEmpty>
+			<isNotEmpty prepend="and" property="leaf">
+				leaf = #leaf#
+			</isNotEmpty>
+			<isNotEmpty prepend="and" property="remark">
+				remark = #remark#
+			</isNotEmpty>
+			<isNotEmpty prepend="and" property="enabled">
+				enabled = #enabled#
+			</isNotEmpty>
+			<isNotEmpty prepend="and" property="editmode">
+				editmode = #editmode#
+			</isNotEmpty>
+			<isNotEmpty prepend="," property="cachemode">
+				cachemode = #cachemode#
+			</isNotEmpty>
+		</dynamic>
+	</select>
+
+	<!-- 根据主键查询RFC表 -->
+	<select id="getRfcByKey" parameterClass="map" resultClass="dto">
+		SELECT editmode
+		FROM $rfctable$
+		<dynamic prepend="WHERE">
+			<isNotEmpty prepend="AND" property="rfc_id">
+				rfc_id = #rfc_id#
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="para_id">
+				para_id = #para_id#
+			</isNotEmpty>
+		</dynamic>
+	</select>
+
+	<!-- 删除代码对照 -->
+	<delete id="deleteRfcItem" parameterClass="map">
+		DELETE
+		FROM $rfctable$
+		<dynamic prepend="WHERE">
+			<isNotEmpty prepend="AND" property="rfc_id">
+				rfc_id = #rfc_id#
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="para_id">
+				para_id = #para_id#
+			</isNotEmpty>
+		</dynamic>
+	</delete>
+
+	<!-- 根据主键更新RFC表 -->
+	<update id="updateRfcItem" parameterClass="dto">
+		UPDATE $rfctable$
+		<dynamic prepend="SET">
+			<isNotEmpty prepend="," property="rfc_name">
+				rfc_name = #rfc_name#
+			</isNotEmpty>
+			<isNotEmpty prepend="," property="parent_id">
+				parent_id = #parent_id#
+			</isNotEmpty>
+			<isNotEmpty prepend="," property="saprfcname">
+				saprfcname = #saprfcname#
+			</isNotEmpty>
+			<isNotEmpty prepend="," property="para_name">
+				para_name = #para_name#
+			</isNotEmpty>
+			<isNotEmpty prepend="," property="aig_name">
+				aig_name = #aig_name#
+			</isNotEmpty>
+			<isNotEmpty prepend="," property="para_type">
+				para_type = #para_type#
+			</isNotEmpty>
+			<isNotEmpty prepend="," property="aig_type">
+				aig_type = #aig_type#
+			</isNotEmpty>
+			<isNotEmpty prepend="," property="para_length">
+				para_length = #para_length#
+		 </isNotEmpty>
+			<isNotEmpty prepend="," property="aig_length">
+				aig_length = #aig_length#
+			</isNotEmpty>
+			<isNotEmpty prepend="," property="aig_decimals">
+				aig_decimals =	#aig_decimals#
+			</isNotEmpty>
+			<isNotEmpty prepend="," property="para_decimals">
+				para_decimals =	#para_decimals#
+		 </isNotEmpty>
+			<isNotEmpty prepend="," property="para_desc">
+				para_desc = #para_desc#
+			</isNotEmpty>
+			<isNotEmpty prepend="," property="aig_desc">
+				aig_desc = #aig_desc#
+			</isNotEmpty>
+			<isNotEmpty prepend="," property="para_optional">
+				para_optional =	#para_optional#
+		 </isNotEmpty>
+			<isNotEmpty prepend="," property="para_vale">
+				para_vale =	#para_vale#
+		 </isNotEmpty>
+		 <isNotEmpty prepend="," property="para_valeper">
+				para_valeper =	#para_valeper#
+		 </isNotEmpty>	
+		 <isNotEmpty prepend="," property="para_remark">
+				para_remark =	#para_remark#
+		 </isNotEmpty>
+		 <isNotEmpty prepend="," property="remark">
+				remark =	#remark#
+		 </isNotEmpty>	 
+			<isNotEmpty prepend="," property="sortno">
+				sortno = #sortno#
+			</isNotEmpty>
+			<isNotEmpty prepend="," property="leaf">
+				leaf = #leaf#
+			</isNotEmpty>
+			<isNotEmpty prepend="," property="remark">
+				remark = #remark#
+			</isNotEmpty>
+			<isNotEmpty prepend="," property="crea_date">
+				crea_date = #crea_date#
+			</isNotEmpty>
+			<isNotEmpty prepend="," property="enabled">
+				enabled = #enabled#
+			</isNotEmpty>
+			<isNotEmpty prepend="," property="editmode">
+				editmode = #editmode#
+			</isNotEmpty>
+			<isNotEmpty prepend="," property="cachemode">
+				cachemode = #cachemode#
+			</isNotEmpty>
+			<isNotEmpty prepend="," property="aig_primarykey">
+				aig_primarykey = #aig_primarykey#
+			</isNotEmpty>
+		</dynamic>
+		<dynamic prepend="WHERE">
+			<isNotEmpty prepend="and" property="rfc_id">
+				rfc_id = #rfc_id#
+			</isNotEmpty>
+			<isNotEmpty prepend="and" property="para_id">
+				para_id = #para_id#
+			</isNotEmpty>
+		</dynamic>
+	</update>
+	<!-- 根据DTO查询RFC信息 生成RFC树 -->
+	<select id="queryRfcItemsByDto" parameterClass="map"
+		resultClass="dto">
+		SELECT
+		rfc_id as id, rfc_name as text, parent_id,leaf,sortno
+		FROM
+		$rfctable$
+		<dynamic prepend="WHERE">
+			<isNotEmpty prepend="AND" property="rfc_id">
+				rfc_id = #rfc_id#
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="enabled">
+				enabled = #enabled#
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="parent_id">
+				parent_id = #parent_id#
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="rf_cname">
+				rfc_name like
+				'%$rfc_name$%'
+			</isNotEmpty>
+		</dynamic>
+		order by sortno
+	</select>
+	<!-- RFC管理-RFC列表 -->
+	<select id="queryRfcsForManage" parameterClass="map"
+		resultClass="dto">
+		SELECT
+		(SELECT rfc_name
+		FROM sap_rfcclass
+		WHERE rfc_id = a.parent_id) AS parentrfcname
+		,a.*
+		FROM $rfctable$ a
+		<dynamic prepend="WHERE">
+			<isNotEmpty prepend="AND" property="rfc_id">
+				a.rfc_id like
+				'$rfc_id$%'
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="para_id">
+				a.para_id like
+				'$para_id$%'
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="parent_id">
+				a.parent_id =
+				#parent_id#
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="rfcname">
+				a.rfc_name like
+				'%$rfc_name$%'
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="leaf">
+				a.leaf = #leaf#
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="para_type">
+				a.para_type like
+				'%$para_type$%'
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="enabled">
+				a.enabled = #enabled#
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="queryParam">
+				a.rfc_name like
+				'%$queryParam$%'
+			</isNotEmpty>
+		</dynamic>
+		ORDER BY leaf,rfc_id, sortno
+	</select>
+
+	<select id="queryRfcsForManageForPageCount" parameterClass="map"
+		resultClass="java.lang.Integer">
+		SELECT count(*) as count
+		FROM $rfctable$ a
+		<dynamic prepend="WHERE">
+			<isNotEmpty prepend="AND" property="rfc_id">
+				a.rfc_id like
+				'$rfc_id$%'
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="para_id">
+				a.para_id like
+				'$para_id$%'
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="parent_id">
+				a.parent_id =
+				#parent_id#
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="rfcname">
+				a.rfc_name like
+				'%$rfc_name$%'
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="queryParam">
+				a.rfc_name like
+				'%$queryParam$%'
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="enabled">
+				a.enabled = #enabled#
+			</isNotEmpty>
+		</dynamic>
+	</select>
+	<!-- RFC映射 -->
+	<select id="queryRfcsForMap" parameterClass="map" resultClass="dto">
+		SELECT *
+		FROM $rfctable$ 
+		<dynamic prepend="WHERE">
+			<isNotEmpty prepend="AND" property="rfc_id">
+				rfc_id like	'$rfc_id$%'
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="para_id">
+				para_id like '$para_id$%'
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="parent_id">
+				parent_id =	#parent_id#
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="leaf">
+				leaf = #leaf#
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="enabled">
+				enabled = #enabled#
+			</isNotEmpty>
+		</dynamic>
+		ORDER BY leaf,rfc_id, sortno
+	</select>
+	<!-- RFCTable列表 -->
+	<select id="queryRfcsForMapT" parameterClass="map" resultClass="dto">
+		SELECT *
+		FROM $rfctable$ 
+		<dynamic prepend="WHERE">
+			<isNotEmpty prepend="AND" property="rfc_id">
+				rfc_id like	'$rfc_id$%'
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="para_id">
+				para_id like'$para_id$%'
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="parent_id">
+				parent_id =	#parent_id#
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="leaf">
+				leaf = #leaf#
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="para_type">
+				para_type like	'%$para_type$%'
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="cachemode">
+				cachemode =	#cachemode#
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="enabled">
+				enabled = #enabled#
+			</isNotEmpty>
+		</dynamic>
+		ORDER BY leaf ,para_id, sortno
+	</select>
+	<!-- RFC映射 -->
+	<select id="queryRfcsForMapE" parameterClass="map" resultClass="dto">
+		SELECT *
+		FROM $rfctable$ 
+		<dynamic prepend="WHERE">
+			<isNotEmpty prepend="AND" property="rfc_id">
+				rfc_id like	'$rfc_id$%'
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="para_id">
+				para_id like	'$para_id$%'
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="parent_id">
+				parent_id =	#parent_id#
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="rfcname">
+				rfc_name like	'%$rfc_name$%'
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="leaf">
+				leaf = #leaf#
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="queryParam">
+				rfc_name like	'%$queryParam$%'
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="enabled">
+				enabled = #enabled#
+			</isNotEmpty>
+		</dynamic>
+		ORDER BY para_id, sortno
+	</select>
+	<!--根据DTO查询RFC 参数信息 生成RFC参数树 -->
+	<select id="queryRfcParaByDto4TreeGrid" parameterClass="map"
+		resultClass="dto">
+		SELECT para_id as id ,para_name as text,parent_id , leaf,sortno
+		FROM
+		$rfctable$ a
+		<dynamic prepend="WHERE">
+			<isNotEmpty prepend="AND" property="rfc_id">
+				a.rfc_id like
+				'$rfc_id$%'
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="para_id">
+				a.para_id like
+				'$para_id$%'
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="parent_id">
+				a.parent_id =
+				#parent_id#
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="rfcname">
+				a.rfc_name like
+				'%$rfc_name$%'
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="leaf">
+				a.leaf = #leaf#
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="queryParam">
+				a.rfc_name like
+				'%$queryParam$%'
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="enabled">
+				a.enabled = #enabled#
+			</isNotEmpty>
+		</dynamic>
+		ORDER BY leaf ,para_id, sortno
+	</select>
+	<!-- 删除AIG缓存表 -->
+	<statement id="dropAigTable" parameterClass="dto">
+		DROP TABLE IF
+		EXISTS `$aigtable$`;
+	</statement>
+	<!-- 创建AIG缓存表 -->
+	<statement id="createAigTable" parameterClass="dto">
+		CREATE TABLE `$aigtable$`
+		<dynamic prepend=" " open="(" close=")">
+			<isEmpty prepend="," property="pksql">
+				`aig_id` int(11) NOT NULL AUTO_INCREMENT
+	  </isEmpty>
+			<isNotEmpty prepend="," property="aigsql">
+				$aigsql$
+		 </isNotEmpty>
+			<isEmpty prepend="," property="pksql">
+				PRIMARY KEY (`aig_id`)
+	</isEmpty>
+			<isNotEmpty prepend="," open="PRIMARY KEY (" close=")" property="pksql">
+				$pksql$
+	</isNotEmpty>
+
+		</dynamic>
+	</statement>
+		<!-- 修改AIG缓存表 -->
+	<statement id="alterAigTable" parameterClass="dto">
+		ALTER TABLE `$aigtable$`
+		<dynamic prepend=" " >
+             <isNotEmpty prepend="," property="aigsql">
+				$aigsql$
+		     </isNotEmpty>
+		</dynamic>
+	</statement>
+		<!-- 根据主键查询AIG表 -->
+	<select id="getAigByKey" parameterClass="map" resultClass="dto">
+		SELECT para_id,aig_name
+		FROM $rfctable$
+		<dynamic prepend="WHERE">
+			<isNotEmpty prepend="AND" property="rfc_id">
+				rfc_id = #rfc_id#
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="leaf">
+				leaf = #leaf#
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="cachemode">
+				cachemode = #cachemode#
+			</isNotEmpty>
+		</dynamic>
+	</select>
+	
+		<!-- 根据主键查询AIG表2 -->
+	<select id="getrfcNameByKey" parameterClass="map" resultClass="string">
+		SELECT rfc_name
+		FROM sap_rfcclass
+		<dynamic prepend="WHERE">
+			<isNotEmpty prepend="AND" property="rfc_id">
+				rfc_id = #rfc_id#
+			</isNotEmpty>
+		</dynamic>
+	</select>
+</sqlMap>

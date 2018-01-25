@@ -1,0 +1,803 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="choiceOrder">
+	<typeAlias alias="dto"
+		type="org.eredlab.g4.ccl.datastructure.impl.BaseDto" />
+
+	<select id="getGoldType" parameterClass="map" resultClass="dto">
+		SELECT ZJLBN, ZQZBL, ZJLMS
+		FROM z_rfc_store_09_it_jl
+		<dynamic>
+			<isNotEmpty property="type" prepend="where">
+				ZJLBN like '$type$%'  
+			</isNotEmpty>
+			<isNotEmpty property="type2" prepend="or">
+				ZJLBN like '$type2$%' 
+			</isNotEmpty>
+		</dynamic>
+	</select>
+
+	<select id="getToneType" parameterClass="map" resultClass="dto">
+		SELECT ZSLBM, TSLBM, ZGBNN, ZBQSY, ZSLFN, TSLFN
+		FROM z_rfc_store_09_it_sl
+		<dynamic>
+			<isNotEmpty property="type" prepend="where">
+				ZSLFN = '$type$'  
+			</isNotEmpty>
+			<isNotEmpty property="in" prepend="and">
+				ZSLBM in
+				<iterate property="in" conjunction="," open="(" close=")">
+					#in[]#
+				 </iterate>
+			</isNotEmpty>
+			<isNotEmpty property="notin" prepend="and">
+				ZSLBM not in
+				<iterate property="notin" conjunction="," open="(" close=")">
+					#notin[]#
+				 </iterate>
+			</isNotEmpty>
+		</dynamic>
+	</select>
+
+	<select id="getTechnicsTypeInfo" parameterClass="map"
+		resultClass="dto">
+		SELECT distinct ATINN, ATWRT, ATWTB
+		FROM z_rfc_store_09_it_gy;
+	</select>
+
+	<select id="getpcxx" parameterClass="map" resultClass="dto">
+		select a.CHARG cpbm ,b.MAKTX plmc,c.KBETR bqj,a.ZCLZL
+		jlzl,a.MATNR bkbh, b.ZMATNRT zp,b.ZJLBM sjczbm ,b.ZGY,b.KONDM
+		from z_rfc_store_03_it_charg a inner join z_rfc_store_01_it_mara b on
+		a.MATNR = b.MATNR left join z_rfc_store_04_gt_zpcjg c on a.CHARG =c.CHARG 
+		where 1=1 and MSTAE != '03'
+		<dynamic>
+			<isNotEmpty prepend="and" property="charg">
+				a.CHARG like '$charg$%'
+			</isNotEmpty>
+			<isNotEmpty property="choiceOrderType" prepend="and">
+				<isEqual property="choiceOrderType" compareValue="X4">
+					b.ZSLBM = 'CZ'
+				</isEqual>
+				<isNotEqual property="choiceOrderType" compareValue="X4">
+					b.KONDM in ( SELECT KONDM FROM aig_choiceordertype WHERE TYPE=#choiceOrderType#	) 	
+				</isNotEqual>
+			</isNotEmpty>
+		</dynamic>
+		 <![CDATA[   limit 0,20]]>
+	</select>
+
+	<select id="getpcxxbyuser" parameterClass="map" resultClass="dto">
+		select 
+			(select ZDSZN from z_rfc_store_08_it_zslit where zzfst = 1 and TMHNN=a.charg limit 1) zszl,
+			<!-- (select LABOR from z_rfc_store_08_it_zslit where zzfst = 1 and TMHNN=a.charg limit 1) LABOR,
+			(select ZSLYS from z_rfc_store_08_it_zslit where zzfst = 1 and TMHNN=a.charg limit 1) ZSLYS, -->
+			ifnull((select LABOR from z_rfc_store_45_it_zcharg_zs where charg=a.charg limit 1),(select LABOR from z_rfc_store_08_it_zslit where zzfst = 1 and TMHNN=a.charg limit 1)) LABOR,
+			ifnull((select ZSLYS from z_rfc_store_45_it_zcharg_zs where charg=a.charg limit 1),(select ZSLYS from z_rfc_store_08_it_zslit where zzfst = 1 and TMHNN=a.charg limit 1)) ZSLYS,
+			(select ZSZSB from z_rfc_store_08_it_zslit where zzfst = 1 and TMHNN=a.charg limit 1) ZSZSB,
+		a.CHARG cpbm ,b.MAKTX plmc,c.KBETR bqj,a.ZCLZL jlzl,a.MATNR bkbh, a.ZMATNRT zp,
+		b.ZJLBM sjczbm, a.ZSLNN LABST, b.ZGY, b.ZSLBM slbm, b.ZSLXZ slxz, b.ZSLGG slgg,b.menge,
+		b.KONDM, b.EXTWG,a.ZCCNN, b.MATKL,a.HPZL,b.bismt ,ZHPCCQ,ZHPCCZ,ZZSZQ,ZZSZZ,a.ZCPXL,a.ZCPFG,MSTAE
+		
+		from z_rfc_store_03_it_charg a inner join z_rfc_store_01_it_mara b on
+		a.MATNR = b.MATNR left join z_rfc_store_04_gt_zpcjg c on a.CHARG =c.CHARG
+		where a.CHARG = #charg# <!-- and MSTAE != '03' -->
+		<dynamic>
+			<isNotEmpty property="choiceOrderType" prepend="and">
+				<isEqual property="choiceOrderType" compareValue="X4">
+					b.ZSLBM = 'CZ'
+				</isEqual>
+				<isNotEqual property="choiceOrderType" compareValue="X4">
+					b.KONDM in ( SELECT KONDM FROM aig_choiceordertype WHERE TYPE=#choiceOrderType#	) 	
+				</isNotEqual>
+			</isNotEmpty>
+		</dynamic>
+		limit 1
+	</select>
+
+	<select id="getpcxxOther" parameterClass="map" resultClass="dto">
+		select 
+			(select ZDSZN from z_rfc_store_08_it_zslit where zzfst = 1 and TMHNN=a.charg limit 1) zszl,
+			ifnull((select LABOR from z_rfc_store_45_it_zcharg_zs where charg=a.charg limit 1),(select LABOR from z_rfc_store_08_it_zslit where zzfst = 1 and TMHNN=a.charg limit 1)) LABOR,
+			ifnull((select ZSLYS from z_rfc_store_45_it_zcharg_zs where charg=a.charg limit 1),(select ZSLYS from z_rfc_store_08_it_zslit where zzfst = 1 and TMHNN=a.charg limit 1)) ZSLYS,
+			(select ZSZSB from z_rfc_store_08_it_zslit where zzfst = 1 and TMHNN=a.charg limit 1) ZSZSB,
+		a.CHARG cpbm ,b.MAKTX plmc,c.KBETR bqj,a.ZCLZL jlzl,a.MATNR bkbh, a.ZMATNRT zp,
+		b.ZJLBM sjczbm, a.ZSLNN LABST, b.ZGY, b.ZSLBM slbm, b.ZSLXZ slxz, b.ZSLGG slgg,b.menge,
+		b.KONDM, b.EXTWG,a.ZCCNN, b.MATKL,a.HPZL,b.bismt ,ZHPCCQ,ZHPCCZ,ZZSZQ,ZZSZZ,a.ZCPXL,a.ZCPFG,MSTAE
+		from z_rfc_store_03_it_charg a 
+		inner join z_rfc_store_01_it_mara b on a.MATNR = b.MATNR 
+		left  join z_rfc_store_04_gt_zpcjg c on a.CHARG =c.CHARG
+		where a.CHARG = (
+			select charg from z_rfc_store_03_it_charg 
+				where matnr = (select matnr from z_rfc_store_01_it_mara where mstae != '03' and bismt = 
+					(select bismt from z_rfc_store_01_it_mara where matnr = 
+						(select matnr from z_rfc_store_03_it_charg where charg = #charg#) 
+					) limit 1
+				) and matnr <![CDATA[<>]]> (select matnr from z_rfc_store_03_it_charg where charg = #charg#) limit 1
+		)
+		<dynamic>
+			<isNotEmpty property="choiceOrderType" prepend="and">
+				<isEqual property="choiceOrderType" compareValue="X4">
+					b.ZSLBM = 'CZ'
+				</isEqual>
+				<isNotEqual property="choiceOrderType" compareValue="X4">
+					b.KONDM in ( SELECT KONDM FROM aig_choiceordertype WHERE TYPE=#choiceOrderType#	) 	
+				</isNotEqual>
+			</isNotEmpty>
+		</dynamic>
+		limit 1
+	</select>
+
+	<select id="getchargisusedorderid" parameterClass="map"
+		resultClass="String">
+		select a.salesorderid from aig_orderitem a ,aig_orderhead
+		b where
+		a.salesorderid=b.salesorderid and
+		a.batchnumber=#charg# and
+		b.orderflag
+		in('NO','UO') limit 0,1
+	</select>
+
+	<select id="getToneSharp" parameterClass="map" resultClass="dto">
+		SELECT ZSLXZ, TSLXZ FROM z_rfc_store_09_it_slxz where ZSLXZ like 'J%';
+	</select>
+
+	<select id="getAllToneSharp" parameterClass="map" resultClass="dto">
+		SELECT ZSLXZ, TSLXZ FROM z_rfc_store_09_it_slxz
+	</select>
+
+	<select id="getToneColor" parameterClass="map" resultClass="dto">
+		<dynamic>
+			<isNotEmpty property="types" >
+					SELECT ZSLYS, TSLYS FROM z_rfc_store_09_it_slys where ZSLYS in 
+				<iterate property="types" open="(" close=")" conjunction=",">
+					#types[]#
+				</iterate>
+			</isNotEmpty>
+			<isEmpty property="types" >
+				<isEmpty property="toneType">
+					SELECT ZSLYS, TSLYS FROM z_rfc_store_09_it_slys 
+				</isEmpty>
+				<isNotEmpty property="toneType">
+					SELECT ZSLYS, TSLYS FROM z_rfc_store_24_it_ztslbm_ys WHERE ZSLBM = #toneType#
+				</isNotEmpty>
+			</isEmpty>
+		</dynamic>
+		order by ZSLYS asc
+	</select>
+	
+	<select id="getToneNeatness" parameterClass="map" resultClass="dto">
+		SELECT  ZSLJD, TSLJD 
+		FROM z_rfc_store_09_it_zsjd 
+		where ZSLJD not like 'A%'
+	</select>
+	
+	<select id="getYbzjg" parameterClass="map" resultClass="double">
+		select YBZJG from z_rfc_store_07_it_zcharg_jg where CHARG=#charg#;
+	</select>
+	
+	<select id="getYshck" parameterClass="map" resultClass="double">
+		select YSHCK from z_rfc_store_07_it_zcharg_jg where CHARG=#charg#;
+	</select>
+	
+	<select id="getVkorg" parameterClass="map" resultClass="string">
+		select VKORG from z_rfc_store_06_it_t001w where WERKS=#werks#;
+	</select>
+	
+	<select id="getKbetr" parameterClass="map" resultClass="Double">
+		select AVG(KBETR) from z_rfc_store_02_it_zpjg WHERE KONDM = #kondm# AND KUNRE=#werks# AND KSCHL=#kschl#
+	</select>
+	
+	<select id="getTonePrice" parameterClass="map" resultClass="Double">
+	<![CDATA[
+		select AVG(ZSCKJ) from z_rfc_store_07_it_ztslsj 
+		where zsxzl<='$gemweight$' and zxxzl>='$gemweight$' and 
+		LABOR=#toneNeatness# AND ZSLYS=#toneColor# AND ZSLBM=#toneType#
+	]]>
+	</select>
+	
+	<select id="getToneFireType" parameterClass="map" resultClass="dto">
+		<![CDATA[
+			SELECT  ZSLHC, TSLHC FROM z_rfc_store_07_it_ztslhc
+		]]>
+	</select>
+	
+	<select id="getCertificate" parameterClass="map" resultClass="dto">
+		<![CDATA[
+			SELECT ZZSLX, TZSLX FROM z_rfc_store_07_it_ztzslx where ZZSLX IN ('GIA','HRD','IGI')
+		]]>
+	</select>
+	
+	<select id="getMainToneStyle" parameterClass="map" resultClass="dto">
+		<![CDATA[
+			SELECT ZSLGG, TSLGG FROM z_rfc_store_07_it_ztslgg
+		]]>
+	</select>
+	
+	
+	<select id="getTechnics" parameterClass="map" resultClass="dto">
+		SELECT AVG(FGY) fgy from z_rfc_store_07_it_ztgfb WHERE EXTWG=#extwg#  
+		<dynamic>
+			<isNotEmpty prepend="and" property="technics">
+				 ZGY in 
+				<iterate property="technics" open="(" close=")" conjunction=",">
+					#technics[]#
+				</iterate>
+				
+			</isNotEmpty>
+		</dynamic>
+		GROUP BY EXTWG,ZGY 
+	</select>
+
+	<select id="getZhjxs" parameterClass="map" resultClass="double">
+	<![CDATA[
+		select ZHJXS from z_rfc_store_07_it_zthjxs 
+		where MATKL=#matkl# 
+	]]>
+	</select>
+	
+	
+	
+	<select id="getmatnr" parameterClass="map" resultClass="dto">
+		SELECT MATNR,MAKTX FROM z_rfc_store_01_it_mara
+		<dynamic>
+			<isNotEmpty prepend="where" property="matnr">
+				MATNR like '$matnr$%'
+			</isNotEmpty>
+			<isNotEmpty property="choiceOrderType" prepend="and">
+				<isEqual property="choiceOrderType" compareValue="X4">
+					ZSLBM = 'CZ'
+				</isEqual>
+				<isNotEqual property="choiceOrderType" compareValue="X4">
+					KONDM in ( SELECT KONDM FROM aig_choiceordertype WHERE TYPE=#choiceOrderType#	) 	
+				</isNotEqual>
+			</isNotEmpty>
+		</dynamic>
+		 <![CDATA[  and MSTAE != '03'  limit 0,20]]>
+	</select>
+
+	<select id="getmatnrbyuser" parameterClass="map" resultClass="dto">
+		SELECT a.*, 
+		(select kbetr from z_rfc_store_02_it_zpjg b where b.matnr=a.matnr and kschl ='ZKP0') KBETR 
+		FROM z_rfc_store_01_it_mara a
+		where a.MATNR = #matnr# <!-- and MSTAE != '03' -->
+		<dynamic>
+			<isNotEmpty property="choiceOrderType" prepend="and">
+				<isEqual compareValue="X4" property="choiceOrderType">
+					a.ZSLBM = 'CZ'
+				</isEqual>
+				<!-- 
+				<isNotEqual property="choiceOrderType" compareValue="X4">
+					KONDM in ( SELECT KONDM FROM aig_choiceordertype WHERE TYPE=#choiceOrderType#	) 	
+				</isNotEqual>
+				 -->
+			</isNotEmpty>
+		</dynamic>
+		limit 1
+	</select>
+	
+	<select id="getMatnrOther" parameterClass="map" resultClass="dto">
+		SELECT a.*, 
+		(select kbetr from z_rfc_store_02_it_zpjg b where b.matnr=a.matnr and kschl ='ZKP0') KBETR 
+		FROM z_rfc_store_01_it_mara a
+		where a.BISMT = ( select bismt from z_rfc_store_01_it_mara where matnr = #matnr# limit 1 ) 
+		and a.matnr <![CDATA[ <> ]]> #matnr# and MSTAE != '03' 
+		<dynamic>
+			<isNotEmpty property="choiceOrderType" prepend="and">
+				<isEqual compareValue="X4" property="choiceOrderType">
+					a.ZSLBM = 'CZ'
+				</isEqual>
+			</isNotEmpty>
+		</dynamic>
+		limit 1
+	</select>
+	
+	<select id="getKondms" parameterClass="dto" resultClass="String">
+		SELECT KONDM FROM aig_choiceordertype WHERE TYPE=#choiceOrderType#
+	</select>
+	
+	<select id="getYbzjgBymatnr" parameterClass="map" resultClass="double">
+		select AVG(YBZJG) from z_rfc_store_07_it_zcharg_jg where CHARG in 
+		(select charg from z_rfc_store_03_it_charg where matnr = #matnr#
+		 and ZZZSJ between #before# and #now#)
+	</select>
+	
+	<select id="getYshckBymatnr" parameterClass="map" resultClass="double">
+		select avg(YSHCK) FROM z_rfc_store_07_it_zcharg_jg WHERE CHARG IN 
+		(select charg from z_rfc_store_03_it_charg where matnr = #matnr#
+		 and ZZZSJ between #before# and #now# )
+	</select>
+	
+	<select id="getToneWeightByMatnr" parameterClass="map" resultClass="Double">
+	<![CDATA[
+		select AVG(ZZLNN) from z_rfc_store_08_it_zslit WHERE MATNR 
+		 = #matnr# AND ZZFST = 1 	
+	]]>
+	</select>
+	
+	<select id="getAllByMatnr" parameterClass="String" resultClass="dto">
+		select * from z_rfc_store_01_it_mara where MATNR = #materialnumber#
+	</select>
+	
+	<select id="getSlAll" resultClass="dto">
+		select * from z_rfc_store_09_it_sl
+	</select>
+	
+	<select id="getYsAll" resultClass="dto">
+		select * from z_rfc_store_09_it_slys
+	</select>
+	
+	<select id="getJdAll" resultClass="dto">
+		select * from z_rfc_store_09_it_zsjd
+	</select>
+	
+	<select id="getJlAll" resultClass="dto">
+		select * from z_rfc_store_09_it_jl
+	</select>
+	
+	<select id="getGyAll" resultClass="dto">
+		select * from z_rfc_store_09_it_gy
+	</select>
+	
+	<select id="getGgAll" resultClass="dto">
+		select * from z_rfc_store_07_it_ztslgg
+	</select>
+	
+	<select id="getHcAll" resultClass="dto">
+		select * from z_rfc_store_07_it_ztslhc
+	</select>
+	
+	<select id="getZsAll" resultClass="dto">
+		select * from z_z_rfc_store_07_it_ztzslx
+	</select>
+	
+	<select id="getKondmByType" parameterClass="dto" resultClass="String">
+		select count(*) from aig_choiceordertype where type = #type# and kondm = #kondm#
+	</select>
+	
+	<insert id="saveChoiceOrderHeader" parameterClass="dto">
+		<![CDATA[
+			INSERT INTO aig_choiceorderheader
+			(choiceorderid, saporderid, type, ordertime, operatordate, orderflag, werks, totalmoney, quantity,telephone,custommade,vipid,urgent, remark,totalgoldweight,oldtotalmoney,oldquantity) 
+			VALUES (#choiceorderid#, #saporderid#, #type#, #ordertime#, #operatordate#, #orderflag#, #werks#, #totalmoney#, #quantity#,#telephone#,#custommade#,#vipid#,#urgent#,#remark#,#totalgoldweight#,#totalmoney#,#quantity#);	
+		]]>
+	</insert>
+	
+	<insert id="saveChoiceOrderItem" parameterClass="dto">
+		<![CDATA[
+			INSERT INTO aig_choiceorderitem
+			(choiceorderid, saporderid, choiceorderitem, upchoiceorderitem, batchnumber, materialnumber, materialdesc, quantity, goldType, 
+			goldweight, technics, goodsize, retailPrice, toneType, toneweight, mainToneStyle, toneColor, toneNeatness, toneshape, ifinlay, 
+			ifNeedLessTone, toneFireColor, goodTotalWeight, certificate, lessToneType, littleTotal, productpictureurl, remark, oldRetailPrice, 
+			oldYbzjbPrice, oldTonePrice, oldTechnicsPrice, extwg, matkl, kbetr, oldCostPrice,
+			selectWerks,style,series,mygoldweight,goldweightlittleTotal) 
+			VALUES (#choiceorderid#, #saporderid#, #choiceorderitem#, #upchoiceorderitem#, #batchnumber#, #materialnumber#, #materialdesc#, #quantity#, #goldType#, 
+			#goldweight#,#technics#, #goodsize#, #retailPrice#, #toneType#, #toneWeight#, #mainToneStyle#, #toneColor#, #toneNeatness#, #toneshape#, #ifinlay#, 
+			#ifNeedLessTone#, #toneFireColor#, #goodTotalWeight#, #certificate#, #lessToneType#, #littleTotal#, #productpictureurl#,#remark#, #oldRetailPrice#,
+			 #oldYbzjbPrice#, #oldTonePrice#, #oldTechnicsPrice#, #extwg#, #matkl#, #kbetr#, #oldCostPrice#,
+			#selectWerks#,#style#,#series#,#mygoldweight#,#goldweightlittleTotal#)
+		]]>
+	</insert>
+	
+	<insert id="saveChoiceOrderHeaderForGift" parameterClass="dto">
+		<![CDATA[
+			INSERT INTO aig_choiceorderheaderforgift
+			(choiceorderid, ordertime, operatordate, orderflag, werks,  quantity,telephone, remark) 
+			VALUES (#choiceorderid#, #ordertime#, #operatordate#, #orderflag#, #werks#,  #quantity#,#telephone#,#remark#);	
+		]]>
+	</insert>
+	
+	<insert id="saveChoiceOrderItemForGift" parameterClass="dto">
+		<![CDATA[
+			INSERT INTO aig_choiceorderitemforgift
+			(choiceorderid, choiceorderitem, materialnumber, materialdesc, quantity, 
+			 remark,tbtxt,werksStr) 
+			VALUES (#choiceorderid#, #choiceorderitem#,  #materialnumber#, #materialdesc#, #quantity#, 
+			#remark#,#tbtxt#,#werksStr#)
+		]]>
+	</insert>
+	<select id="getMaxChoiceOrderId" resultClass="String" parameterClass="dto">
+		<![CDATA[
+			select IFNULL(max(choiceorderid),'000') from aig_choiceorderheader where choiceorderid like '$posChoiceOrderId$%'
+		]]>
+	</select>
+	<select id="getMaxChoiceOrderForGiftId" resultClass="String" parameterClass="dto">
+		<![CDATA[
+			select IFNULL(max(choiceorderid),'000') from aig_choiceorderheaderforgift where choiceorderid like '$posChoiceOrderId$%'
+		]]>
+	</select>
+	
+	<select id="getChoiceOrderHeader" resultClass="dto" parameterClass="dto">
+		<![CDATA[
+			SELECT choiceorderid, saporderid, type, ordertime, operatordate, orderflag, werks, totalmoney, quantity,custommade, remark 
+			FROM aig_choiceorderheader where werks=#werks#
+		]]>
+		<dynamic>
+			<isNotEmpty	prepend="and" property="choiceorderid"> 
+				choiceorderid like '$choiceorderid$%'
+			</isNotEmpty>
+			<isNotEmpty	prepend="and" property="saporderid"> 
+				saporderid like '$saporderid$%'
+			</isNotEmpty>
+			<isNotEmpty	prepend="and" property="type"> 
+				type = '$type$'
+			</isNotEmpty>
+			<isNotEmpty	prepend="and" property="startordertime"> 
+				<![CDATA[ ordertime >= '$startordertime$']]>
+			</isNotEmpty>
+			<isNotEmpty	prepend="and" property="endordertime"> 
+				<![CDATA[ ordertime <= '$endordertime$']]>
+			</isNotEmpty>
+			<isNotEmpty	prepend="and" property="orderflag"> 
+				<![CDATA[ orderflag  = '$orderflag$']]>
+			</isNotEmpty>
+			<isNotEmpty	prepend="and" property="custommade"> 
+				<![CDATA[ custommade  = '$custommade$']]>
+			</isNotEmpty>
+			<isNotEmpty	prepend="and" property="nocustommade"> 
+				<![CDATA[ custommade  = '' or custommade is null ]]>
+			</isNotEmpty>
+		</dynamic>
+		order by ordertime desc
+	</select>
+	
+	<select id="getChoiceOrderHeaderFor1000" resultClass="dto" parameterClass="dto">
+		<![CDATA[
+			SELECT choiceorderid, saporderid, type, ordertime, operatordate, orderflag, werks, totalmoney, quantity,custommade, remark 
+			FROM aig_choiceorderheader WHERE werks!='1000'
+		]]>
+		<dynamic>
+			<isNotEmpty	prepend="and" property="saporderid"> 
+				(choiceorderid like '$saporderid$%' or saporderid like '$saporderid$%')
+			</isNotEmpty>
+			<isNotEmpty	prepend="and" property="type"> 
+				type = '$type$'
+			</isNotEmpty>
+			<isNotEmpty	prepend="and" property="startordertime"> 
+				<![CDATA[ ordertime >= '$startordertime$']]>
+			</isNotEmpty>
+			<isNotEmpty	prepend="and" property="endordertime"> 
+				<![CDATA[ ordertime <= '$endordertime$']]>
+			</isNotEmpty>
+			<isNotEmpty	prepend="and" property="orderflag"> 
+				<![CDATA[ orderflag  = '$orderflag$']]>
+			</isNotEmpty>
+			<isNotEmpty	prepend="and" property="custommade"> 
+				<![CDATA[ custommade  = '$custommade$']]>
+			</isNotEmpty>
+			<isNotEmpty	prepend="and" property="nocustommade"> 
+				<![CDATA[ custommade  = '' or custommade is null ]]>
+			</isNotEmpty>
+		</dynamic>
+		order by ordertime desc
+	</select>
+	
+	<select id="getChoiceOrderForGiftHeader" resultClass="dto" parameterClass="dto">
+		<![CDATA[
+			SELECT choiceorderid, saporderid, ordertime, operatordate, orderflag, werks, quantity, remark 
+			FROM aig_choiceorderheaderforgift where werks=#werks#
+		]]>
+		<dynamic>
+			<isNotEmpty	prepend="and" property="choiceorderid"> 
+				choiceorderid like '$choiceorderid$%'
+			</isNotEmpty>
+			<isNotEmpty	prepend="and" property="saporderid"> 
+				saporderid like '$saporderid$%'
+			</isNotEmpty>
+			<isNotEmpty	prepend="and" property="startordertime"> 
+				<![CDATA[ ordertime >= '$startordertime$']]>
+			</isNotEmpty>
+			<isNotEmpty	prepend="and" property="endordertime"> 
+				<![CDATA[ ordertime <= '$endordertime$']]>
+			</isNotEmpty>
+			<isNotEmpty	prepend="and" property="orderflag"> 
+				<![CDATA[ orderflag  = '$orderflag$']]>
+			</isNotEmpty>
+		</dynamic>
+		order by ordertime desc
+	</select>
+	
+	<select id="getChoiceOrderHeaderCount" resultClass="int" parameterClass="dto">
+		<![CDATA[
+			SELECT count(*)
+			FROM aig_choiceorderheader where werks=#werks#
+		]]>
+		<dynamic>
+			<isNotEmpty	prepend="and" property="choiceorderid"> 
+				choiceorderid like '$choiceorderid$%'
+			</isNotEmpty>
+			<isNotEmpty	prepend="and" property="saporderid"> 
+				saporderid like '$saporderid$%'
+			</isNotEmpty>
+			<isNotEmpty	prepend="and" property="type"> 
+				type = '$type$'
+			</isNotEmpty>
+			<isNotEmpty	prepend="and" property="startordertime"> 
+				<![CDATA[ ordertime >= '$startordertime$']]>
+			</isNotEmpty>
+			<isNotEmpty	prepend="and" property="endordertime"> 
+				<![CDATA[ ordertime <= '$endordertime$']]>
+			</isNotEmpty>
+			<isNotEmpty	prepend="and" property="orderflag"> 
+				<![CDATA[ orderflag  = '$orderflag$']]>
+			</isNotEmpty>
+			<isNotEmpty	prepend="and" property="custommade"> 
+				<![CDATA[ custommade  = '$custommade$']]>
+			</isNotEmpty>
+			<isNotEmpty	prepend="and" property="nocustommade"> 
+				<![CDATA[ custommade  = '' or custommade  = null ]]>
+			</isNotEmpty>
+		</dynamic>
+		
+	</select>
+	
+	<select id="getChoiceOrderHeaderForGiftCount" resultClass="int" parameterClass="dto">
+		<![CDATA[
+			SELECT count(*)
+			FROM aig_choiceorderheaderforgift where werks=#werks#
+		]]>
+		<dynamic>
+			<isNotEmpty	prepend="and" property="choiceorderid"> 
+				choiceorderid like '$choiceorderid$%'
+			</isNotEmpty>
+			<isNotEmpty	prepend="and" property="saporderid"> 
+				saporderid like '$saporderid$%'
+			</isNotEmpty>
+			<isNotEmpty	prepend="and" property="startordertime"> 
+				<![CDATA[ ordertime >= '$startordertime$']]>
+			</isNotEmpty>
+			<isNotEmpty	prepend="and" property="endordertime"> 
+				<![CDATA[ ordertime <= '$endordertime$']]>
+			</isNotEmpty>
+			<isNotEmpty	prepend="and" property="orderflag"> 
+				<![CDATA[ orderflag  = '$orderflag$']]>
+			</isNotEmpty>
+		</dynamic>
+		
+	</select>
+	
+	<select id="getChoiceOrderHeaderInfo" resultClass="dto" parameterClass="dto">
+			SELECT * FROM aig_choiceorderheader
+		<dynamic>
+			<isNotEmpty property="choiceorderid" prepend="where">
+				 choiceorderid = #choiceorderid# 
+			</isNotEmpty>
+		</dynamic>
+	</select>
+	
+	
+	<select id="getChoiceOrderHeaderInfoForGift" resultClass="dto" parameterClass="dto">
+			SELECT * FROM aig_choiceorderheaderforgift
+		<dynamic>
+			<isNotEmpty property="choiceorderid" prepend="where">
+				 choiceorderid = #choiceorderid# 
+			</isNotEmpty>
+		</dynamic>
+	</select>
+	
+	<select id="getChoiceOrderItem" resultClass="dto" parameterClass="dto">
+			SELECT * 
+			FROM aig_choiceorderitem
+		<dynamic>
+			<isNotEmpty property="salesorderid" prepend="where">
+				 choiceorderid = #salesorderid# 
+			</isNotEmpty>
+		</dynamic>
+		order by -choiceorderitem desc
+	</select>
+	
+	
+	<select id="getChoiceOrderItemForGift" resultClass="dto" parameterClass="dto">
+			SELECT * 
+			FROM aig_choiceorderitemforgift
+		<dynamic>
+			<isNotEmpty property="salesorderid" prepend="where">
+				 choiceorderid = #salesorderid# 
+			</isNotEmpty>
+		</dynamic>
+	</select>
+	
+	
+	<update id="updateChoiceOrderHead" parameterClass="dto">
+		UPDATE aig_choiceorderheader 
+		SET  saporderid = #saporderid#, type = #type#, ordertime = #ordertime#, operatordate = #operatordate#, telephone=#telephone#,totalgoldweight=#totalgoldweight#,
+		orderflag = #orderflag#, werks = #werks#, totalmoney = #totalmoney#, quantity = #quantity#, remark = #remark# , custommade = #custommade# 
+		WHERE choiceorderid = #choiceorderid#
+	</update>
+	
+	<update id="updateChoiceOrderHeadForGift" parameterClass="dto">
+		UPDATE aig_choiceorderheaderforgift 
+		SET  operatordate = #operatordate#, telephone = #telephone#, werks = #werks#, quantity = #quantity#, remark = #remark# 
+		WHERE choiceorderid = #choiceorderid#
+	</update>
+	
+	<delete id="deleteChoiceOrderItems" parameterClass="dto">
+		DELETE FROM aig_choiceorderitem WHERE choiceorderid = #choiceorderid#
+	</delete>
+	
+	<delete id="deleteChoiceOrderItemsForGift" parameterClass="dto">
+		DELETE FROM aig_choiceorderitemforgift WHERE choiceorderid = #choiceorderid#
+	</delete>
+	
+	<delete id="deleteChoiceOrderHeader" parameterClass="dto">
+		DELETE FROM aig_choiceorderheader  WHERE choiceorderid = #salesorderid#
+	</delete>
+	
+	<delete id="deleteChoiceOrderItem" parameterClass="dto">
+		DELETE FROM aig_choiceorderitem WHERE choiceorderid = #salesorderid#
+	</delete>
+	
+	
+	<delete id="deleteChoiceOrderHeaderForGift" parameterClass="dto">
+		DELETE FROM aig_choiceorderheaderforgift  WHERE choiceorderid = #salesorderid#
+	</delete>
+	
+	<delete id="deleteChoiceOrderItemForGift" parameterClass="dto">
+		DELETE FROM aig_choiceorderitemforgift WHERE choiceorderid = #salesorderid#
+	</delete>
+	
+	<select id="getMatnrByParam" parameterClass="dto" resultClass="string">
+		select distinct a.matnr,a.maktx from z_rfc_store_01_it_mara a where 
+		a.kondm in (select kondm from aig_choiceordertype where type=#orderType#) 
+		<dynamic>
+			<isNotEmpty property="bismt" prepend="and">
+				a.bismt = #bismt# 
+			</isNotEmpty>
+			<isNotEmpty property="ifNeedLessTone" prepend="and">
+				 a.zpsbs = #ifNeedLessTone#
+			</isNotEmpty>
+			<isEmpty property="ifNeedLessTone" prepend="and">
+				 (a.zpsbs = '' or a.zpsbs is null)
+			</isEmpty>
+			<isNotEmpty property="goldType" prepend="and">
+				a.ZJLBM like '$goldType$%'
+			</isNotEmpty>
+			<isNotEmpty property="toneType" prepend="and">
+				a.ZSLBM like '$toneType$%'
+			</isNotEmpty>
+			<isNotEmpty property="toneColor" prepend="and">
+				 a.ZSLYS like '$toneColor$%' 
+			</isNotEmpty>
+			<isNotEmpty property="toneNeatness" prepend="and">
+				 a.labor like '$toneNeatness$%'
+			</isNotEmpty>
+			<isNotEmpty property="technics" prepend="and">
+				a.zgy like '%$technics$%'
+			</isNotEmpty>
+			<isNotEmpty property="toneshape" prepend="and">
+				a.ZSLXZ like '$toneshape$%'
+			</isNotEmpty>
+			<isNotEmpty property="mainToneStyle" prepend="and">
+				a.zslgg like '$mainToneStyle$%'
+			</isNotEmpty>
+			
+			<isNotEmpty property="gemweight" prepend="and">
+				a.zzszq <![CDATA[ <= ]]> #gemweight# and a.zzszz<![CDATA[>=]]>#gemweight#
+			</isNotEmpty>
+			
+			<isNotEmpty property="goodsize" prepend="and">
+				a.zhpccq <![CDATA[ <= ]]> #goodsize# and a.zhpccz<![CDATA[>=]]>#goodsize#
+			</isNotEmpty>
+		</dynamic>
+	</select>
+	
+	<select id="getBismtInfo" parameterClass="dto" resultClass="dto">
+		select * from z_rfc_store_07_it_ztzmsx where ZZMHN=#bismt# limit 1
+	</select>
+	
+	<!-- 通过批次号获取出库系数 -->
+	<select id="getPHXSByCharg" parameterClass="dto" resultClass="Double">
+		select kbetr from z_rfc_store_02_it_zpjg where charg = #charg# AND KSCHL='ZZK5' AND KUNRE LIKE '$werks$%' AND DATAB <![CDATA[<=]]> current_date AND DATBI >= current_date ORDER BY DATAB DESC limit 1
+	</select>
+	<!-- 通过物料号获取出库系数 -->
+	<select id="getPHXSByMatnr" parameterClass="dto" resultClass="Double">
+		SELECT kbetr FROM z_rfc_store_02_it_zpjg WHERE KONDM = (SELECT KONDM FROM z_rfc_store_01_it_mara WHERE MATNR=#matnr# limit 1)  AND KSCHL='ZZK5' AND KUNRE LIKE '$werks$%' 
+		AND DATAB <![CDATA[<=]]> current_date AND DATBI >= current_date ORDER BY DATAB DESC limit 1
+	</select>
+	<!-- 通过物料号获取核价系数 -->
+	<select id="getHJXSByMatnr" parameterClass="dto" resultClass="Double">
+		SELECT kbetr FROM z_rfc_store_02_it_zpjg WHERE KONDM = (SELECT KONDM FROM z_rfc_store_01_it_mara WHERE MATNR=#matnr# limit 1)  AND KSCHL='ZHJX'
+		AND DATAB <![CDATA[<=]]> current_date AND DATBI >= current_date ORDER BY DATAB DESC limit 1
+	</select>
+	<!-- 获取金料损耗和工费 -->
+	<select id="getJLSHGFByMatnr" parameterClass="dto" resultClass="dto">
+		SELECT ZZSH,ZGF FROM z_rfc_store_25_it_zgfsh WHERE EXTWG = 
+		(SELECT EXTWG FROM z_rfc_store_01_it_mara WHERE MATNR = #matnr#) 
+		AND ZQSZZ <![CDATA[<=]]> #gemweight# AND ZZZZZ >= #gemweight# AND ZJLBM = #goldType# limit 1
+	</select>
+	<!-- 获取金价 -->
+	<select id="getDailyGoldPrice" parameterClass="dto" resultClass="dto">
+		select ZTJAC,(select ZQZBL FROM z_rfc_store_27_it_ztjlnn WHERE ZJLBN=#goldType#) ZQZBL from z_rfc_store_25_it_zjj a 
+		where a.MATNR = (select matnr from z_rfc_store_27_it_zjlgx where zjlbn=#goldType#) and ERDAT = current_date order by UZEIT desc LIMIT 1
+	</select>
+	<!-- 获取辅石价格 -->
+	<select id="getLessTonePrice" parameterClass="dto" resultClass="Double">
+		select MAX(ZSCKJ) from z_rfc_store_25_it_slj where ZSLBM = #reallessToneType# and ZSXZL<![CDATA[<=]]>#lessToneWeight# AND ZXXZL >=#lessToneWeight#
+		<isNotEmpty property="lessToneWeightMore">
+			and LABOR='VS' AND ZSLYS='H'
+		</isNotEmpty>
+	</select>
+	
+	
+	<!-- 获取主石价格 -->
+	<select id="getMyTonePrice" parameterClass="dto" resultClass="Double">
+		select
+		<dynamic>
+			<isLessEqual property="gemweight" compareValue="0.078" >
+				MAX(ZSCKJ) ZSCKJ from z_rfc_store_25_it_slj where ZSXZL <![CDATA[<=]]> #gemweight# AND ZXXZL >=#gemweight#
+			</isLessEqual>
+			<isGreaterThan property="gemweight" compareValue="0.078" >
+			ZSCKJ from z_rfc_store_25_it_slj where ZSXZL <![CDATA[<=]]> #gemweight# AND ZXXZL >=#gemweight#
+				 and  ZSLBM = #toneType# and LABOR=#toneNeatness# AND ZSLYS=#toneColor#
+				<isEqual property="isBarerock" compareValue="1" prepend="and">
+					ZSLPG = 'EX' AND ZSLDC = 'EX'
+				</isEqual>
+				<isEqual property="isBarerock" compareValue="0" prepend="and">
+					ZSLPG = '' AND ZSLDC = ''
+				</isEqual>
+			</isGreaterThan>
+		</dynamic>
+		 ORDER BY BEGDA desc , UZEIT desc limit 1
+	<!-- 	select MAX(ZSCKJ) from z_rfc_store_25_it_slj where ZSLBM = #toneType# and ZSXZL <![CDATA[<=]]> #gemweight# AND ZXXZL >=#gemweight#
+			and LABOR=#toneNeatness# AND ZSLYS=#toneColor# AND UZEIT =(SELECT max(UZEIT) FROM z_rfc_store_25_it_slj WHERE
+			 BEGDA =( select max(BEGDA) from z_rfc_store_25_it_slj where ZSLBM =#toneType# and ZSXZL <![CDATA[<=]]> #gemweight# AND 
+			 ZXXZL >=#gemweight# and LABOR=#toneNeatness# AND ZSLYS=#toneColor#) and ZSLBM =#toneType# and ZSXZL <![CDATA[<=]]> #gemweight# 
+			 AND ZXXZL >=#gemweight# and LABOR=#toneNeatness# AND ZSLYS=#toneColor#)
+			AND BEGDA =(select max(BEGDA) from z_rfc_store_25_it_slj where ZSLBM =#toneType and ZSXZL <![CDATA[<=]]> #gemweight# 
+			AND ZXXZL >=#gemweight# and LABOR=#toneNeatness# AND ZSLYS=#toneColor#) -->
+			
+	</select>
+	
+	
+	<select id="getStyles" parameterClass="dto" resultClass="dto">
+		select ZCPFG,TCPFG from z_rfc_store_27_it_ztcpfg WHERE 1=1 
+		<dynamic>
+			<isNotEmpty property="styles" prepend="and">
+			 ZCPFG IN 
+				<iterate property="styles" open="(" close=")" conjunction=",">
+					#styles[]#
+				</iterate>
+			</isNotEmpty>
+		</dynamic>
+	</select>
+	
+	
+	<select id="getSeries" parameterClass="dto" resultClass="dto">
+		select ZCPXL,TCPXL from z_rfc_store_27_it_ztcpxl WHERE 1=1
+		<dynamic>
+			<isNotEmpty property="series" prepend="and">
+			 ZCPXL IN 
+				<iterate property="series" open="(" close=")" conjunction=",">
+					#series[]#
+				</iterate>
+			</isNotEmpty>
+		</dynamic>
+	</select>
+	
+	<select id="getKondmByWerks" parameterClass="dto" resultClass="String">
+		select distinct KONDM from z_rfc_store_02_it_zpjg WHERE KSCHL = 'ZZK5' and KUNRE = #werks# 
+		and DATAB <![CDATA[<=]]> #currentDate# and DATBI <![CDATA[>=]]> #currentDate#
+		order by KONDM asc
+	</select>
+	
+	<select id="getName1ByWerks" parameterClass="String" resultClass="String">
+		select distinct name1 from z_rfc_store_06_it_t001w where werks = #werks#
+	</select>
+	
+	<select id="getDiscount" parameterClass="dto" resultClass="double">
+	<![CDATA[
+		select (1+ifnull(kbetr,0)/1000) from  z_rfc_store_02_it_zpjg 
+		where kondm = (select kondm from z_rfc_store_01_it_mara where matnr=#matnr# limit 1) 
+		AND KUNRE LIKE '$werks$%' AND DATAB <= current_date AND DATBI>=current_date and kschl='ZZKL'
+		ORDER BY DATBI LIMIT 1
+	]]>
+	</select>
+	
+	<select id="getOrderIdCount" parameterClass="String" resultClass="int">
+		select count(*) from aig_choiceorderheader where choiceorderid = #key#
+	</select>
+	
+	
+	
+
+</sqlMap>

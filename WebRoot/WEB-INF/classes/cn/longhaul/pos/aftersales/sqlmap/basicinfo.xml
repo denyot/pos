@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="basicinfo">
+	<typeAlias alias="dto"
+		type="org.eredlab.g4.ccl.datastructure.impl.BaseDto" />
+	<!-- 查询门店信息 -->
+	<select id="getStoresInfo" parameterClass="map" resultClass="dto">
+		select * from z_rfc_store_06_it_t001w
+      where 1=1 
+    <dynamic>
+      <isNotEmpty prepend="and" property="WERKS">
+        WERKS = #WERKS#
+      </isNotEmpty>
+    </dynamic>
+	</select>
+	<!-- 查询配件信息 -->
+  <select id="getQualityPersonInfo" parameterClass="map" resultClass="dto">
+    select * from pos_quality_person
+  </select>
+	<!-- 查询配件信息 -->
+	<select id="getReplacementInfo" parameterClass="map" resultClass="dto">
+		select * from pos_replacement
+	</select>
+	
+	<!-- 查询售后服务信息 -->
+	<select id="getAftersalesserviceInfo" parameterClass="map" resultClass="dto">
+		select * from pos_aftersales_service
+	</select>
+	
+  <!-- 查询改款款式信息 -->
+  <select id="getFaceliftbagInfo" parameterClass="map" resultClass="dto">
+    select * from pos_facelift_bag
+  </select>
+  
+  <!-- 查询客户编码 -->
+  <select id="getKunnrById" parameterClass="String" resultClass="String">
+  	select kunnr from z_rfc_store_05_gt_vip where SORT2 = #vipId# limit 1
+  </select>
+  
+  <!-- 查询金料信息 -->
+  <select id="getGoldmaterialInfo" parameterClass="map" resultClass="dto">
+    select * from pos_goldmaterial
+  </select>
+  <!-- 查询成色信息 -->
+  <select id="getGoldQualityInfo" parameterClass="map" resultClass="dto">
+    select * from pos_goldquality
+  </select>
+   <!-- 查询售后类型信息 -->
+  <select id="getAftersalestypeInfo" parameterClass="map" resultClass="dto">
+    select * from pos_aftersales_type
+  </select>
+  
+   <!-- 查询证书信息 -->
+  <select id="getCertificateInfo" parameterClass="map" resultClass="dto">
+    select * from pos_certificate
+  </select>
+  
+     <!-- 查询裸石证书信息 -->
+  <select id="getLuodanCertificateInfo" parameterClass="map" resultClass="dto">
+    select * from pos_luodan_certificate
+  </select>
+  
+  <!-- 查询商品信息 -->
+  <select id="getMateriel" parameterClass="map" resultClass="dto">
+    SELECT a.CHARG charg, a.MATNR sptm, b.MAKTX spmc,b.ZMATNRT sptp 
+    FROM z_rfc_store_03_it_charg a left join z_rfc_store_01_it_mara b on a.MATNR = b.MATNR 
+     where 1=1 
+    <dynamic>
+      <isNotEmpty prepend="and" property="charg">
+        a.CHARG like '$charg$%'
+      </isNotEmpty>
+    </dynamic>
+     <![CDATA[   limit 1,10]]>
+  </select>
+  <select id="getMaterielbyuser" parameterClass="map" resultClass="dto">
+    SELECT a.CHARG charg,a.HPZL hpzl, a.ZGMJH mjh,  a.ZSZSB1 hpzsbh,
+     b.MATNR sptm, b.MAKTX spmc,a.ZMATNRT sptp,
+     (select ZZLNN from z_rfc_store_08_it_zslit where TMHNN=a.charg and ZZFST='1' limit 1) slzl,
+     (select ZZSLX from z_rfc_store_08_it_zslit where TMHNN=a.charg and ZZFST='1' limit 1) zslx,
+     (select ZSZSB from z_rfc_store_08_it_zslit where TMHNN=a.charg and ZZFST='1' limit 1) zsbh,
+     (select zslbm from z_rfc_store_08_it_zslit where TMHNN=a.charg and ZZFST='1' limit 1) sl, 
+   <!-- item.NETPRICE xsjg, date_format(head.SALEDATE,'%Y-%m-%d') xsrq,head.vipcard, --> 
+     (SELECT COUNT(*) FROM pos_sales_service where old_commodity_barcode=#charg#) chargappcount
+     FROM z_rfc_store_03_it_charg a 
+     <!-- left join z_rfc_store_03_gt_charg zs on a.CHARG = zs.CHARG -->
+       left join z_rfc_store_01_it_mara b on a.MATNR = b.MATNR
+       <!--   left join aig_orderitem item on a.CHARG = item.batchnumber
+          left join aig_orderhead head on item.SALESORDERID = head.SALESORDERID -->
+        WHERE a.CHARG = #charg# limit 1
+  </select>
+  
+  <!-- 取出最后一次销售批次的价钱(从SAP中获取数据) -->
+  <select id="getchargbaklastpriceforsap" parameterClass="map" resultClass="dto">
+		select SORT2 vipcard,AUDAT xsrq,KBETRY3 xsjg 
+		from
+		z_rfc_store_47_it_ztls
+		where 1=1 AND PSTYV != 'ZIN' AND PSTYV != 'ZIN1'
+		<isNotEmpty prepend="and" property="charg">
+			(CHARG=#charg# or
+			OCHARG=#charg#)
+		</isNotEmpty>
+		<!-- <isNotEmpty prepend="and" property="matnr"> b.materialnumber=#matnr# </isNotEmpty> -->
+		<!-- <isNotEmpty prepend="and" property="vipid">
+			SORT2=#vipid#
+		</isNotEmpty> -->
+		<isNotEmpty prepend="and" property="ordertype">
+			AUART in
+			<iterate property="ordertype" conjunction="," open="(" close=")">
+				#ordertype[]#
+			</iterate>
+		</isNotEmpty>
+              <![CDATA[order by AUDAT desc limit 1]]>
+	</select>
+  
+  
+  
+  <select id="getMatnrbyCharg" parameterClass="map" resultClass="String">
+    SELECT matnr  FROM  z_rfc_store_03_it_charg b  WHERE charg = #matnr# limit 1
+  </select>
+  
+  
+  <select id="getChargCount" parameterClass="dto" resultClass="String">
+    SELECT COUNT(*) FROM pos_sales_service where old_commodity_barcode=#charg#
+  </select>
+  
+  
+  <select id="getMatnrbyuser" parameterClass="map" resultClass="dto">
+    SELECT *  FROM  z_rfc_store_01_it_mara b  WHERE matnr = #matnr# limit 1
+  </select>
+  
+  
+  
+  <select id="getSalesInfo" parameterClass="map" resultClass="dto">
+	  select item.NETPRICE xsjg ,date_format(head.SALEDATE,'%Y-%m-%d') xsrq ,head.vipcard
+	   from aig_orderitem item inner join aig_orderhead head on item.salesorderid = head.salesorderid
+	  where item.batchnumber=#charg# and item.netprice > 0 order by OPERATEDATETIME DESC limit 1
+  </select>
+  
+   <!-- 查询石料种类 -->
+  <select id="getStoneKind" parameterClass="map" resultClass="dto">
+    SELECT ZSLBM zlcode, TSLBM zlname from z_rfc_store_09_it_sl;
+  </select>
+   <!-- 查询石料净度 -->
+  <select id="getStoneClarity" parameterClass="map" resultClass="dto">
+    SELECT ZSLJD jdcode, TSLJD jdname from z_rfc_store_09_it_zsjd;
+  </select>
+    <!-- 查询石料颜色 -->
+  <select id="getStoneColor" parameterClass="map" resultClass="dto">
+    SELECT ZSLYS yscode, TSLYS ysname from z_rfc_store_09_it_slys;
+  </select>
+  <!-- 查询会员信息 -->
+  <select id="viprecord" parameterClass="map" resultClass="dto">
+       select a.KUNNR hybh, a.SORT2 hykh, a.NAME1 hyxm, ifnull(a.SORT1,a.TELF1) sj from z_rfc_store_05_gt_vip a 
+       where 1=1
+    <dynamic>
+      <isNotEmpty prepend="and" property="kunnr">
+        a.KUNNR like '$kunnr$%'
+      </isNotEmpty>
+      <isNotEmpty prepend="and" property="vipid">
+        a.SORT2 like '$vipid$%'
+      </isNotEmpty>
+      <isNotEmpty prepend="and" property="tel">
+        a.sort1 like '$tel$%'
+      </isNotEmpty>
+      <isNotEmpty prepend="and" property="telf1">
+        a.TELF1 like '$telf1$%'
+      </isNotEmpty>
+      <isNotEmpty prepend=" " property="rownum">
+        limit 0,#rownum#
+      </isNotEmpty>
+      
+    </dynamic>
+  </select>
+
+  <select id="viprecordbyuser" parameterClass="map" resultClass="dto">
+      select a.KUNNR hybh,a.SORT2 hykh, a.NAME1 hyxm, ifnull(a.SORT1,a.TELF1) sj, a.BUILDING mfcs from z_rfc_store_05_gt_vip a 
+      WHERE 1 = 1
+    <dynamic>
+    <isNotEmpty prepend="and" property="name1">
+      	a.NAME1 = #name1#
+      </isNotEmpty>
+      <isNotEmpty prepend="and" property="kunnr">
+        a.KUNNR = #kunnr#
+      </isNotEmpty>
+      <isNotEmpty prepend="and" property="vipid">
+        a.SORT2 = #vipid#
+      </isNotEmpty>
+      <isNotEmpty prepend="and" property="tel">
+        a.sort1 = #tel#
+      </isNotEmpty>
+      <isNotEmpty prepend="and" property="telf1">
+        a.TELF1 = #telf1#
+      </isNotEmpty>
+    </dynamic>
+  </select>
+	
+	
+	  
+</sqlMap>

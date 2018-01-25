@@ -1,0 +1,114 @@
+body {
+  color: #4f6b72;
+  background: #E6EAE9;
+  font-family: 宋体, Arial;
+  font-size: 12px;
+  margin-left: 0px;
+  margin-top: 0px;
+  margin-right: 0px;
+  margin-bottom: 0px;
+}
+table { 
+	background-color:#FFFFFF;
+	text-align:right;
+	border:0px solid #C1DAD7;   
+  border-collapse:collapse; 
+}
+td{
+  border-right: 1px solid #C1DAD7;
+  border-bottom: 1px solid #C1DAD7;
+  background: #fff;
+  font-family: 宋体, Arial;
+  font-size: 12px;
+  padding: 2px 2px 2px 3px;
+  color: #4f6b72;
+  cursor: pointer;
+}
+a{
+    color:#333;
+    text-decoration:none;
+}
+th {
+  font-family: 宋体, Arial;
+  font-size: 13px;
+  color: #4f6b72;
+  border-right: 0px solid #C1DAD7;
+  border-bottom: 0px solid #C1DAD7;
+  border-top: 0px solid #C1DAD7;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  text-align: center;
+  padding: 6px 6px 6px 12px;
+  background: #CAE8EA no-repeat;
+  cursor: pointer;
+}
+
+input {
+  background-color: expression((this.readOnly &&this.readOnly ==true)?"#f0f0f0":"" )
+}
+.inputreadonly {
+  padding: 0;
+  height: 20px;
+  line-height: 15px;
+  width: 150px;
+  border: 0px; 
+  background: #f0f0f0;
+}
+.titlehead {
+  color: #FF3030;
+  font-family: 宋体, Arial;
+  font-size: 20px;
+}
+.orersystembutton {
+  background-position: center center;
+  background-image: url(../../order/images/button.png);
+  background-color: buttonface;
+  width: 80px;
+  height: 30px;
+  background-repeat: no-repeat;
+  cursor: pointer;
+}
+
+.numberInfo {
+  color: #FF3030;
+  font-family: 宋体, Arial;
+  font-size: 15px;
+  
+}
+.prompt {
+  color: #FF3030;
+  font-family: 宋体, Arial;
+  font-size: 12px;
+  
+}
+.inputleft {
+  border-right: 1px solid #C1DAD7;
+  border-bottom: 1px solid #C1DAD7;
+  background: #fff;
+  font-family: 宋体, Arial;
+  font-size: 12px;
+  padding: 2px 2px 2px 3px;
+  color: #4f6b72;
+  text-align: left; 
+  cursor: pointer;
+}
+.abline{
+background-color:#CCFF33;
+}
+.spanIsCheck {
+color: red;
+font-size: 12px;
+}
+.oreropbutton {
+  background-position: center center;
+  background-image: url(../images/button.png);
+  background-color: buttonface;
+  width: 70px;
+  height: 25px;
+  background-repeat: no-repeat;
+  cursor: pointer;
+}
+.trbottom td{
+  border-bottom-color:#FFFF00;
+  border-bottom-width:2px;
+}

@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 订单业务系统 -->
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="
+	http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+	http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd
+	http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd">
+	 
+	 <!-- Apache Commons DBCP  ORDER订单系统 数据源  -->
+	<bean id="dataSourceOrder" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+		<property name="driverClassName" value="${g4.jdbc.driverClassName2}" />
+		<property name="url" value="${g4.jdbc.url2}" />
+		<property name="username" value="${g4.jdbc.username2}" />
+		<property name="password" value="${g4.jdbc.password2}" />
+		<property name="initialSize" value="10" />
+		<property name="maxActive" value="30" />
+		<property name="maxIdle" value="15" />
+		<property name="minIdle" value="5" />
+		<property name="removeAbandoned" value="true" />
+		<property name="removeAbandonedTimeout" value="60" />
+		<property name="maxWait" value="10000" />
+		<property name="logAbandoned" value="true" />
+	</bean>
+	
+	 <!-- 配置sqlmapClientFactory -->
+	<bean id="sqlMapClientOrder" class="org.springframework.orm.ibatis.SqlMapClientFactoryBean">
+		<property name="configLocations">
+			<list>
+				<!-- 业务系统的SQL映射 -->
+				<value>config/app/app.sqlordermap.xml</value>
+			</list>
+		</property>
+		<property name="dataSource" ref="dataSourceOrder" />
+	</bean>
+	
+	
+	
+	
+	
+	<!-- JDBC事务管理器配置 -->
+	<bean id="transactionManagerOrder" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource">
+			<ref bean="dataSourceOrder" />
+		</property>
+	</bean>	
+	
+	<!-- JDBC事务管理器配置 -->
+	<bean id="transactionManagerOrder2" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource">
+			<ref bean="dataSourceG4" />
+		</property>
+	</bean>	
+	
+	<!-- 配置事务代理的基类 -->
+	<bean id="baseTransactionProxyOrder" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean" abstract="true">
+		<property name="transactionManager">
+			<ref bean="transactionManagerOrder" />
+		</property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="save*">PROPAGATION_REQUIRED,-Exception</prop>
+				<prop key="do*">PROPAGATION_REQUIRED,-Exception</prop>
+				<prop key="insert*">PROPAGATION_REQUIRED,-Exception</prop>
+				<prop key="del*">PROPAGATION_REQUIRED,-Exception</prop>
+				<prop key="drop*">PROPAGATION_REQUIRED,-Exception</prop>
+				<prop key="update*">PROPAGATION_REQUIRED,-Exception</prop>
+				<prop key="edit*">PROPAGATION_REQUIRED,-Exception</prop>
+				<prop key="modify*">PROPAGATION_REQUIRED,-Exception</prop>
+				<prop key="call*">PROPAGATION_REQUIRED,-Exception</prop>
+				<prop key="batch*">PROPAGATION_REQUIRED,-Exception</prop>
+				<prop key="*">PROPAGATION_SUPPORTS,-Exception</prop>
+			</props>
+		</property>
+	</bean> 
+	
+	<!-- 配置事务代理的基类 -->
+	<bean id="baseTransactionProxyOrder2" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean" abstract="true">
+		<property name="transactionManager">
+			<ref bean="transactionManagerOrder2" />
+		</property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="save*">PROPAGATION_REQUIRED,-Exception</prop>
+				<prop key="do*">PROPAGATION_REQUIRED,-Exception</prop>
+				<prop key="insert*">PROPAGATION_REQUIRED,-Exception</prop>
+				<prop key="del*">PROPAGATION_REQUIRED,-Exception</prop>
+				<prop key="drop*">PROPAGATION_REQUIRED,-Exception</prop>
+				<prop key="update*">PROPAGATION_REQUIRED,-Exception</prop>
+				<prop key="edit*">PROPAGATION_REQUIRED,-Exception</prop>
+				<prop key="modify*">PROPAGATION_REQUIRED,-Exception</prop>
+				<prop key="call*">PROPAGATION_REQUIRED,-Exception</prop>
+				<prop key="batch*">PROPAGATION_REQUIRED,-Exception</prop>
+				<prop key="*">PROPAGATION_SUPPORTS,-Exception</prop>
+			</props>
+		</property>
+	</bean> 
+	
+	
+	
+	<!-- 配置订单系统数据读取器  -->
+	<bean id="g4Readerorder" class="org.eredlab.g4.bmf.base.IReaderImpl">
+		<property name="sqlMapClient" ref="sqlMapClientOrder" />
+	</bean>
+	<!-- 配置订单系统G4Dao  -->
+	<bean id="g4DaoOrder" class="org.eredlab.g4.bmf.base.IDaoImpl">
+		<property name="sqlMapClient" ref="sqlMapClientOrder" />
+	</bean>
+	
+	<!-- 订单系统配置 -->
+	<bean id="orderService" parent="baseTransactionProxyOrder">
+		<property name="target">
+			<bean class="cn.longhaul.ordersystem.service.OrderServiceImpl">
+				<property name="g4Dao" ref="g4DaoOrder" />
+			</bean>
+		</property>
+	</bean>
+	<bean id="orderService2" parent="baseTransactionProxyOrder2">
+		<property name="target">
+			<bean class="cn.longhaul.pos.order.service.OrderServiceImpl">
+				<property name="g4Dao" ref="g4Dao" />
+			</bean>
+		</property>
+	</bean>
+	<!-- AIG POS 选款订单系统配置  -->
+	<bean id="choiceOrderService" parent="baseTransactionProxyG4">
+		<property name="target">
+			<bean class="cn.longhaul.pos.choiceorder.service.ChoiceOrderServiceImpl">
+				<property name="g4Dao" ref="g4Dao" />
+			</bean>
+		</property>
+	</bean>	
+
+	<bean id="stockService" parent="baseTransactionProxyOrder2">
+		<property name="target">
+			<bean class="cn.longhaul.pos.stock.service.StockServiceImpl">
+				<property name="g4Dao" ref="g4Dao" />
+			</bean>
+		</property>
+	</bean>
+	
+	 
+</beans>

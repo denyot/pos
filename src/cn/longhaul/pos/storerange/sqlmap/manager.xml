@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="BrandManager">
+	<typeAlias alias="dto"
+		type="org.eredlab.g4.ccl.datastructure.impl.BaseDto" />
+
+	<select id="getBrandlist" parameterClass="map" resultClass="dto">
+		select * from aig_brand where 1=1
+	</select>
+	<select id="getBrandCount" parameterClass="map"
+		resultClass="java.lang.Integer">
+		select count(*) from aig_brand where 1=1
+	</select>
+
+	<insert id="saveBrand" parameterClass="dto">
+		INSERT INTO aig_brand(brandname,branddesc) VALUES
+		(#brandname#,#branddesc#)
+	</insert>
+	<update id="updateBrand" parameterClass="map">
+		UPDATE aig_brand SET brandname = #brandname# , branddesc =
+		#branddesc# where id = #id#
+	</update>
+
+	<delete id="delBrand" parameterClass="map">
+		DELETE FROM aig_brand where id = #id#
+	</delete>
+
+	<insert id="saveBrandSale" parameterClass="dto">
+		INSERT INTO
+		aig_brandsale(brandid,brandsale,comment,datetype,year,mouth,week,deptid,extend)
+		VALUES
+		(#brandtype#,#salecount#,#comment#,#datatype#,#year#,#mouth#,#week#,#deptid#,#extend#)
+	</insert>
+	<delete id="delBrandSale" parameterClass="dto">
+		DELETE FROM aig_brandsale where brandid = #brandtype# and
+		datetype = #datatype# and year = #year# and mouth = #mouth# and
+		deptid = #deptid#
+		<isNotEmpty prepend="and" property="week">
+			week = #week#
+		</isNotEmpty>
+	</delete>
+	<select id="getdepttreelist" parameterClass="map"
+		resultClass="dto">
+		SELECT b.DEPTID as id ,b.DEPTNAME as text, b.PARENTID , b.LEAF
+		,b.SORTNO from eadept b where PARENTID = #node#
+	</select>
+
+	<select id="getBrandSaleListByWeek" parameterClass="map"
+		resultClass="dto">
+		SELECT a.brandname,b.brandsale from aig_brandsale b RIGHT JOIN
+		aig_brand a ON a.id = b.brandid and a.deptid=#deptid# and
+		b.deptid=#deptid# and b.year = #year# and b.mouth = #mouth# and
+		b.week = #week# ORDER BY (b.brandsale+0) desc
+	</select>
+
+	<select id="getBrandSaleListByYear" parameterClass="map"
+		resultClass="dto">
+		SELECT b.brandsale ,a.brandname from ( select
+		brandid,SUM(brandsale) as brandsale from aig_brandsale where
+		deptid = #deptid# and year = #year# GROUP BY brandid ,year ) b
+		RIGHT JOIN aig_brand a ON a.id = b.brandid and a.deptid=#deptid#
+		ORDER BY (b.brandsale+0) DESC
+	</select>
+
+	<select id="getBrandSaleListByMonth" parameterClass="map"
+		resultClass="dto">
+		SELECT b.brandsale ,a.brandname from ( select
+		brandid,SUM(brandsale) as brandsale from aig_brandsale where
+		deptid = #deptid# and year = #year# and mouth=#mouth# GROUP BY
+		brandid ,year,mouth ) b RIGHT JOIN aig_brand a ON a.id =
+		b.brandid and a.deptid=#deptid# ORDER BY (b.brandsale+0) DESC
+	</select>
+
+</sqlMap>

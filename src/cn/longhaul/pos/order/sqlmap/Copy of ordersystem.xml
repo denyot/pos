@@ -1,0 +1,518 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="posordersystem">
+	<typeAlias alias="dto"
+		type="org.eredlab.g4.ccl.datastructure.impl.BaseDto" />
+	<!--订单原因 -->
+	<select id="orderreson" parameterClass="map" resultClass="dto">
+		select * from z_rfc_store2_09_it_tvaut a, z_rfc_store2_09_it_ztddyypzb
+		b where b.augru = a.augru
+		<isNotEmpty prepend="and" property="auart">
+			b.auart= #auart#
+		</isNotEmpty>
+
+	</select>
+
+	<select id="ordertype" parameterClass="map" resultClass="dto">
+		select DISTINCT AUART pzdm, AUARTT pzmc FROM
+		z_rfc_store2_09_it_ztddyypzb where 1=1
+		<isNotEmpty prepend="and" property="ordertype">
+			AUART= #ordertype#
+		</isNotEmpty>
+	</select>
+
+	<select id="getpospassword" parameterClass="map" resultClass="String">
+		select YHKL from sq_yhxx where trim(yhdlm)=#userid#
+	</select>
+
+	<select id="getsaleman" parameterClass="map" resultClass="dto">
+		SELECT
+		* FROM aig_assistant_info where store_number=#werks#
+	</select>
+
+	<select id="getswerkssaleflag" parameterClass="map" resultClass="String">
+		select PTBZ Xsbj from z_rfc_store2_06_it_t001w where WERKS=#werks#
+	</select>
+
+	<select id="ordertypeall" parameterClass="map" resultClass="dto">
+		select * from z_rfc_store2_09_it_ztddyypzb
+	</select>
+
+	<select id="getgiftjf" parameterClass="map" resultClass="Integer">
+		select kdjf from xt_lppmbm where 1=1
+		<isNotEmpty prepend="and" property="charg">
+			lppmbm= #charg#
+		</isNotEmpty>
+	</select>
+	<!-- 取出最后一次销售批次的内存 -->
+	<select id="getchargbaklastprice" parameterClass="map"
+		resultClass="double">
+		select totalamount from (
+		SELECT B.totalamount , a.saledate,
+		ROW_NUMBER() OVER(ORDER BY a.operatedatetime desc)
+		ROW_NUMBER
+		FROM
+		aig_orderhead a ,aig_orderitem b
+		WHERE a.salesorderid=b.salesorderid
+		<isNotEmpty prepend="and" property="charg">
+			b.batchnumber=#charg#
+		</isNotEmpty>
+		<isNotEmpty prepend="and" property="matnr">
+			b.materialnumber=#matnr#  
+		     </isNotEmpty>
+		<isNotEmpty prepend="and" property="ordertype">
+			a.ordertype=#ordertype#
+		</isNotEmpty>
+              <![CDATA[)table1  where   ROW_NUMBER=1 ]]>
+	</select>
+
+	<select id="getchargisusedorderid" parameterClass="map"
+		resultClass="String">
+		select a.salesorderid from aig_orderitem a ,aig_orderhead b where
+		a.salesorderid=b.salesorderid and
+		a.batchnumber=#charg# and b.orderflag
+		in('NO','UO') limit 0,1
+	</select>
+	<select id="viprecord" parameterClass="map" resultClass="dto">
+	
+		<![CDATA[
+			 select a.KUNNR hybh, a.SORTL hykh, a.TELF1 sj, a.NAME1 hyxm from
+			z_rfc_store2_05_it_vip a left join z_rfc_store2_11_it_jf b on a.KUNNR = b.KUNNR
+	    	WHERE a.SORTL <> ''
+    	]]>
+		<dynamic>
+			<isNotEmpty prepend="and" property="kunnr">
+			<![CDATA[(]]>
+				a.KUNNR like '$kunnr$%'
+			</isNotEmpty>
+
+			<isNotEmpty prepend="and" property="vipid">
+			<![CDATA[(]]>
+				a.SORTL like '$vipid$%'
+			</isNotEmpty>
+			<isNotEmpty prepend="or" property="tel">
+				a.TELF1 like '$tel$%'
+			</isNotEmpty>
+			<![CDATA[)]]>
+			<isNotEmpty prepend=" " property="rownum">
+				limit 0,#rownum#
+			</isNotEmpty>
+		</dynamic>
+	</select>
+
+	<select id="viprecordbyuser" parameterClass="map" resultClass="dto">
+		select a.KUNNR hybh, a.SORTL hykh, a.TELF1 sj, a.NAME1 hyxm, b.*  from
+		z_rfc_store2_05_it_vip a left join z_rfc_store2_11_it_jf b on a.KUNNR = b.KUNNR
+    	WHERE 1 = 1
+		<dynamic>
+			<isNotEmpty prepend="and" property="kunnr">
+			<![CDATA[(]]>
+				a.KUNNR =#kunnr#
+			</isNotEmpty>
+			<isNotEmpty prepend="and" property="vipid">
+			<![CDATA[(]]>
+				a.SORTL = #vipid#
+			</isNotEmpty>
+			<isNotEmpty prepend="or" property="tel">
+				a.TELF1 = #tel#
+			</isNotEmpty>
+			<![CDATA[)]]>
+			<isNotEmpty prepend=" " property="rownum">
+				limit 0,#rownum#
+			</isNotEmpty>
+		</dynamic>
+	</select>
+
+	<select id="getpcxx" parameterClass="map" resultClass="dto">
+	  SELECT a.LGORT, a.MATNR bkbh, a.CHARG cpbm, a.ZHLHX plbm, ZHLHXT  plmc,a. ZJLZL1 jlzl,  	
+		a.ZTJTF bqj, a.ZZSH zsh, a.ZSJL zszl,a. ZTJCD xsgf, a.ZJJFL sjczbm 	 
+	  FROM z_rfc_store2_initial_it_tab a inner join z_rfc_store2_03_it_ztbhd b 
+	  on a.CHARG = b.CHARG WHERE LABST>0 and a.LGORT not in ('0007','0009','0010')
+		<dynamic>
+			<isNotEmpty prepend="and" property="werks">
+				a.WERKS= #werks#
+			</isNotEmpty>
+			<isNotEmpty prepend="and" property="charg">
+				a.CHARG like '$charg$%'
+			</isNotEmpty>
+		</dynamic>
+		 <![CDATA[   limit 0,10]]>
+	</select>
+	
+	<!-- select a.CHARG cpbm,a.ZHLHX plbm,a.ZHLHXT plmc,b.ZTJTF bqj,c.ZTJTE
+		sxj,a.ZJLZL1 jlzl, b.LGORT,
+		NULL zszl,a.ZZSH zsh,a.ZTJCD xsgf,a.MATNR
+		bkbh ,NULL zp,a.ZJJFL sjczbm
+		from z_rfc_store2_03_it_ztbhd a inner join z_rfc_store2_initial_it_tab b
+		on a.CHARG = b.CHARG
+		inner join z_rfc_store2_04_it_ztbjg c on a.CHARG = c.CHARG
+		where b.LABST>0 -->
+
+	<select id="getpcxxbyuser" parameterClass="map" resultClass="dto">
+
+		select a.CHARG cpbm,a.ZHLHX plbm,a.ZHLHXT plmc,b.ZTJTF bqj,c.ZTJTE
+		sxj,a.ZJLZL1 jlzl, b.LGORT,
+		b.ZZSZL1 zszl,a.ZZSH zsh,a.ZTJCD xsgf,a.MATNR
+		bkbh ,NULL zp,a.ZJJFL sjczbm , b.LABST
+		from z_rfc_store2_03_it_ztbhd a inner join z_rfc_store2_initial_it_tab b
+		on a.CHARG = b.CHARG
+		inner join z_rfc_store2_04_it_ztbjg c on a.CHARG = c.CHARG
+		where a.CHARG = #charg#
+
+
+	</select>
+
+	<select id="getgift" parameterClass="map" resultClass="dto">
+	  	 <![CDATA[  
+	  	    SELECT a.LGORT, a.MATNR cpbm, a. LABST, a. ZCPLB,  a.ZTJTF bqj, a. AESZN, b.MAKTX plmc, b.ZBZ zplb
+    		FROM z_rfc_store2_initial_matnr_it_tab a INNER JOIN z_rfc_store2_01_it_mara b ON a.MATNR = b.MATNR
+	 		where a. LABST>0 and a.WERKS=#werks# and a.MATNR like '$charg$%' limit 1,10 
+	  	]]>
+	</select>
+	<!-- select t.cpbm, t.bqj , t.plmc ,t.zplb from (select distinct a.MATNR 
+		cpbm, b.ZTJTF bqj,a.MAKTX plmc,a.ZBZ zplb,IFNULL(b.DATAB,NOW()) qsrq, IFNULL(b.DATBI,NOW()) 
+		jzrq from z_rfc_store2_01_it_mara a left join z_rfc_store2_02_it_wljg b on 
+		a.MATNR = b.MATNR where a.MATNR like '$charg$%') t where t.qsrq<= NOW() and 
+		t.jzrq >= NOW() limit 0,10 -->
+
+
+	<select id="getgiftbyuser" parameterClass="map" resultClass="dto">
+	  	<![CDATA[  
+	  	SELECT a.LGORT, a.MATNR cpbm, a. LABST, a. ZCPLB,  a.ZTJTF bqj, a. AESZN, b.MAKTX plmc, b.ZBZ zplb 
+    		FROM z_rfc_store2_initial_matnr_it_tab a INNER JOIN z_rfc_store2_01_it_mara b ON a.MATNR = b.MATNR
+	 		where a. LABST>0 and a.WERKS=#werks# and a.MATNR='$charg$' order by LABST limit 1
+	  	]]>
+	</select>
+	<!-- select t.cpbm, t.bqj , t.plmc ,t.zplb from (select distinct a.MATNR 
+		cpbm, b.ZTJTF bqj,a.MAKTX plmc,a.ZBZ zplb,IFNULL(b.DATAB,NOW()) qsrq, IFNULL(b.DATBI,NOW()) 
+		jzrq from z_rfc_store2_01_it_mara a left join z_rfc_store2_02_it_wljg b on 
+		a.MATNR = b.MATNR where a.MATNR = #charg# ) t where t.qsrq<= NOW() and t.jzrq 
+		>= NOW() -->
+
+	<select id="getgoldprices" parameterClass="map" resultClass="dto">
+		select goldvalue drjj from aig_dailygold where 1=1
+		<dynamic>
+			<isNotEmpty prepend="and" property="werks">
+				storenumbers = #werks#
+			</isNotEmpty>
+			<isNotEmpty prepend="and" property="date">
+				golddate = #date#
+			</isNotEmpty>
+			<isNotEmpty prepend="and" property="chargtype">
+				goldtype = #chargtype#
+			</isNotEmpty>
+		</dynamic>
+	</select>
+	<!-- 根据部门时间选择最大序列号 -->
+	<select id="getmaxorder" parameterClass="map" resultClass="java.lang.String">
+		select max(salesOrderId) from aig_orderhead where storeid = #storeid#
+		and
+		DAYOFYEAR(insertdatetime) = DAYOFYEAR(#insertdatetime#)
+	</select>
+
+	<!-- 插入订单主表记录 -->
+	<insert id="createorderhead" parameterClass="dto">
+		insert into
+		aig_orderhead (salesorderid,operatedatetime,sapsalesorderid,ordertype,
+		salepromotioncode,orderreason,storeid,operator,remarks,depositid,saledate,customerid,
+		cashcoupon,salesclerk,storereceipt,paymentaccno,amountcollected,paymentmethod,vipcard,
+		orderflag,deliverydate,cardexpired,totalmoney,resalesorderid,vipname,statementid,insertdatetime
+		,cash,unionpay,shoppingcard,subscription)
+		values(
+		#salesorderid#,#operatedatetime#
+		,#sapsalesorderid#,#ordertype#,
+		#salepromotioncode#,#orderreason#,#storeid#,#operator#,#remarks#,#depositid#,#saledate#,#customerid#,
+		#cashcoupon#,#salesclerk#,#storereceipt#,#paymentaccno#,#amountcollected#,#paymentmethod#,#vipcard#,
+		#orderflag#,#deliverydate#,#cardexpired#,#totalmoney#,#resalesorderid#,#vipname#,#statementid#,
+		#insertdatetime#,#cash#,#unionpay#,#shoppingcard#,#subscription#
+		)
+	</insert>
+	<!-- 插入订单主表记录 -->
+	<insert id="createorderitem" parameterClass="dto">
+		insert into
+		aig_orderitem (salesorderid,salesorderitem,upsalesorderitem,orderitemtype,
+		storeid,materialnumber,batchnumber,salesquantity,storagelocation,netprice,
+		goodsprocessingfee,goldprice,totalamount,tagprice,goldweight,customersdiscount,
+		storediscount,unit,changefee,otherfee,exchangepint,lowerlevelsnumber,productpictureurl,
+		statementid,settlementrate,settlementamount,originalsettlementrate,originalsettlementamount,
+		materialclassificationcode,materialdesc)
+		values(
+		#salesorderid#,#salesorderitem#,#upsalesorderitem#,#orderitemtype#,
+		#storeid#,#materialnumber#,#batchnumber#,#salesquantity#,#storagelocation#,#netprice#,
+		#goodsprocessingfee#,#goldprice#,#totalamount#,#tagprice#,#goldweight#,#customersdiscount#,
+		#storediscount#,#unit#,#changefee#,#otherfee#,#exchangepint#,#lowerlevelsnumber#,#productpictureurl#,
+		#statementid#,#settlementrate#,#settlementamount#,#originalsettlementrate#,#originalsettlementamount#,
+		#materialclassificationcode#,#materialdesc#
+		) 
+	</insert>
+
+	<select id="getorderitem" parameterClass="map" resultClass="dto">
+		select
+		salesorderid,salesorderitem,upsalesorderitem,orderitemtype,storeid,materialnumber,batchnumber,
+		salesquantity,storagelocation,netprice,goodsprocessingfee,goldprice,totalamount,
+		tagprice,goldweight,customersdiscount,storediscount,unit,changefee,otherfee,exchangepint,
+		lowerlevelsnumber,productpictureurl,statementid,settlementrate,settlementamount,
+		originalsettlementrate,originalsettlementamount,materialclassificationcode,materialdesc
+		from aig_orderitem
+		where salesorderid=#salesorderid# order by
+		salesorderitem, upsalesorderitem
+	</select>
+
+	<select id="getorddeleritem" parameterClass="map" resultClass="dto">
+		select
+		salesorderid,salesorderitem,upsalesorderitem,orderitemtype,storeid,materialnumber,batchnumber,
+		salesquantity,storagelocation,netprice,goodsprocessingfee,goldprice,totalamount,
+		tagprice,goldweight,customersdiscount,storediscount,unit,changefee,otherfee,exchangepint,
+		lowerlevelsnumber,productpictureurl,statementid,settlementrate,settlementamount,
+		originalsettlementrate,originalsettlementamount,materialclassificationcode,materialdesc
+		from aig_orderitem
+		where salesorderid=#salesorderid# and salesorderitem in
+		<iterate property="delist" open="(" close=")" conjunction=",">
+			#delist[]#  
+        </iterate>
+	</select>
+
+	<select id="getorderhead" parameterClass="map" resultClass="dto">
+		select salesorderid,operatedatetime
+		operatedatetime,sapsalesorderid,ordertype,salepromotioncode,orderreason,storeid,
+		operator,remarks,depositid,saledate,customerid,cashcoupon,salesclerk,storereceipt,
+		paymentaccno,amountcollected,paymentmethod,vipcard,orderflag,deliverydate,cardexpired,
+		totalmoney,resalesorderid,vipname,statementid,cash,unionpay,shoppingcard,subscription
+		from aig_orderhead
+		where salesorderid=#salesorderid# 
+	</select>
+
+	<select id="getorderheads" parameterClass="map" resultClass="dto">
+		select salesorderid,operatedatetime
+		operatedatetime,sapsalesorderid,ordertype,
+		salepromotioncode,orderreason,storeid,
+		operator,remarks,depositid,saledate,customerid,cashcoupon,salesclerk,storereceipt,
+		paymentaccno,amountcollected,paymentmethod,vipcard,orderflag,deliverydate,cardexpired,
+		totalmoney,resalesorderid,vipname,statementid,deliveryordernumber,materialdocumber,
+		cash,unionpay,shoppingcard,subscription from aig_orderhead
+		where
+		salesorderid in
+		<iterate property="orderIds" open="(" close=")" conjunction=",">
+			#orderIds[]#  
+        </iterate>
+
+	</select>
+
+	<select id="getorderheadbyuser" parameterClass="map"
+		resultClass="dto">
+		select salesorderid,operatedatetime
+		operatedatetime,sapsalesorderid,ordertype,
+		salepromotioncode,orderreason,storeid,
+		operator,remarks,depositid,saledate,customerid,cashcoupon,salesclerk,storereceipt,
+		paymentaccno,amountcollected,paymentmethod,vipcard,orderflag,deliverydate,cardexpired,
+		totalmoney,resalesorderid,vipname,statementid,deliveryordernumber,materialdocumber,
+		cash,unionpay,shoppingcard,subscription from aig_orderhead head
+		where 1=1
+		<isNotEmpty prepend="and" property="salesorderid">
+			salesorderid like
+			'%$salesorderid$'  
+	   </isNotEmpty>
+		<isNotEmpty prepend="and" property="saledatefrom">
+			saledate
+	   </isNotEmpty>
+		<isNotEmpty prepend="between" property="saledatefrom">
+			#saledatefrom#
+		</isNotEmpty>
+		<isNotEmpty prepend="and" property="saledateto">
+			#saledateto#
+		</isNotEmpty>
+		<isNotEmpty prepend="and" property="sapsalesorderid">
+			sapsalesorderid like
+			'%$sapsalesorderid$'  
+	   </isNotEmpty>
+		<isNotEmpty prepend="and" property="kunnr">
+			customerid like
+			'%$kunnr$'   
+	   </isNotEmpty>
+		<isNotEmpty prepend="and" property="vipid">
+			vipcard like
+			'%$vipid$'
+		</isNotEmpty>
+		<isNotEmpty prepend="and" property="ordertype">
+			ordertype= #ordertype#
+		</isNotEmpty>
+		<isNotEmpty prepend="and" property="orderflag">
+			orderflag= #orderflag#
+		</isNotEmpty>
+		<isNotEmpty prepend="and" property="werks">
+			storeid= #werks#
+		</isNotEmpty>
+		<isNotEmpty prepend="and" property="salesclerk">
+			salesclerk= #salesclerk#
+		</isNotEmpty>
+		<isNotEmpty prepend="and" property="operator">
+			operator= #operator#
+		</isNotEmpty>
+		<isNotEmpty prepend="and" property="deliveryordernumber">
+			deliveryordernumber like
+			'%$deliveryordernumber$'  
+	   </isNotEmpty>
+
+		<isNotEmpty prepend="and" property="batchno">
+			(select count(*) from
+			aig_orderitem item where BATCHNUMBER like #batchno#
+			and head.salesorderid
+			=item.salesorderid) > 0
+		</isNotEmpty>
+	   
+	    <![CDATA[  order by salesorderid  desc ]]>
+	</select>
+
+	<select id="getorderheadbyuserForPageCount" parameterClass="map"
+		resultClass="java.lang.Integer">
+		SELECT count(*) as count
+		from aig_orderhead head WHERE 1=1
+		<dynamic>
+			<isNotEmpty prepend="and" property="salesorderid">
+				salesorderid like
+				'%$salesorderid$'  
+			   </isNotEmpty>
+			<isNotEmpty prepend="and" property="saledatefrom">
+				saledate
+			   </isNotEmpty>
+			<isNotEmpty prepend="between" property="saledatefrom">
+				#saledatefrom#
+			</isNotEmpty>
+			<isNotEmpty prepend="and" property="saledateto">
+				#saledateto#
+			</isNotEmpty>
+			<isNotEmpty prepend="and" property="sapsalesorderid">
+				sapsalesorderid like
+				'%$sapsalesorderid$'  
+			   </isNotEmpty>
+			<isNotEmpty prepend="and" property="kunnr">
+				customerid like
+				'%$kunnr$'   
+			   </isNotEmpty>
+			<isNotEmpty prepend="and" property="vipid">
+				vipcard like '%$vipid$'
+			</isNotEmpty>
+			<isNotEmpty prepend="and" property="ordertype">
+				ordertype= #ordertype#
+			</isNotEmpty>
+			<isNotEmpty prepend="and" property="orderflag">
+				orderflag= #orderflag#
+			</isNotEmpty>
+			<isNotEmpty prepend="and" property="werks">
+				storeid= #werks#
+			</isNotEmpty>
+			<isNotEmpty prepend="and" property="salesclerk">
+				salesclerk=
+				#salesclerk#  
+			   </isNotEmpty>
+			<isNotEmpty prepend="and" property="operator">
+				operator= #operator#
+			</isNotEmpty>
+			<isNotEmpty prepend="and" property="batchno">
+				(select count(*) from
+				aig_orderitem item where BATCHNUMBER like #batchno#
+				and head.salesorderid
+				=item.salesorderid) > 0
+			   </isNotEmpty>
+		</dynamic>
+	</select>
+
+
+
+	<update id="updateorderhead" parameterClass="dto">
+		update aig_orderhead set
+		sapsalesorderid=#sapsalesorderid#,ordertype=#ordertype#,
+		salepromotioncode=#salepromotioncode#,orderreason=#orderreason#,storeid=#storeid#,operator=#operator#,
+		remarks=#remarks#,depositid=#depositid#,saledate=#saledate#,
+		customerid=#customerid#,cashcoupon=#cashcoupon#,salesclerk=#salesclerk#,storereceipt=#storereceipt#,
+		paymentaccno=#paymentaccno#,amountcollected=#amountcollected#,
+		paymentmethod=#paymentmethod#,vipcard=#vipcard#,orderflag=#orderflag#,deliverydate=#deliverydate#,
+		cardexpired=#cardexpired#,totalmoney=#totalmoney#,
+		resalesorderid=#resalesorderid#,vipname=#vipname#,statementid=#statementid#
+		,cash=#cash#
+		,unionpay=#unionpay#,shoppingcard=#shoppingcard#,subscription=#subscription#
+		where salesorderid=#salesorderid=#
+	</update>
+
+	<update id="updateorderitem" parameterClass="dto">
+		update aig_orderitem set
+		upsalesorderitem=#upsalesorderitem#,
+		orderitemtype=#orderitemtype#,storeid=#storeid#,materialnumber=#materialnumber#,batchnumber=#batchnumber#,
+		salesquantity=#salesquantity#,storagelocation=#storagelocation#,netprice=#netprice#,
+		goodsprocessingfee=#goodsprocessingfee#,goldprice=#goldprice#,totalamount=#totalamount#,tagprice=#tagprice#,
+		goldweight=#goldweight#,customersdiscount=#customersdiscount#,
+		storediscount=#storediscount#,unit=#unit#,changefee=#changefee#,otherfee=#otherfee#,
+		exchangepint=#exchangepint#,lowerlevelsnumber=#lowerlevelsnumber#,productpictureurl=#productpictureurl#,
+		statementid=#statementid#,settlementrate=#settlementrate#,settlementamount=#settlementamount#,
+		originalsettlementrate=#originalsettlementrate#,originalsettlementamount=#originalsettlementamount#,
+		materialclassificationcode=#materialclassificationcode#,materialdesc=#materialdesc#
+		where salesorderid=#salesorderid=# and salesorderitem=#salesorderitem#
+	</update>
+
+	<delete id="deleteorderItem" parameterClass="map">
+		DELETE
+		FROM aig_orderitem
+		WHERE salesorderid =#salesorderid#
+	</delete>
+
+
+	<delete id="deleteorderhead" parameterClass="map">
+		DELETE
+		FROM aig_orderhead
+		WHERE salesorderid =#salesorderid#
+	</delete>
+
+	<update id="updateorderheadbysapvbeln" parameterClass="map">
+		UPDATE
+		aig_orderhead
+		set sapsalesorderid =#sapsalesorderid#
+		,orderflag=#orderflag#,operatedatetime=
+		#operatedatetime#
+		WHERE
+		salesorderid =#salesorderid#
+	</update>
+
+	<update id="updateorderheadbyDelivery" parameterClass="map">
+		UPDATE
+		aig_orderhead
+		set deliveryordernumber=#deliveryordernumber#,
+		materialdocumber=#materialdocumber#
+		,orderflag=#orderflag#,operatedatetime=
+		#operatedatetime#
+		WHERE
+		salesorderid =#salesorderid#
+	</update>
+
+	<update id="updateByjsb" parameterClass="map">
+		UPDATE EA_DEMO_BYJSB SET
+		fyze = #fyze# WHERE sxh = #sxh#
+	</update>
+
+	<update id="updateByjsb2" parameterClass="map">
+		UPDATE EA_DEMO_BYJSBx
+		SET
+		fyze = #fyze# WHERE sxh = #sxh#
+	</update>
+
+	<select id="getHYBH" parameterClass="map" resultClass="java.lang.String">
+		select
+		a.KUNNR HYBH from z_rfc_store2_05_it_vip a inner join
+		z_rfc_store2_11_it_jf b on a.KUNNR = b.KUNNR
+		where SORTL='' and
+		NAME1='' and b.ZWDHJF = 0
+		and werks='01DL' LIMIT 1
+	</select>
+
+	<select id="getCustomId" parameterClass="map" resultClass="java.lang.String">
+		select customid from eadept where deptid=#deptId#
+	</select>
+
+	<update id="updateHYXM" parameterClass="map">
+		UPDATE hy_hyxxb SET
+		hyxm =
+		#regname# WHERE HYBH = #customerid#
+	</update>
+
+
+
+</sqlMap>

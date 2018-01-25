@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- ESB.Hessian服务端配置 -->
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="
+	http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+	http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd
+	http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd">
+	    <!-- 测试发布Hessian -->
+	<bean id="defaultHandlerMapping"
+		class="org.springframework.web.servlet.handler.BeanNameUrlHandlerMapping" />
+	<bean id="helloWorldImpl" class="org.eredlab.g4.demo.esb.hessian.HelloWorldImpl" />
+	<bean name="/helloWorldService"
+		class="org.springframework.remoting.caucho.HessianServiceExporter">
+		<property name="service" ref="helloWorldImpl" />
+		<property name="serviceInterface" value="org.eredlab.g4.demo.esb.hessian.HelloWorld" />
+	</bean>
+	
+	<bean id="sapTransferImpl" class="cn.longhaul.sap.system.esb.hesssion.SapTransferImpl" />
+    <!--<bean name="/sapTransferService"
+		class="org.springframework.remoting.caucho.HessianServiceExporter">
+		<property name="service" ref="sapTransferImpl" />
+		<property name="serviceInterface" value="cn.longhaul.sap.system.esb.hesssion.SapTransfer" />
+	</bean>
+    --><bean name="/sapTransferService"
+		class="cn.longhaul.sap.system.esb.hesssion.MyHessianExport">
+		<property name="service" ref="sapTransferImpl" />
+		<property name="serviceInterface" value="cn.longhaul.sap.system.esb.hesssion.SapTransfer" />
+	</bean>
+
+</beans>

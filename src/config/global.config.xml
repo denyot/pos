@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:aop="http://www.springframework.org/schema/aop"
+    xmlns:tx="http://www.springframework.org/schema/tx"
+    xmlns:context="http://www.springframework.org/schema/context"
+     xmlns:jee="http://www.springframework.org/schema/jee"
+    xsi:schemaLocation="
+    http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
+    http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+    http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
+    http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd
+     http://www.springframework.org/schema/jee
+       http://www.springframework.org/schema/jee/spring-jee-2.5.xsd"  >
+    <!--根据JAVA 文件自动 生成bean 减少配置文件过多  
+    <context:component-scan base-package="cn.longhaul.*"/> 
+     -->
+	<!-- 导入数据访问对象 -->
+	<import resource="classpath:config/global.dao.xml" />
+	<!-- 导入业务处理对象.权限参考模型 -->
+	<import resource="classpath:config/g4/g4.service.xml" />
+	<!-- 导入业务处理对象.业务系统 -->
+	<import resource="classpath:config/app/app.service.xml" />
+	
+	<!-- 导入业务处理对象.订单系统业务系统 -->
+	<import resource="classpath:config/app/app.orderservice.xml" />
+	
+	<!-- 导入SpringBean切面监控 -->
+	<import resource="classpath:config/global.monitor.xml" />
+	 
+	<!-- 导入ESB客户端配置.DEMO -->
+	<import resource="classpath:config/app/app.esb.client.xml" />
+	<!-- 导入Quardz Job 由于quartz自动启动10个线程不便于容器回收所以
+	  单独启动线程来运行作业  -->
+	<import resource="classpath:config/global.quartz.xml" />
+   
+</beans>
