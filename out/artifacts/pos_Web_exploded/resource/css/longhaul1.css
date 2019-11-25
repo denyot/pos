@@ -1,0 +1,668 @@
+/*所有字体样式定义*/
+.topMenuWord {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	color: #3c3159;
+	font-weight: bold;
+	text-transform: capitalize;
+}
+
+.firstLeverMenuWord {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 14px;
+	color: #FFFFFF;
+	font-weight: bold;
+	text-transform: capitalize;
+}
+
+.secondLeverMenuWord {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 13px;
+	color: #FFFFFF;
+	text-transform: capitalize;
+}
+
+.thirdLeverMenuWord {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	color: #6b698e;
+	text-decoration: underline;
+	text-transform: capitalize;
+}
+
+/*各欢迎页面文字*/
+.welcomePageWord1 {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 24px;
+	color: #234582;
+	text-transform: capitalize;
+	margin-top:-5px;
+}
+
+.welcomePageWord2 {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 32px;
+	color: #234582;
+	text-transform: capitalize;
+}
+
+.welcomePageWord3 {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 36px;
+	font-weight: bold;
+	color: #194278;
+	text-transform: capitalize;
+}
+
+/*topMenu sheet*/
+.topMenu {
+	padding: 0 0 0 32px;
+	margin: 0;
+	list-style: none;
+	height: 40px;
+	background: #fff url(../images/menuBg.gif) repeat-x;
+	position: relative;
+	font-family: arial, verdana, sans-serif;
+}
+
+.topMenu li.top {
+	display: block;
+	float: left;
+	position: relative;
+}
+
+.topMenu li a.top_link {
+	display: block;
+	float: left;
+	height: 40px;
+	line-height: 33px;
+	color: #bbb;
+	text-decoration: none;
+	font-size: 11px;
+	font-weight: bold;
+	padding: 0 0 0 12px;
+	cursor: pointer;
+}
+
+.topMenu li a.top_link span {
+	float: left;
+	font-weight: bold;
+	display: block;
+	padding: 0 24px 0 12px;
+	height: 40px;
+}
+
+.topMenu li a.top_link:hover {
+	color: #000;
+	background: url(../images/button4.gif) no-repeat;
+}
+
+.topMenu li a.top_link:hover span {
+	background: url(../images/button4.gif) no-repeat right top;
+}
+
+.topMenu li:hover>a.top_link {
+	color: #000;
+	background: url(../images/button4.gif) no-repeat;
+}
+
+.topMenu li:hover>a.top_link span {
+	background: url(../images/button4.gif) no-repeat right top;
+}
+
+.topMenu a:hover {
+	visibility: visible;
+}
+
+.topMenu li:hover {
+	position: relative;
+	z-index: 200;
+}
+
+.topMenu ul,.topMenu :hover ul ul,.topMenu :hover ul :hover ul ul,.topMenu :hover ul :hover ul :hover ul ul,.topMenu :hover ul :hover ul :hover ul :hover ul ul
+	{
+	position: absolute;
+	left: -9999px;
+	top: -9999px;
+	width: 0;
+	height: 0;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.topMenu :hover ul.sub {
+	left: 2px;
+	top: 40px;
+	right: 2px;
+	background: #fff;
+	padding: 3px 0;
+	border: 1px solid #999999;
+	white-space: nowrap;
+	width: 200px;
+	height: auto;
+}
+
+.topMenu :hover ul.sub li {
+	display: block;
+	height: 20px;
+	position: relative;
+	float: left;
+	width: 250px;
+}
+
+.topMenu :hover ul.sub li a {
+	font-weight: normal;
+	display: block;
+	font-size: 11px;
+	height: 20px;
+	width: 192px;
+	line-height: 20px;
+	text-indent: 5px;
+	color: #000;
+	text-decoration: none;
+	border: 3px solid #fff;
+	border-width: 0 0 0 3px;
+}
+
+.topMenu :hover ul.sub li a:hover {
+	background: #999999;
+	color: #fff;
+}
+
+.topMenu :hover ul :hover ul,.topMenu :hover ul :hover ul :hover ul,.topMenu :hover ul :hover ul :hover ul :hover ul,.topMenu :hover ul :hover ul :hover ul :hover ul :hover ul
+	{
+	left: 90px;
+	top: -4px;
+	background: #fff;
+	padding: 3px 0;
+	border: 1px solid 999999;
+	white-space: nowrap;
+	width: 93px;
+	z-index: 200;
+	height: auto;
+}
+
+#closeWinPic {
+	width: 26px;
+	height: 24px;
+	background-image: url(../images/close.gif);
+	float: right;
+	margin-right: -20px;
+	margin-top: 5px;
+}
+
+#closeWinPic a {
+	display: block;
+	width: 25px;
+	height: 23px;
+}
+
+/*left menu sheet*/
+div.sdmenu {
+	height: 100%;
+	overflow: auto;
+	width: 181px;
+	font-family: Arial, sans-serif;
+	font-size: 12px;
+	padding-bottom: 5px;
+	background: url(../images/bottom.gif) no-repeat right top;
+	color: #fff;
+}
+
+div.sdmenu div {
+	background: url(../images/treetitle.gif) repeat-x;
+	overflow: hidden;
+}
+
+div.sdmenu div:first-child {
+	background: url(../images/toptitle.gif) no-repeat;
+}
+
+div.sdmenu div.collapsed {
+	height: 25px;
+}
+
+div.sdmenu div span {
+	display: block;
+	padding: 5px 25px 5px 25px;
+	font-weight: bold;
+	color: white;
+	cursor: default;
+	border-bottom: 1px solid #ddd;
+}
+
+div.sdmenu div.collapsed span {
+	background-image: url(../images/collapsed.gif) no-repeat;
+}
+
+div.sdmenu div a {
+	padding: 5px 10px 5px 15px;
+	background: #3656A1;
+	text-decoration: none;
+	display: block;
+	color: white;
+}
+
+div.sdmenu div a.current {
+	background: #ccc;
+}
+
+div.sdmenu div a:active {
+	background: #4E88D8 url(../images/linkarrow.gif) no-repeat right center;
+	color: #fff;
+	text-decoration: none;
+	margin-left: -4px;
+	margin-right: -25px;
+	margin-top: -2px;
+}
+
+div.sdmenu ul li {
+	list-style-type: disc
+}
+
+#Table_02 {
+	width: 100%;
+}
+
+/*用于生成圆角的样式*/
+.thirdMenuContainer {
+	padding-top: 5px;
+	padding-left: 10px;
+	padding-right: 5px;
+	padding-bottom: 10px;
+}
+
+.thirdMenuContainer .verticalLine {
+	width: 1;
+	height: 50;
+	width: 1;
+	border-left: 1px dotted #000000;
+	margin-left: 600
+}
+
+div.RoundedCorner {
+	width: 95%;
+	margin: 0px auto;
+	margin-bottom: 10px;
+	background-color: #e2e9f1;
+}
+
+b.rtop,b.rbottom {
+	display: block;
+	background: #ebeff2;
+}
+
+b.rtop b,b.rbottom b {
+	display: block;
+	height: 1px;
+	overflow: hidden;
+	background: #acc6df
+}
+
+b.r1 {
+	margin: 0 4px
+}
+
+b.r2 {
+	margin: 0 3px
+}
+
+b.r3 {
+	margin: 0 2px
+}
+
+b.r4 {
+	background-color: #e2e9f1;
+}
+
+b.rtop b.r4,b.rbottom b.r4 {
+	margin: 0 1px;
+	height: 2px
+}
+
+/*欢迎页面样式*/
+#welcomePageTop {
+	background-image: url(../images/centertop.gif);
+	background-repeat: repeat-x;
+	height: 30px;
+	padding: 10px;
+}
+
+#all {
+	background-color: #ebeff2;
+	width: 100%;
+	height: 100%;
+}
+
+.roundCorner {
+	margin: 0px auto;
+	margin-bottom: 20px;
+	background-color: #ebeff2;
+}
+
+/*第三圆角样式*/
+div.ThirdRoundedCorner {
+	background: #e2e9f1；
+}
+
+.ThirdRoundedCorner b.rtop,.ThirdRoundedCorner b.rbottom {
+	display: block;
+	background: #ebeff2;
+}
+
+.ThirdRoundedCorner b.rtop b,.ThirdRoundedCorner b.rbottom b {
+	display: block;
+	height: 1px;
+	overflow: hidden;
+	background: #acc6df
+}
+
+.ThirdRoundedCorner b.r1 {
+	margin: 0 4px
+}
+
+.ThirdRoundedCorner b.r2 {
+	margin: 0 3px
+}
+
+.ThirdRoundedCorner b.r3 {
+	margin: 0 2px
+}
+
+.ThirdRoundedCorner b.r4 {
+	background-color: #e2e9f1;
+}
+
+.ThirdRoundedCorner b.rtop b.r4,.bigRoundedCorner b.rbottom b.r4 {
+	margin: 0 1px;
+	height: 2px
+}
+
+#ThirdRoundedCorner{
+	background-color:#b1cade;
+}
+
+/*大的圆角样式*/
+div.bigRoundedCorner {
+	background: #e2e9f1
+}
+
+.bigRoundedCorner b.rtop,.bigRoundedCorner b.rbottom {
+	display: block;
+	background: #ebeff2;
+}
+
+.bigRoundedCorner b.rtop b,.bigRoundedCorner b.rbottom b {
+	display: block;
+	height: 1px;
+	overflow: hidden;
+	background: #acc6df
+}
+
+.bigRoundedCorner b.r1 {
+	margin: 0 4px
+}
+
+.bigRoundedCorner b.r2 {
+	margin: 0 3px
+}
+
+.bigRoundedCorner b.r3 {
+	margin: 0 2px
+}
+
+.bigRoundedCorner b.r4 {
+	background-color: #e2e9f1;
+}
+
+.bigRoundedCorner b.rtop b.r4,.bigRoundedCorner b.rbottom b.r4 {
+	margin: 0 1px;
+	height: 2px
+}
+
+#BigRoundCornerBg{
+	background-color:#b1cade;
+}
+
+/*可拖放的div*/
+* {
+	border: 0;
+	margin: 0;
+	padding: 0;
+}
+
+a {
+	text-decoration: none;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+#all_open {
+	display: none;
+}
+
+body {
+	background: #ccb;
+	color: #555;
+	font: 11px Arial, sans-serif;
+}
+
+#container {
+	margin: 0 auto;
+	width: 95%;
+}
+
+#controls {
+	float: right;
+}
+
+#columns td {
+	padding: 0 5px;
+	vertical-align: top;
+	width: 240px;
+}
+
+.Bigportlet {
+	background: #ffe;
+	border-color: #fff #665 #665 #fff;
+	border-style: solid;
+	border-width: 1px;
+	cursor: pointer;
+	margin: 0 0 10px;
+	width: 320px;
+	height: 350px;
+}
+
+.portlet {
+	background: #ffe;
+	border-color: #fff #665 #665 #fff;
+	border-style: solid;
+	border-width: 1px;
+	cursor: pointer;
+	margin: 0 0 10px;
+	width: 480px;
+	font-size:12px;
+}
+
+.portlet2 {
+	background: #ffe;
+	border-color: #fff #665 #665 #fff;
+	border-style: solid;
+	border-width: 1px;
+	cursor: pointer;
+	margin: 0 0 10px;
+	width: 400px;
+	height: 350px;
+}
+
+.portlet_topper {
+	background: #d5e6fa;
+	padding: 5px 10px;
+}
+
+.portlet_topper a {
+	color: #443;
+	font-weight: bold;
+}
+
+.portlet_content {
+	border-top: 1px solid #998;
+	padding: 10px;
+}
+
+.portlet_content p {
+	line-height: 150%;
+	text-align: justify;
+}
+
+.portlet_bottom {
+	background: #ccc;
+	font-size: 1px;
+	line-height: 1px;
+	height: 5px;
+}
+
+.sort_placeholder {
+	background: #bba;
+}
+
+.body{
+		background-color: #e9f0f6;
+	}
+	
+	.tbview{
+		border-color: #bcc8d6;
+		border:2px;
+		BACKGROUND-COLOR: #bfcbd9;
+	}
+	
+	.TrviewFirst{
+		background-color: #ced5db;
+	}
+	
+	.TrinviewOther2{
+		background-color: #d9e5f3;
+	}
+	.btndoc, .btnmenuview, .btnmenuviewmouseover{
+		background:url('../images/86.gif') no-repeat top left;
+		border:0px;
+		width:50px!important;
+	}
+	
+	.btndoc2{
+		background:url('../images/64.gif') no-repeat top left;
+		border:0px;
+		width:55px!important;
+	}
+	
+	
+
+.inputSpan { display:table; border:1px solid #979797}
+.textdocdown,.textdocdown2 { border:1px solid #fff; background:#fff none repeat scroll 0 0;}
+.textdocdown { border:1px solid #fff; width: 80px;}
+.textdocdown2 { border-left:1px solid #000; border-top:1px solid #000;background-color:#fff09d;width: 80px;}
+	
+.textdocdown3 { border:1px solid #fff; background:#fff none repeat scroll 0 0;}	
+	/*.textdocdown {
+	COLOR: #0066ff; 
+	FONT-SIZE: 12px;
+	background-image: url('../images/37.gif');
+	width:84px;
+	height:20px;
+	margin-right:10px;
+	padding-left:5px;
+	padding-top:5px;
+}*/
+	
+	.common1 {
+		height:25px;
+		float:left;
+		padding-top:5px;
+	}
+	
+	.common2 {
+		height:25px;
+		float:left;
+	}
+	
+	.notSuit{
+		background: url('../images/74.gif') no-repeat;
+		width:50px;
+		height:20px;
+		float:left;
+		padding-top:6px;
+		text-align:center;
+		margin-right:5px;
+		margin-left:5px;
+	}
+	
+	.suit{
+		background: url('../images/85.gif') no-repeat;
+		width:50px;
+		height:20px;
+		float:left;
+		padding-top:6px;
+		text-align:center;
+		margin-right:5px;
+		margin-left:5px;
+	}
+	
+/*分页页脚div*/
+.pagination{
+	position: static;bottom:0;left:0;
+	background-color:#e9f0f6;
+	padding-left:41%;
+}
+
+
+th.header:hover{
+	cursor:pointer;
+}
+
+th.headerSortDown {     
+	background: url(../images/small_desc.gif) no-repeat left;
+	}
+th.headerSortUp {     
+	background: url(../images/small_asc.gif) no-repeat left;     
+	}
+
+/*登录页面样式*/
+#loginBody{
+	background:#eaf1f6;
+}
+
+.loginTop{
+	position:relative;top:0;left:50%
+}
+
+.loginMiddleLeft{
+	display:inline;
+}
+
+.loginMiddleRight1{
+	display:inline;
+}
+.loginMiddleRight1{
+	
+}
+.loginMiddleRight2{
+	
+}
+.loginBottom{
+	position:absolute;top:100%;left:50%
+}
+
+/*供应商交货按钮*/
+ .botton1{
+	background: url(../images/icons/close.png) no-repeat center left;
+	padding-left:20px;
+	cursor: pointer;
+}
+
+.botton2{
+	background: url(../images/close1.png) no-repeat center left;
+	padding-left:20px;
+}

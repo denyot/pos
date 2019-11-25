@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="manager">
+<typeAlias alias="dto"
+		type="org.eredlab.g4.ccl.datastructure.impl.BaseDto" />
+
+    <select id="gettcodelist" parameterClass="map" resultClass="dto">
+		     select  * from    sap_tocde where 1=1 
+             <isNotEmpty prepend="and" property="id">
+				 tcode_id  like '%$id$%'
+		     </isNotEmpty>
+		     <isNotEmpty prepend="and" property="name">
+				 tcode_name like '%$name$%' 
+		     </isNotEmpty>
+	</select>
+    <select id="gettcodeCount" parameterClass="map" resultClass="java.lang.Integer">
+		     select  count(*)  from    sap_tocde where 1=1 
+             <isNotEmpty prepend="and" property="id">
+				 tcode_id  like '%$id$%'
+		     </isNotEmpty>
+		     <isNotEmpty prepend="and" property="name">
+				 tcode_name like '%$name$%' 
+		     </isNotEmpty>
+	</select>
+	
+</sqlMap>

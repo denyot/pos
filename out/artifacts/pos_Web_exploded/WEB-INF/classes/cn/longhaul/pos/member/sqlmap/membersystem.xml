@@ -1,0 +1,462 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="membersystem">
+    <typeAlias alias="dto"
+               type="org.eredlab.g4.ccl.datastructure.impl.BaseDto"/>
+
+    <!--会员信息 -->
+    <select id="getMemberInfo" parameterClass="map" resultClass="dto">
+        <!--
+            select h.*, ds.vtext pavipname ,(
+            ifnull((select sum(totalmoney) money from aig_orderhead a where (a.customerid = h.kunnr or a.VIPCARD in (select ZJHY from z_rfc_store_37_it_zthymx where ZXHY=h.sort2))),0)
+            +
+            ifnull((select sum(KBETRY3) money from z_rfc_store_47_it_ztls c  WHERE (c.SORT2 = h.SORT2)),0)
+            ) totalmoney
+            ,zhyjf - zjf costjf,(select ZJHY from z_rfc_store_37_it_zthymx where ZXHY=h.sort2 limit 1) oldcard
+            from
+            z_rfc_store_05_gt_vip h
+            left join z_rfc_store_09_it_tvipt ds on
+            (h.pavip=ds.pavip)
+            where name4=#store_number#
+            -->
+        select h.*, ds.vtext pavipname ,(
+        ifnull((select sum(totalmoney) money from aig_orderhead as a where a.customerid = h.kunnr),0)
+        +
+        ifnull((select sum(KBETRY3) money from z_rfc_store_47_it_ztls c WHERE (c.SORT2 = h.SORT2)),0)
+        ) totalmoney
+        ,zhyjf - zjf costjf,(select ZJHY from z_rfc_store_37_it_zthymx where ZXHY=h.sort2 limit 1) oldcard
+        from
+        z_rfc_store_05_gt_vip h
+        left join z_rfc_store_09_it_tvipt ds on
+        (h.pavip=ds.pavip)
+        where kunn2=#store_number#
+
+        <dynamic>
+            <isNotEmpty prepend="and" property="kunnr">
+                KUNNR like '$kunnr$%'
+            </isNotEmpty>
+            <isNotEmpty prepend="and" property="sort1">
+                SORT1 like '$sort1$%'
+            </isNotEmpty>
+            <isNotEmpty prepend="and" property="sort2">
+                SORT2 like '$sort2$%'
+            </isNotEmpty>
+            <isNotEmpty prepend="and" property="name1">
+                NAME1 like '%$name1$%'
+            </isNotEmpty>
+            <isNotEmpty prepend="and" property="name2">
+                NAME2 like '%$name2$%'
+            </isNotEmpty>
+            <isNotEmpty prepend="and" property="zhyjb">
+                KONDA like '$zhyjb$%'
+            </isNotEmpty>
+            <isNotEmpty prepend="and" property="telf1">
+                TELF1 like '$telf1$%'
+            </isNotEmpty>
+            <isNotEmpty prepend="and" property="pavip">
+                PAVIP = #pavip#
+            </isNotEmpty>
+            <isEqual property="used" compareValue="2" prepend="and">
+                SORTL=''
+                and name1=''
+            </isEqual>
+            <isEqual property="used" compareValue="1" prepend="and">
+                <![CDATA[ SORTL<>'' and name1<>'' ]]>
+            </isEqual>
+            <isNotEmpty property="parvoArray">
+                and parvo in
+                <iterate open="(" close=")" property="parvoArray"
+                         conjunction=",">#parvoArray[]#
+                </iterate>
+            </isNotEmpty>
+
+            <isNotEmpty property="birthdayFrom" prepend="and">
+                <isNotEmpty property="birthdayTo">
+                    substring(gbdat,6,2) between #birthdayFrom# AND
+                    #birthdayTo#
+                </isNotEmpty>
+                <isEmpty property="birthdayTo">
+                    substring(gbdat,6,2)=#birthdayFrom#
+                </isEmpty>
+            </isNotEmpty>
+
+            <isEmpty property="birthdayFrom">
+                <isNotEmpty property="birthdayTo" prepend="and">
+                    substring(gbdat,6,2)=#birthdayTo#
+                </isNotEmpty>
+            </isEmpty>
+
+            <isNotEmpty property="merryFrom" prepend="and">
+                <isNotEmpty property="merryTo">
+                    substring(TELF2,6,2) between #merryFrom# AND
+                    #merryTo#
+                </isNotEmpty>
+                <isEmpty property="merryTo">
+                    substring(TELF2,6,2)=#merryFrom#
+                </isEmpty>
+            </isNotEmpty>
+
+            <isEmpty property="merryFrom">
+                <isNotEmpty property="merryTo" prepend="and">
+                    substring(TELF2,6,2)=#merryTo#
+                </isNotEmpty>
+            </isEmpty>
+
+            <isNotEmpty property="joinDateFrom" prepend="and">
+                <isNotEmpty property="joinDateTo">
+                    str_to_date(tel_number,'%Y-%m-%d') between left('$joinDateFrom$',10) AND left('$joinDateTo$',10)
+                </isNotEmpty>
+                <isEmpty property="joinDateTo">
+                    str_to_date(tel_number,'%Y-%m-%d') >= left('$joinDateFrom$',10)
+                </isEmpty>
+            </isNotEmpty>
+
+            <isEmpty property="joinDateFrom">
+                <isNotEmpty property="joinDateTo" prepend="and">
+                    left('$joinDateTo$',10) > str_to_date(tel_number,'%Y-%m-%d')
+                </isNotEmpty>
+            </isEmpty>
+
+        </dynamic>
+    </select>
+
+    <select id="getMemberInfoForNewMember" parameterClass="map"
+            resultClass="dto">
+        select h.KUNNR,h.SORT2,h.NAME1,h.KONDA,h.KUNN2,h.NAME4, ds.vtext
+        pavipname
+        from z_rfc_store_05_gt_vip h
+        left join z_rfc_store_09_it_tvipt
+        ds on (h.pavip=ds.pavip)
+        where kunn2=#store_number#
+        <dynamic>
+            <isNotEmpty prepend="and" property="kunnr">
+                KUNNR like '$kunnr$%'
+            </isNotEmpty>
+            <isNotEmpty prepend="and" property="sortl">
+                SORT1 like '$sortl$%'
+            </isNotEmpty>
+            <isNotEmpty prepend="and" property="sort2">
+                SORT2 like '$sort2$%'
+            </isNotEmpty>
+            <isNotEmpty prepend="and" property="name1">
+                NAME1 like '$name1$%'
+            </isNotEmpty>
+            <isNotEmpty prepend="and" property="name2">
+                NAME2 like '$name2$%'
+            </isNotEmpty>
+            <isNotEmpty prepend="and" property="zhyjb">
+                KONDA like '$zhyjb$%'
+            </isNotEmpty>
+            <isNotEmpty prepend="and" property="telf1">
+                TELF1 like '$telf1$%'
+            </isNotEmpty>
+            <isNotEmpty prepend="and" property="pavip">
+                PAVIP = #pavip#
+            </isNotEmpty>
+            <isEqual property="used" compareValue="2" prepend="and">
+                SORTL=''
+                and name1=''
+            </isEqual>
+            <isEqual property="used" compareValue="1" prepend="and">
+                <![CDATA[ SORTL<>'' and name1<>'' ]]>
+            </isEqual>
+            <isNotEmpty property="parvoArray">
+                and parvo in
+                <iterate open="(" close=")" property="parvoArray"
+                         conjunction=",">#parvoArray[]#
+                </iterate>
+            </isNotEmpty>
+
+
+            <isNotEmpty property="birthdayFrom" prepend="and">
+                <isNotEmpty property="birthdayTo">
+                    TELF2 between #birthdayFrom# AND
+                    #birthdayTo#
+                </isNotEmpty>
+                <isEmpty property="birthdayTo">
+                    TELF2=#birthdayFrom#
+                </isEmpty>
+            </isNotEmpty>
+
+            <isNotEmpty property="birthdayTo" prepend="and">
+                <isNotEmpty property="birthdayFrom">
+                    TELF2 between #birthdayFrom# AND
+                    #birthdayTo#
+                </isNotEmpty>
+                <isEmpty property="birthdayFrom">
+                    TELF2=#birthdayTo#
+                </isEmpty>
+            </isNotEmpty>
+
+
+        </dynamic>
+    </select>
+
+    <select id="getMemberCount" parameterClass="map" resultClass="int">
+        SELECT count(*) FROM z_rfc_store_05_gt_vip h left join
+        z_rfc_store_09_it_tvipt ds on (h.pavip=ds.pavip)
+        where
+        kunn2=#store_number#
+        <dynamic>
+            <isNotEmpty prepend="and" property="kunnr">
+                KUNNR like '$kunnr$%'
+            </isNotEmpty>
+            <isNotEmpty prepend="and" property="sort1">
+                SORT1 like '$sort1$%'
+            </isNotEmpty>
+            <isNotEmpty prepend="and" property="sort2">
+                SORT2 like '$sort2$%'
+            </isNotEmpty>
+            <isNotEmpty prepend="and" property="name1">
+                NAME1 like '%$name1$%'
+            </isNotEmpty>
+            <isNotEmpty prepend="and" property="name2">
+                NAME2 like '%$name2$%'
+            </isNotEmpty>
+            <isNotEmpty prepend="and" property="zhyjb">
+                KONDA like '$zhyjb$%'
+            </isNotEmpty>
+            <isNotEmpty prepend="and" property="telf1">
+                TELF1 like '$telf1$%'
+            </isNotEmpty>
+            <isNotEmpty prepend="and" property="pavip">
+                PAVIP = #pavip#
+            </isNotEmpty>
+            <isEqual property="used" compareValue="2" prepend="and">
+                SORTL=''
+                and name1=''
+            </isEqual>
+            <isEqual property="used" compareValue="1" prepend="and">
+                <![CDATA[ SORTL<>'' and name1<>'' ]]>
+            </isEqual>
+            <isNotEmpty property="parvoArray">
+                and parvo in
+                <iterate open="(" close=")" property="parvoArray"
+                         conjunction=",">#parvoArray[]#
+                </iterate>
+            </isNotEmpty>
+
+            <isNotEmpty property="birthdayFrom" prepend="and">
+                <isNotEmpty property="birthdayTo">
+                    substring(gbdat,6,2) between #birthdayFrom# AND
+                    #birthdayTo#
+                </isNotEmpty>
+                <isEmpty property="birthdayTo">
+                    substring(gbdat,6,2)=#birthdayFrom#
+                </isEmpty>
+            </isNotEmpty>
+            <isEmpty property="birthdayFrom">
+                <isNotEmpty property="birthdayTo" prepend="and">
+                    substring(gbdat,6,2)=#birthdayTo#
+                </isNotEmpty>
+            </isEmpty>
+            <isNotEmpty property="merryFrom" prepend="and">
+                <isNotEmpty property="merryTo">
+                    substring(TELF2,6,2) between #merryFrom# AND
+                    #merryTo#
+                </isNotEmpty>
+                <isEmpty property="merryTo">
+                    substring(TELF2,6,2)=#merryFrom#
+                </isEmpty>
+            </isNotEmpty>
+
+            <isEmpty property="merryFrom">
+                <isNotEmpty property="merryTo" prepend="and">
+                    substring(TELF2,6,2)=#merryTo#
+                </isNotEmpty>
+            </isEmpty>
+
+            <isNotEmpty property="joinDate" prepend="and">
+                tel_number=substring(#joinDate#,1,10)
+            </isNotEmpty>
+
+        </dynamic>
+    </select>
+
+    <select id="getMember" parameterClass="map" resultClass="dto">
+		select *
+		from z_rfc_store_05_gt_vip where kunnr=#kunnr#
+  </select>
+
+    <update id="updateMember" parameterClass="map">
+        UPDATE z_rfc_store_05_gt_vip
+        <dynamic prepend="SET">
+            <isNotEmpty prepend="," property="telf2">TELF2=#telf2#
+            </isNotEmpty>
+            <isNotEmpty prepend="," property="name1">NAME1=#name1#
+            </isNotEmpty>
+            <isNotEmpty prepend="," property="name2">NAME2=#name2#
+            </isNotEmpty>
+            <isNotEmpty prepend="," property="sort2">SORT2=#sort2#
+            </isNotEmpty>
+            <isNotEmpty prepend="," property="fax_number">FAX_NUMBER=#fax_number#
+            </isNotEmpty>
+            <isNotEmpty prepend="," property="konda">KONDA=#konda#
+            </isNotEmpty>
+            <isNotEmpty prepend="," property="parge">PARGE=#parge#
+            </isNotEmpty>
+            <isNotEmpty prepend="," property="gbdat">GBDAT=#gbdat#
+            </isNotEmpty>
+            <isNotEmpty prepend="," property="abtnr">ABTNR=#abtnr#
+            </isNotEmpty>
+            <isNotEmpty prepend="," property="sort1">SORT1=#sort1#
+            </isNotEmpty>
+            <isNotEmpty prepend="," property="telf1">TELF1=#telf1#
+            </isNotEmpty>
+            <isNotEmpty prepend="," property="smtp_addr">SMTP_ADDR=#smtp_addr#
+            </isNotEmpty>
+            <isNotEmpty prepend="," property="fax_number1">FAX_NUMBER1=#fax_number1#
+            </isNotEmpty>
+            <isNotEmpty prepend="," property="function">FUNCTION=#function#
+            </isNotEmpty>
+            <isNotEmpty prepend="," property="post_code1">POST_CODE1=#post_code1#
+            </isNotEmpty>
+            <isNotEmpty prepend="," property="street">STREET=#street#
+            </isNotEmpty>
+            <isNotEmpty prepend="," property="zyjdz">ZYJDZ=#zyjdz#
+            </isNotEmpty>
+            <isNotEmpty prepend="," property="tel_number">TEL_NUMBER=#tel_number#
+            </isNotEmpty>
+            <!--<isNotEmpty prepend="," property="name4">NAME4=#name4#
+            </isNotEmpty>-->
+            <isNotEmpty prepend="," property="remark">REMARK=#remark#
+            </isNotEmpty>
+            <isNotEmpty prepend="," property="parau">PARAU=#parau#
+            </isNotEmpty>
+            <isNotEmpty prepend="," property="name_co">NAME_CO=#name_co#
+            </isNotEmpty>
+            <isNotEmpty prepend="," property="str_suppl1">STR_SUPPL1=#str_suppl1#
+            </isNotEmpty>
+            <isNotEmpty prepend="," property="str_suppl2">STR_SUPPL2=#str_suppl2#
+            </isNotEmpty>
+            <isNotEmpty prepend="," property="extension2">EXTENSION2=#extension2#
+            </isNotEmpty>
+            <isNotEmpty prepend="," property="str_suppl3">STR_SUPPL3=#str_suppl3#
+            </isNotEmpty>
+            <isNotEmpty prepend="," property="location">LOCATION=#location#
+            </isNotEmpty>
+            <isNotEmpty prepend="," property="city2">CITY2=#city2#
+            </isNotEmpty>
+            <isNotEmpty prepend="," property="extension1">EXTENSION1=#extension1#
+            </isNotEmpty>
+            <!-- <isNotEmpty prepend="," property="kunn2">KUNN2=#kunn2#
+            </isNotEmpty> -->
+            <isNotEmpty prepend="," property="bryth">BRYTH=#bryth#
+            </isNotEmpty>
+            <isNotEmpty prepend="," property="pafkt">PAFKT=#pafkt#
+            </isNotEmpty>
+            <isNotEmpty prepend="," property="pavip">PAVIP=#pavip#
+            </isNotEmpty>
+            <isNotEmpty prepend="," property="parvo">PARVO=#parvo#
+            </isNotEmpty>
+            <isNotEmpty property="updatejf">
+                <isNotEmpty prepend="," property="zjf">ZJF=#zjf#</isNotEmpty>
+                <isNotEmpty prepend="," property="zhyjf">ZHYJF=#zhyjf#
+                </isNotEmpty>
+            </isNotEmpty>
+            <isNotEmpty prepend="," property="building">BUILDING=#building#
+            </isNotEmpty>
+        </dynamic>
+        WHERE KUNNR = #kunnr#
+    </update>
+
+    <select id="getWerksInfo" resultClass="dto" parameterClass="dto">
+        select werks,name1 from z_rfc_store_06_it_t001w
+        <dynamic>
+            <isNotEmpty property="vkorg" prepend="where">
+                vkorg=#vkorg#
+            </isNotEmpty>
+        </dynamic>
+        order by werks
+    </select>
+    <!-- 会员卡类别 -->
+    <select id="getCardCategoryInfo" resultClass="dto">
+    <![CDATA[
+
+      select * from z_rfc_store_09_it_tpfkt order by PAFKT
+
+        ]]>
+	</select>
+    <!-- 会员卡级别 -->
+    <select id="getCardStatusInfo" resultClass="dto">
+    <![CDATA[
+
+      select * from z_rfc_store_09_it_tvpvt order by PARVO
+
+        ]]>
+	</select>
+    <!-- 会员消费记录 -->
+    <select id="getMemberConsumDetail" resultClass="dto">
+        SELECT SALESORDERID, OPERATEDATETIME, SAPSALESORDERID,ORDERTYPE ,
+        (select bezei from z_rfc_store_09_it_tvakt b where b.AUART =
+        a.ORDERTYPE )
+        ORDERTYPESTR, SALEPROMOTIONCODE, ORDERREASON , (select
+        BEZEI from
+        z_rfc_store_09_it_tvaut c where c.AUGRU=a.orderreason )
+        orderreasonStr,
+        STOREID , (select NAME1 from z_rfc_store_06_it_t001w d
+        where
+        d.werks=a.storeid) storeidstr, OPERATOR, REMARKS, DEPOSITID,
+        SALEDATE,
+        CUSTOMERID,
+        CASHCOUPON, SALESCLERK, STORERECEIPT,
+        PAYMENTACCNO, AMOUNTCOLLECTED,
+        PAYMENTMETHOD, VIPCARD, ORDERFLAG,
+        DELIVERYDATE, CARDEXPIRED,
+        TOTALMONEY,
+        RESALESORDERID, VIPNAME,
+        STATEMENTID, DELIVERYORDERNUMBER, MATERIALDOCUMBER,
+        INSERTDATETIME,
+        CASH, UNIONPAY, SHOPPINGCARD, SUBSCRIPTION, referrer,
+        thankIntegral ,
+        (select sum(SALESQUANTITY) from aig_orderitem d where
+        d.SALESORDERID=a.SALESORDERID ) quantity,
+        IF((select sort2 from z_rfc_store_05_gt_vip where str_to_date(TEL_NUMBER,'%Y-%m-%d') =
+        str_to_date(a.SALEDATE,'%Y-%m-%d')
+        and sort2=#kunnr#)=NULL, 'YES', 'NO') AS ISAGAIN
+        FROM aig_orderhead a
+        where
+        VIPCARD=#kunnr#
+        or VIPCARD in
+        <dynamic>
+            <iterate property="idList" open="(" close=")" conjunction=",">
+                #idList[]#
+            </iterate>
+        </dynamic>
+        order by OPERATEDATETIME desc
+    </select>
+
+
+    <insert id="insertConnection" parameterClass="dto">
+		INSERT INTO z_rfc_store_37_it_zthymx
+		(MANDT, ZXHY, ZJHY) 
+		VALUES ('200', #newkunnr#, #oldkunnr#)
+  </insert>
+
+    <select id="getOldIdList" parameterClass="dto" resultClass="String">
+        SELECT ZJHY
+        FROM z_rfc_store_37_it_zthymx where ZXHY in
+        <dynamic>
+            <isNotEmpty property="idList">
+                <iterate property="idList" open="(" close=")" conjunction=",">
+                    #idList[]#
+                </iterate>
+            </isNotEmpty>
+            <isEmpty property="idList">
+                ('')
+            </isEmpty>
+        </dynamic>
+    </select>
+
+    <select id="getRecommendKbert" parameterClass="dto" resultClass="Integer">
+		select ifnull((select DISTINCT b.KBETR from z_rfc_store_01_it_mara a inner join 	
+			z_rfc_store_02_it_zpjg b on a.KONDM = b.KONDM 	
+	where KSCHL = 'ZJF8'  		and KUNRE LIKE '$werks$%' 	
+	and b.datab <![CDATA[<=]]> current_date and b.datbi >= current_date 		
+		limit 1 )		, 		(select DISTINCT b.KBETR from z_rfc_store_01_it_mara a inner join 
+		z_rfc_store_02_it_zpjg b on a.KONDM = b.KONDM 		where KSCHL = 'ZJF8' and b.datab <![CDATA[<=]]>
+	current_date and b.datbi >= current_date  		limit 1 )		) KBETR
+	</select>
+
+
+</sqlMap>

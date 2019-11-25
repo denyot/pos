@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+	http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd">
+	<!-- quartz job -->
+   <!-- <bean name="quartzScheduler" class="org.springframework.scheduling.quartz.SchedulerFactoryBean" lazy-init="false">
+        <property name="dataSource" ref="dataSourceG4"/>
+        <property name="applicationContextSchedulerContextKey" value="applicationContextKey"/>
+        <property name="configLocation" value="classpath:quartz.properties"/>	-->	
+		<!--这个是必须的，QuartzScheduler 延时启动，应用启动完后 QuartzScheduler 再启动-->
+		<!--<property name="startupDelay" value="5"/>
+	    <property name="waitForJobsToCompleteOnShutdown" value="true"/>-->
+		<!--这个是可选，QuartzScheduler 启动时更新己存在的Job，这样就不用每次修改targetObject后删除qrtz_job_details表对应记录了
+		-->
+	<!--	<property name="overwriteExistingJobs" value="true"/>
+    </bean> 
+ 
+    <bean id="jobDetail" class="org.springframework.scheduling.quartz.JobDetailBean">
+        <property name="jobClass">
+            <value>
+               cn.longhaul.job.JobBean
+            </value>
+        </property>
+        <property name="jobDataAsMap">
+            <map>
+                <entry key="jobService">
+                    <ref bean="jobService"/>
+                </entry>
+            </map>
+        </property>
+    </bean>
+	<bean id="schedulerService" 
+		class="cn.longhaul.job.quartzservice.SchedulerServiceImpl">
+		<property name="jobDetail">
+			<ref bean="jobDetail" />
+		</property>
+		<property name="scheduler">
+			<ref bean="quartzScheduler" />
+		</property>
+	</bean> 
+	<bean id="jobService" 
+		class="cn.longhaul.job.JobService">
+	</bean>   -->
+ </beans>

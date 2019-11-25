@@ -1,0 +1,197 @@
+<%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "
+http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<%
+	String path = request.getContextPath();
+	String basePath = request.getScheme() + "://"
+			+ request.getServerName() + ":" + request.getServerPort()
+			+ path + "/";
+	String WERKS = (String) request.getAttribute("WERKS");
+	WERKS = WERKS == null || WERKS.equals("") ? "01DL" : WERKS;
+	String opterator = (String) request.getAttribute("userid");
+	opterator = opterator == null || opterator.equals("") ? "CHJ"
+			: opterator;
+	opterator = opterator.toUpperCase();
+	String salesorderid = (String) request.getAttribute("salesorderid");
+	salesorderid = salesorderid == null || salesorderid.equals("") ? ""
+			: salesorderid;
+	String opmode = (String) request.getAttribute("opmode");
+	opmode = opmode == null || opmode.equals("") ? "ADD" : opmode;
+	String ordertype = (String) request.getAttribute("ordertype");
+	ordertype = ordertype == null || ordertype.equals("") ? ""
+			: ordertype;
+	String autocompletesecond = (String) request
+			.getAttribute("autocompletesecond");
+	String autocompletewords = (String) request
+			.getAttribute("autocompletewords");
+	autocompletesecond = autocompletesecond == null
+			|| autocompletesecond.equals("") ? "4000"
+			: autocompletesecond;
+	autocompletewords = autocompletewords == null
+			|| autocompletewords.equals("") ? "4" : autocompletewords;
+	String posurl = (String) request.getAttribute("posurl");
+	posurl = posurl == null || posurl.equals("") ? "192.168.0.119"
+			: posurl;
+%>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <base href="<%=basePath%>">
+    <title>财务付款录入</title>
+    <script src="resource/jquery/jquery-1.7.2.js">
+</script>
+    <script src="resource/jquery/ui/jquery.ui.core.js">
+</script>
+    <script src="resource/jquery/ui/jquery.ui.widget.js">
+</script>
+    <script src="resource/jquery/ui/jquery.ui.position.js">
+</script>
+    <script src="resource/jquery/ui/jquery.ui.autocomplete.js">
+</script>
+    <script src="resource/jquery/ui/jquery.ui.datepicker.js">
+</script>
+    <script src="resource/jquery/ui/i18n/jquery.ui.datepicker-zh-CN.js">
+</script>
+    <script src="resource/jquery/ui/jquery.ui.mouse.js">
+</script>
+    <script src="resource/jquery/ui/jquery.ui.button.js">
+</script>
+    <script src="resource/jquery/ui/jquery.ui.draggable.js">
+</script>
+    <script src="resource/jquery/ui/jquery.ui.resizable.js">
+</script>
+    <script src="resource/jquery/ui/jquery.ui.dialog.js">
+</script>
+    <script src="resource/jquery/external/jquery.bgiframe-2.1.2.js">
+</script>
+    <script src="resource/jquery/jquery.alerts-1.1/jquery.alerts.js">
+</script>
+    <script src="resource/jquery/jquery-easyui-1.2.6/plugins/jquery.form.js">
+</script>
+    <script src="resource/jquery/validate/jquery.validationEngine.js">
+</script>
+    <script src="resource/jquery/validate/jquery.validationEngine-zh_CN.js">
+</script>
+    <script src="resource/jquery/jquery.multiSelect-1.2.3/jquery.multiSelect.js" type="text/javascript">
+</script>
+    <script src="resource/jquery/jquery-cookie/jquery.cookie.js" type="text/javascript">
+</script>
+    <link href="resource/jquery/jquery.multiSelect-1.2.3/jquery.multiSelect.css" rel="stylesheet" type="text/css" />
+    <script src="longhaul/pos/order/js/orderdate.js">
+</script>
+    <link rel="stylesheet" href="resource/jquery/themes/base/jquery.ui.all.css">
+    <link rel="stylesheet" href="resource/jquery/jquery.alerts-1.1/jquery.alerts.css">
+    <link rel="stylesheet" href="resource/jquery/validate/css/validationEngine.jquery.css" media="screen" />
+    <link rel="stylesheet" href="longhaul/pos/aftersales/css/aftersales.css" media="screen">
+    <style>
+.ui-autocomplete-loading {
+	background: white
+		url('resource/jquery/ui/images/ui-anim_basic_16x16.gif') right center
+		no-repeat;
+	td {text-align: right;
+}
+</style>
+    <script type="text/javascript">
+var WERKS = "<%=WERKS%>";
+var opterator = "<%=opterator%>";
+var chargimgpath = "http://<%=posurl%>/sappic/";
+var opmode = "<%=opmode%>";
+var werkssaleflag = "";
+var autocompletelength=<%=autocompletewords%>;
+		 var autocompletedelay=<%=autocompletesecond%>;
+		 var salesorderid = "<%=salesorderid%>";
+		 var basepath = "<%=basePath%>";
+		 var posurl="<%=posurl%>";
+     var service_type="<%=request.getParameter("service_type")%>";
+</script>
+  </head>
+  <body>
+    <form id="cwForm" name="cwForm" method="post">
+      <table width="800px" border="1" align="center">
+        <tr>
+          <td colspan="4" align="center">
+            <font class="titlehead"> 财务付款录入 </font>
+          </td>
+        </tr>
+        <td colspan="4" align="left" width=400px>
+          <font class="numberInfo"> 单号：${map.service_number } 顾客姓名：${map.member_name } </font>
+        </td>
+        <tr>
+          <td>
+            财务付款金额:</td>
+          <td class="inputleft">
+            <input name="cw_pay_amount" id="cw_pay_amount" value="${map.real_repair_amount }"  />元
+          </td>
+         <td>
+           会计凭证:</td>
+          <td class="inputleft">
+            <input name="cw_pay_documents" id="cw_pay_documents" value="${map.accounting_documents }" />
+          </td>
+        </tr>
+        <tr>
+          <td>
+            付款状态:</td>
+          <td class="inputleft">
+            <select name="cw_pay_status" id="cw_pay_status" style="width: 150px">
+              <option value="已付款">
+                已付款
+              </option>
+              <option value="未付款">
+                未付款
+              </option>
+            </select>
+          </td>
+          <td>&nbsp;</td>
+          <td>&nbsp;</td>
+          <!-- 
+          <td>
+            受理人:
+          </td>
+          <td class="inputleft">
+            <select name="accept_people_cw_select" id="accept_people_cw_select" 
+            multiple="multiple" style="width: 200px">
+            </select>
+            <input name="accept_people_cw" id="accept_people_cw" type="hidden"/>
+          </td>
+           -->
+        </tr>
+        <tr>
+          <td colspan="4">
+            <input type="button" id="repairSubmitBtn" value="提交" class="orersystembutton" />
+            &nbsp;&nbsp;
+            <input type=reset id="repairResetBtn" value="重置" class="orersystembutton" />
+            <input type="hidden" id="service_number" name="service_number"
+              value="<%=request.getParameter("service_number")%>" />
+            <input type="hidden" id="opterator" name="opterator" value="<%=opterator%>" />
+          </td>
+        </tr>
+      </table>
+    </form>
+  </body>
+</html>
+<script src="longhaul/pos/aftersales/js/binding.js"></script>
+<script type="text/javascript">
+$(function () {
+  //form提交
+  $("#repairSubmitBtn").click(function() {
+      var pass = $("#cwForm").validationEngine('validate');
+        if(pass==false){
+         return;
+      }
+     var params=$('#cwForm').serialize();
+     $.ajax({  
+             url :'longhaul/pos/aftersales/aftersales.ered?reqCode=updateInfo&postType=1&service_type='+service_type+'&step=cw', 
+             type:'post',    
+             dataType:'json',   
+             data:params,    
+             error: function(XMLHttpRequest, textStatus, errorThrown){
+                //jAlert('操作错误,请与系统管理员联系!', '提示');
+                window.location.href="longhaul/pos/authorization.jsp";
+              },
+             success:function(data){
+               jAlert('保存成功', '提示');
+             }//回传函数
+      });
+  });
+});
+</script>

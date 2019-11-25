@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 全局数据访问模型 -->
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="
+	http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+	http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd
+	http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd">
+	
+	<!-- 加载jdbc属性文件 -->
+	<bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="locations">
+			<list>
+				<value>jdbc.properties</value>
+			</list>
+		</property>
+	</bean>
+	<!-- Apache Commons DBCP 数据源  Mysql数据库
+	<bean id="dataSourceG4" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close" >
+		<property name="driverClassName" value="${g4.jdbc.driverClassName}" />
+		<property name="url" value="${g4.jdbc.url}" />
+		<property name="username" value="${g4.jdbc.username}" />
+		<property name="password" value="${g4.jdbc.password}" />
+		<property name="initialSize" value="10" />
+		<property name="maxActive" value="30" />
+		<property name="maxIdle" value="15" />
+		<property name="minIdle" value="5" />
+		<property name="removeAbandoned" value="true" />
+		<property name="removeAbandonedTimeout" value="60" />
+		<property name="maxWait" value="10000" />
+		<property name="logAbandoned" value="true" />
+	</bean>-->
+	
+	<bean id="dataSourceG4" class="com.alibaba.druid.pool.DruidDataSource" init-method="init" destroy-method="close" >
+		<property name="driverClassName" value="${g4.jdbc.driverClassName}" />
+		<property name="url" value="${g4.jdbc.url}" />
+		<property name="username" value="${g4.jdbc.username}" />
+		<property name="password" value="${g4.jdbc.password}" />
+		
+			<!-- 初始化连接大小 -->
+		<property name="initialSize" value="0" />
+		<!-- 连接池最大使用连接数量 -->
+		<property name="maxActive" value="20" />
+		<!-- 连接池最大空闲
+		<property name="maxIdle" value="20" /> -->
+		<!-- 连接池最小空闲 -->
+		<property name="minIdle" value="0" />
+		<!-- 获取连接最大等待时间 -->
+		<property name="maxWait" value="60000" />
+		<!-- <property name="poolPreparedStatements" value="true" /> <property name="maxPoolPreparedStatementPerConnectionSize" value="33" /> -->
+		<property name="testOnBorrow" value="false" />
+		<property name="testOnReturn" value="false" />
+		<property name="testWhileIdle" value="true" />
+		<property name="validationQuery" value="SELECT 'x'" />
+		<!-- 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒 -->
+		<property name="timeBetweenEvictionRunsMillis" value="60000" />
+		<!-- 配置一个连接在池中最小生存的时间，单位是毫秒 -->
+		<property name="minEvictableIdleTimeMillis" value="25200000" />
+		<!-- 打开removeAbandoned功能 -->
+		<property name="removeAbandoned" value="true" />
+		<!-- 1800秒，也就是30分钟 -->
+		<property name="removeAbandonedTimeout" value="1800" />
+		<!-- 关闭abanded连接时输出错误日志 -->
+		<property name="logAbandoned" value="true" />
+		 <!-- 开启Druid的监控统计功能 -->
+		 <property name="filters" value="stat" /> 
+	</bean>
+	
+	<!-- 配置sqlmapClientFactory -->
+	<bean id="sqlMapClientG4" class="org.springframework.orm.ibatis.SqlMapClientFactoryBean">
+		<property name="configLocations">
+			<list>
+				<!-- G4系统级的SQL映射 -->
+				<value>config/g4/g4.sqlmap.xml</value>
+				<!-- 业务系统的SQL映射 -->
+				<value>config/app/app.sqlmap.xml</value>
+			</list>
+		</property>
+		<property name="dataSource" ref="dataSourceG4" />
+	</bean>
+	<!-- 配置G4数据读取器  -->
+	<bean id="g4Reader" class="org.eredlab.g4.bmf.base.IReaderImpl">
+		<property name="sqlMapClient" ref="sqlMapClientG4" />
+	</bean>
+	<!-- 配置G4Dao  -->
+	<bean id="g4Dao" class="org.eredlab.g4.bmf.base.IDaoImpl">
+		<property name="sqlMapClient" ref="sqlMapClientG4" />
+	</bean>
+
+
+	<!-- 会员相关-->
+	<bean id="userDao" class="cn.longhaul.pos.member.service.UserDaoImpl" >
+		<property name="sqlMapClient" ref="sqlMapClientG4" />
+	</bean>
+
+	
+	<!-- Apache Commons DBCP 数据源 Oracle数据库 
+	<bean id="dataSourceOracle" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close" >
+		<property name="driverClassName" value="${g4.jdbc.driverClassName2}" />
+		<property name="url" value="${g4.jdbc.url2}" />
+		<property name="username" value="${g4.jdbc.username2}" />
+		<property name="password" value="${g4.jdbc.password2}" />
+		<property name="initialSize" value="15" />
+		<property name="maxActive" value="60" />
+		<property name="maxIdle" value="30" />
+		<property name="minIdle" value="10" />
+		<property name="removeAbandoned" value="true" />
+		<property name="removeAbandonedTimeout" value="60" />
+		<property name="maxWait" value="1000000" />
+		<property name="logAbandoned" value="true" />
+	</bean> -->
+	<bean id="dataSourceOracle" class="com.alibaba.druid.pool.DruidDataSource" init-method="init" destroy-method="close" >
+		<property name="driverClassName" value="${g4.jdbc.driverClassName2}" />
+		<property name="url" value="${g4.jdbc.url2}" />
+		<property name="username" value="${g4.jdbc.username2}" />
+		<property name="password" value="${g4.jdbc.password2}" />
+			<!-- 初始化连接大小 -->
+		<property name="initialSize" value="0" />
+		<!-- 连接池最大使用连接数量 -->
+		<property name="maxActive" value="20" />
+		<!-- 连接池最大空闲
+		<property name="maxIdle" value="20" /> -->
+		<!-- 连接池最小空闲 -->
+		<property name="minIdle" value="0" />
+		<!-- 获取连接最大等待时间 -->
+		<property name="maxWait" value="60000" />
+		<!-- <property name="poolPreparedStatements" value="true" /> <property name="maxPoolPreparedStatementPerConnectionSize" value="33" /> -->
+		<property name="testOnBorrow" value="false" />
+		<property name="testOnReturn" value="false" />
+		<property name="testWhileIdle" value="false" />
+		<!-- 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒 -->
+		<property name="timeBetweenEvictionRunsMillis" value="60000" />
+		<!-- 配置一个连接在池中最小生存的时间，单位是毫秒 -->
+		<property name="minEvictableIdleTimeMillis" value="25200000" />
+		<!-- 打开removeAbandoned功能 -->
+		<property name="removeAbandoned" value="true" />
+		<!-- 1800秒，也就是30分钟 -->
+		<property name="removeAbandonedTimeout" value="1800" />
+		<!-- 关闭abanded连接时输出错误日志 -->
+		<property name="logAbandoned" value="true" />
+		 <!-- 开启Druid的监控统计功能 -->
+		 <property name="filters" value="stat" /> 
+	</bean>
+	<!-- 配置sqlmapClientFactory -->
+	<bean id="sqlMapClientOracle" class="org.springframework.orm.ibatis.SqlMapClientFactoryBean">
+		<property name="configLocations">
+			<list>
+				<!-- G4系统级的SQL映射 -->
+				<value>config/g4/g4.sqlmap.xml</value>
+				<!-- 业务系统的SQL映射 -->
+				<value>config/app/app.sqlmap.xml</value>
+			</list>
+		</property>
+		<property name="dataSource" ref="dataSourceOracle" />
+	</bean>
+	<!-- 配置G4数据读取器  -->
+	<bean id="oracleReader" class="org.eredlab.g4.bmf.base.IReaderImpl">
+		<property name="sqlMapClient" ref="sqlMapClientOracle" />
+	</bean>
+	<!-- 配置G4Dao  -->
+	<bean id="oracleDao" class="org.eredlab.g4.bmf.base.IDaoImpl">
+		<property name="sqlMapClient" ref="sqlMapClientOracle" />
+	</bean>
+	
+</beans>

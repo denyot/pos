@@ -1,0 +1,17 @@
+$(function () {
+	var day30 = 30 * 24 * 60 * 60 * 1000;
+	var now = new Date();
+	now.setTime(now.getTime() + day30);
+	$("#accept_date").datepicker({changeMonth:true, changeYear:true, });
+	if($("#accept_date").val()=="")
+	  $("#accept_date").datepicker("setDate", new Date());
+	$("#sell_date").datepicker({changeMonth:true, changeYear:true});
+	$("#expected_pickup_date").datepicker({changeMonth:true, changeYear:true});
+	if($("#expected_pickup_date").val()=="")
+	  $("#expected_pickup_date").datepicker("setDate", now);
+	$("#receive_date").datepicker({changeMonth:true, changeYear:true});
+	if($("#receive_date").val()=="")
+	  $("#receive_date").datepicker("setDate", new Date());
+	
+});
+

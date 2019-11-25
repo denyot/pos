@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="synchrosystem">
+	<typeAlias alias="dto"
+		type="org.eredlab.g4.ccl.datastructure.impl.BaseDto" />
+	
+	<select id="getMatnrIfExists" parameterClass="dto" resultClass="int">
+		select count(*) from z_rfc_store_01_it_mara where MATNR = #MATNR#
+	</select>
+	
+	<update id="updateMatnrInfo" parameterClass="dto">
+		UPDATE z_rfc_store_01_it_mara 
+		SET MANDT = #MANDT# , MEINS = #MEINS#, MAKTX = #MAKTX#, MATKL = #MATKL#, EXTWG = #EXTWG#,
+		 MSTAE = #MSTAE#, ZJLBM = #ZJLBM#, ZSLBM = #ZSLBM#, ZSLYS = #ZSLYS#, ZSLXZ = #ZSLXZ#, 
+		 ZSLGG = #ZSLGG#, LABOR = #LABOR#, ZHKFF = #ZHKFF#, ZGY = #ZGY#, ZMATNRT = #ZMATNRT#, 
+		 TBTXT = #TBTXT#, KONDM = #KONDM#, BISMT = #BISMT#, ZHPCCQ = #ZHPCCQ#, ZHPCCZ = #ZHPCCZ#, 
+		 ZZSZQ = #ZZSZQ#, ZZSZZ = #ZZSZZ#, ZPSBS = #ZPSBS#, ZJZ = #ZJZ#, VERPR = #VERPR#, ZFSSL = #ZFSSL#, 
+		 ZFSZL = #ZFSZL#, ZCPXL = #ZCPXL#, ZCPFG = #ZCPFG#, MENGE = #MENGE#, ZGMJH = #ZGMJH#, 
+		 ZBZJS = #ZBZJS#, ZBZJX = #ZBZJX# 
+		WHERE MATNR=#MATNR#
+	</update>
+	
+	<insert id="insertMatnrInfo" parameterClass="dto">
+		INSERT INTO z_rfc_store_01_it_mara
+		(MANDT, MATNR, MEINS, MAKTX, MATKL, EXTWG, MSTAE, ZJLBM, ZSLBM, ZSLYS, 
+		ZSLXZ, ZSLGG, LABOR, ZHKFF, ZGY, ZMATNRT, TBTXT, KONDM, BISMT, ZHPCCQ, 
+		ZHPCCZ, ZZSZQ, ZZSZZ, ZPSBS, ZJZ, VERPR, ZFSSL, ZFSZL, ZCPXL, ZCPFG, MENGE, 
+		ZGMJH, ZBZJS, ZBZJX)
+		VALUES (#MANDT#, #MATNR#, #MEINS#, #MAKTX#, #MATKL#, #EXTWG#, #MSTAE#, 
+		#ZJLBM#, #ZSLBM#, #ZSLYS#, #ZSLXZ#, #ZSLGG#, #LABOR#, #ZHKFF#, #ZGY#, #ZMATNRT#, 
+		#TBTXT#, #KONDM#, #BISMT#, #ZHPCCQ#, #ZHPCCZ#, #ZZSZQ#, #ZZSZZ#, #ZPSBS#, #ZJZ#, #VERPR#, 
+		#ZFSSL#, #ZFSZL#, #ZCPXL#, #ZCPFG#, #MENGE#, #ZGMJH#, #ZBZJS#, #ZBZJX#)
+	</insert>
+	
+	<select id="getChargIfExists" parameterClass="dto" resultClass="int">
+		select count(*) from z_rfc_store_03_it_charg where CHARG = #CHARG#
+	</select>
+	
+	<!-- 
+	<update id="updateChargInfo" parameterClass="dto">
+		UPDATE z_rfc_store_03_it_charg 
+		SET  MATNR = #MATNR#, ZCLZL = #ZCLZL#, ZDZGK = #ZDZGK#, ZFMNN = #ZFMNN#, ZFXMN = #ZFXMN#, ZGMJH = #ZGMJH#, ZSLNN = #ZSLNN#, ZZLNN = #ZZLNN#, 
+		ZCCNN = #ZCCNN#, ZGSXS = #ZGSXS#, ZCPXL = #ZCPXL#, ZCPFG = #ZCPFG#, ZSHNN = #ZSHNN#, ZJLBM = #ZJLBM#, ZJSYL = #ZJSYL#, ZJJFS = #ZJJFS#, 
+		ZXSFS = #ZXSFS#, ZCZZN = #ZCZZN#, ZZZSJ = #ZZZSJ#, ZYRKH = #ZYRKH#, ZYWLX = #ZYWLX#, PCHARG1 = #PCHARG1#, ZPJSL1 = ZPJSL1, ZPJZL1 = #ZPJZL1#, 
+		PCHARG2 = #PCHARG2#, ZPJSL2 = #ZPJSL2#, ZPJZL2 = #ZPJZL2#, YDBSF = #YDBSF#, ZYSNN = #ZYSNN#, LIFNR = #LIFNR#, HPZL = #HPZL#, ZNUM = #ZNUM#,
+		ZSZSB1 = #ZSZSB1#, CHARG_O = #CHARG_O#, ZDATUM = #ZDATUM#, ZMATNRT = #ZMATNRT#, ZTXT1 = #ZTXT1#
+		WHERE CHARG = #CHARG# 
+	</update>
+	
+	<insert id="insertChargInfo" parameterClass="dto">
+		INSERT INTO z_rfc_store_03_it_charg
+		(CHARG, MATNR, ZCLZL, ZDZGK, ZFMNN, ZFXMN, ZGMJH, ZSLNN, ZZLNN, ZCCNN, ZGSXS, ZCPXL, ZCPFG, ZSHNN, ZJLBM, ZJSYL, ZJJFS, ZXSFS, ZCZZN, ZZZSJ, 
+		ZYRKH, ZYWLX, PCHARG1, ZPJSL1, ZPJZL1, PCHARG2, ZPJSL2, ZPJZL2, YDBSF, ZYSNN, LIFNR, HPZL, ZNUM, ZSZSB1, CHARG_O, ZDATUM, ZMATNRT, ZTXT1) 
+		VALUES (#CHARG#, #MATNR#, #ZCLZL#, #ZDZGK#, #ZFMNN#, #ZFXMN#, #ZGMJH#, #ZSLNN#, #ZZLNN#, #ZCCNN#, 
+		#ZGSXS#, #ZCPXL#, #ZCPFG#, #ZSHNN#, #ZJLBM#, #ZJSYL#, #ZJJFS#, #ZXSFS#, #ZCZZN#, #ZZZSJ#, #ZYRKH#, 
+		#ZYWLX#, #PCHARG1#, #ZPJSL1#, #ZPJZL1#, #PCHARG2#, #ZPJSL2#, #ZPJZL2#, #YDBSF#, #ZYSNN#, #LIFNR#, #HPZL#, #ZNUM#, 
+		#ZSZSB1#, #CHARG_O#, #ZDATUM#, #ZMATNRT#, #ZTXT1#)
+	</insert>
+	-->
+	
+	<update id="updateChargInfo" parameterClass="dto">
+		UPDATE z_rfc_store_03_it_charg 
+		SET  MATNR = #MATNR#, ZCLZL = #ZCLZL#, ZDZGK = #ZDZGK#, ZFMNN = #ZFMNN#, ZFXMN = #ZFXMN#, ZGMJH = #ZGMJH#, ZSLNN = #ZSLNN#, ZZLNN = #ZZLNN#, 
+		ZCCNN = #ZCCNN#, ZGSXS = #ZGSXS#, ZCPXL = #ZCPXL#, ZCPFG = #ZCPFG#, ZSHNN = #ZSHNN#, ZJLBM = #ZJLBM#, ZJSYL = #ZJSYL#, ZJJFS = #ZJJFS#, 
+		ZXSFS = #ZXSFS#, ZCZZN = #ZCZZN#, ZZZSJ = #ZZZSJ#, ZYRKH = #ZYRKH#, ZYWLX = #ZYWLX#, PCHARG1 = #PCHARG1#, ZPJSL1 = ZPJSL1, ZPJZL1 = #ZPJZL1#, 
+		PCHARG2 = #PCHARG2#, ZPJSL2 = #ZPJSL2#, ZPJZL2 = #ZPJZL2#, YDBSF = #YDBSF#, ZYSNN = #ZYSNN#, LIFNR = #LIFNR#, HPZL = #HPZL#, ZNUM = #ZNUM#,
+		ZSZSB1 = #ZSZSB1#, CHARG_O = #CHARG_O#, ZDATUM = #ZDATUM#, ZMATNRT = #ZMATNRT#, ZTXT1 = #ZTXT1#, GOLDFEE = #GOLDFEE#, ZTXT2 = #ZTXT2#,
+		ZTXT3 = #ZTXT3#, ZTXT4 = #ZTXT4#, ZTXT5 = #ZTXT5#, ZCITSTOMWG = #ZCITSTOMWG#, ZCITSTOAWG = #ZCITSTOAWG#, ZTXT6 = #ZTXT6#, ZTXT7 = #ZTXT7#,
+		ZTXT8 = #ZTXT8#, ZINT1 =#ZINT1#, ZINT2 = #ZINT2#
+		WHERE CHARG = #CHARG# 
+	</update>
+	
+	<insert id="insertChargInfo" parameterClass="dto">
+		INSERT INTO z_rfc_store_03_it_charg
+		(CHARG, MATNR, ZCLZL, ZDZGK, ZFMNN, ZFXMN, ZGMJH, ZSLNN, ZZLNN, ZCCNN, ZGSXS, ZCPXL, ZCPFG, ZSHNN, ZJLBM, ZJSYL, ZJJFS, ZXSFS, ZCZZN, ZZZSJ, 
+		ZYRKH, ZYWLX, PCHARG1, ZPJSL1, ZPJZL1, PCHARG2, ZPJSL2, ZPJZL2, YDBSF, ZYSNN, LIFNR, HPZL, ZNUM, ZSZSB1, CHARG_O, ZDATUM, ZMATNRT, ZTXT1, GOLDFEE,
+		ZTXT2,ZTXT3,ZTXT4,ZTXT5,ZCITSTOMWG,ZCITSTOAWG,ZTXT6,ZTXT7,ZTXT8,ZINT1,ZINT2) 
+		VALUES (#CHARG#, #MATNR#, #ZCLZL#, #ZDZGK#, #ZFMNN#, #ZFXMN#, #ZGMJH#, #ZSLNN#, #ZZLNN#, #ZCCNN#, 
+		#ZGSXS#, #ZCPXL#, #ZCPFG#, #ZSHNN#, #ZJLBM#, #ZJSYL#, #ZJJFS#, #ZXSFS#, #ZCZZN#, #ZZZSJ#, #ZYRKH#, 
+		#ZYWLX#, #PCHARG1#, #ZPJSL1#, #ZPJZL1#, #PCHARG2#, #ZPJSL2#, #ZPJZL2#, #YDBSF#, #ZYSNN#, #LIFNR#, #HPZL#, #ZNUM#, 
+		#ZSZSB1#, #CHARG_O#, #ZDATUM#, #ZMATNRT#, #ZTXT1#, #GOLDFEE#, #ZTXT2#, #ZTXT3#, #ZTXT4#, #ZTXT5#, #ZCITSTOMWG#, 
+		#ZCITSTOAWG#, #ZTXT6#, #ZTXT7#, #ZTXT8#, #ZINT1#, #ZINT2#)
+	</insert>
+	
+	<select id="getTempIfExists" parameterClass="dto" resultClass="int">
+		select count(*) from z_rfc_store_07_it_ztzmsx where ZZMHN = #ZZMHN#
+	</select>
+	
+	<update id="updateTempInfo" parameterClass="dto">
+		UPDATE z_rfc_store_07_it_ztzmsx 
+		SET MANDT = #MANDT# , ERDAT = #ERDAT#, MATKL = #MATKL#, EXTWG = #EXTWG#, ZMSHU = #ZMSHU#, ZSLXZ = #ZSLXZ#, ZSLGG = #ZSLGG#, ZGY = #ZGY#, 
+		ZXQFF = #ZXQFF#, ZSSBM = #ZSSBM#, ZJLBN = #ZJLBN#, ZSLBM = #ZSLBM#, ZCPFG = #ZCPFG#, ZCPXL = #ZCPXL#, ZSCNT = #ZSCNT#, ZSSIZ = #ZSSIZ#, 
+		ZSBZS = #ZSBZS#, UNAME = #UNAME#, ZYNFS = #ZYNFS# 
+		WHERE ZZMHN = #ZZMHN#
+	</update>
+	
+	<insert id="insertTempInfo" parameterClass="dto">
+		INSERT INTO z_rfc_store_07_it_ztzmsx
+		(MANDT, ZZMHN, ERDAT, MATKL, EXTWG, ZMSHU, ZSLXZ, ZSLGG, ZGY, ZXQFF, ZSSBM, ZJLBN, ZSLBM, ZCPFG, ZCPXL, ZSCNT, ZSSIZ, ZSBZS, UNAME, ZYNFS) 
+		VALUES (#MANDT#, #ZZMHN#, #ERDAT#, #MATKL#, #EXTWG#, #ZMSHU#, #ZSLXZ#, #ZSLGG#, #ZGY#, #ZXQFF#, #ZSSBM#, #ZJLBN#, #ZSLBM#, #ZCPFG#, #ZCPXL#, 
+		#ZSCNT#, #ZSSIZ#, #ZSBZS#, #UNAME#, #ZYNFS#)
+	</insert>
+	
+	<select id="getStockIfExists" parameterClass="dto" resultClass="int">
+		select count(*) from z_rfc_store_46_it_stock where WERKS = #WERKS# and LGORT = #LGORT# and CHARG = #CHARG# and MATNR = #MATNR#
+	</select>
+	
+	<update id="updateStockInfo" parameterClass="dto">
+		UPDATE z_rfc_store_46_it_stock 
+		SET WERKS = #WERKS# , LGORT = #LGORT#, CHARG = #CHARG#, MATNR = #MATNR#, LABST = #LABST#, MEINS = #MEINS# 
+		WHERE WERKS = #WERKS# and LGORT = #LGORT# and CHARG = #CHARG# and MATNR = #MATNR#
+	</update>
+	
+	<insert id="insertStockInfo" parameterClass="dto">
+		INSERT INTO z_rfc_store_46_it_stock
+		(WERKS, LGORT, CHARG, MATNR, LABST, MEINS) 
+		VALUES (#WERKS# , #LGORT#, #CHARG#, #MATNR#, #LABST#, #MEINS#)
+	</insert>
+	<update id="deleteAktnr" parameterClass="dto">
+		delete FROM z_rfc_store_02_it_zpjg
+		where kschl in ('Z087','ZZK2') 
+		  and	aktnr in 
+				<iterate property="aktnrs" open="(" close=")" conjunction=",">
+					#aktnrs[]#
+				</iterate>
+		  and aktnr > ''
+	</update>
+	<update id="deleteAktnrCharg" parameterClass="dto">
+		delete FROM z_rfc_store_54_it_z087
+		where kschl = 'Z087'
+		  and	aktnr in 
+				<iterate property="aktnrs" open="(" close=")" conjunction=",">
+					#aktnrs[]#
+				</iterate>
+		  and aktnr > ''
+	</update>
+	<insert id="insertAktnr" parameterClass="dto">
+		INSERT INTO $table$
+		(`MATNR`, `VKORG`, `VTWEG`, `KSCHL`, `KBETR`, `DATAB`, `DATBI`, `CURRDATE`, `KUNRE`, `KONDM`, `KONDA`, `AUART_SD`, `AKTNR`, `CHARG`, `KOSRT`, `KDGRP`) 
+		VALUES (#MATNR#, #VKORG#, #VTWEG#, #KSCHL#, #KBETR#, #DATAB#, #DATBI#, #CURRDATE#, #KUNRE#, #KONDM#, #KONDA#, #AUART_SD#,#AKTNR#, #CHARG#, #KOSRT#, #KDGRP#)
+	</insert>
+
+	
+</sqlMap>

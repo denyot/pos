@@ -1,0 +1,17 @@
+.servicebutton {
+  background-position: center center;
+  background-color: buttonface;
+  width: 70px;
+  height: 25px;
+  background-repeat: no-repeat;
+  cursor: pointer;
+}
+.servicebutton_se {
+  background-position: center center;
+  background-image: url(../../order/images/button.png);
+  background-color: buttonface;
+  width: 70px;
+  height: 25px;
+  background-repeat: no-repeat;
+  cursor: pointer;
+}

@@ -1,0 +1,725 @@
+<%@ page language="java" import="java.util.*,java.util.*" pageEncoding="UTF-8"%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "
+http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<%
+	String path = request.getContextPath();
+	String basePath = request.getScheme() + "://"
+			+ request.getServerName() + ":" + request.getServerPort()
+			+ path + "/";
+	String WERKS = (String) request.getAttribute("WERKS");
+	WERKS = WERKS == null || WERKS.equals("") ? "01DL" : WERKS;
+	String opterator = (String) request.getAttribute("userid");
+	opterator = opterator == null || opterator.equals("") ? "CHJ"
+			: opterator;
+	opterator = opterator.toUpperCase();
+	String salesorderid = (String) request.getAttribute("salesorderid");
+	salesorderid = salesorderid == null || salesorderid.equals("") ? ""
+			: salesorderid;
+	String opmode = (String) request.getAttribute("opmode");
+	opmode = opmode == null || opmode.equals("") ? "ADD" : opmode;
+	String ordertype = (String) request.getAttribute("ordertype");
+	ordertype = ordertype == null || ordertype.equals("") ? ""
+			: ordertype;
+	String autocompletesecond = (String) request
+			.getAttribute("autocompletesecond");
+	String autocompletewords = (String) request
+			.getAttribute("autocompletewords");
+	autocompletesecond = autocompletesecond == null
+			|| autocompletesecond.equals("") ? "4000"
+			: autocompletesecond;
+	autocompletewords = autocompletewords == null
+			|| autocompletewords.equals("") ? "4" : autocompletewords;
+	String posurl = (String) request.getAttribute("posurl");
+	posurl = posurl == null || posurl.equals("") ? "192.168.0.119"
+			: posurl;
+%>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <base href="<%=basePath%>">
+    <title>单据打印</title>
+    <script src="resource/jquery/jquery-1.7.2.js">
+</script>
+    <script src="resource/jquery/ui/jquery.ui.core.js">
+</script>
+    <script src="resource/jquery/ui/jquery.ui.widget.js">
+</script>
+    <script src="resource/jquery/ui/jquery.ui.position.js">
+</script>
+    <script src="resource/jquery/ui/jquery.ui.autocomplete.js">
+</script>
+    <script src="resource/jquery/ui/jquery.ui.datepicker.js">
+</script>
+    <script src="resource/jquery/ui/i18n/jquery.ui.datepicker-zh-CN.js">
+</script>
+    <script src="resource/jquery/ui/jquery.ui.mouse.js">
+</script>
+    <script src="resource/jquery/ui/jquery.ui.button.js">
+</script>
+    <script src="resource/jquery/ui/jquery.ui.draggable.js">
+</script>
+    <script src="resource/jquery/ui/jquery.ui.resizable.js">
+</script>
+    <script src="resource/jquery/ui/jquery.ui.dialog.js">
+</script>
+    <script src="resource/jquery/external/jquery.bgiframe-2.1.2.js">
+</script>
+    <script src="resource/jquery/jquery.alerts-1.1/jquery.alerts.js">
+</script>
+    <script src="resource/jquery/jquery.multiSelect-1.2.3/jquery.multiSelect.js" type="text/javascript">
+</script>
+    <script src="resource/jquery/jquery-cookie/jquery.cookie.js" type="text/javascript">
+</script>
+    <link href="resource/jquery/jquery.multiSelect-1.2.3/jquery.multiSelect.css" rel="stylesheet" type="text/css" />
+    <script src="longhaul/pos/order/js/orderdate.js">
+</script>
+    </script>
+    <link rel="stylesheet" href="resource/jquery/themes/base/jquery.ui.all.css">
+    <link rel="stylesheet" href="resource/jquery/jquery.alerts-1.1/jquery.alerts.css">
+    <link rel="stylesheet" href="longhaul/pos/aftersales/css/print.css" media="screen">
+    <style>
+.ui-autocomplete-loading {
+	background: white
+		url('resource/jquery/ui/images/ui-anim_basic_16x16.gif') right center
+		no-repeat;
+	td {text-align: right;
+}
+</style>
+    <script type="text/javascript">
+var WERKS = "<%=WERKS%>";
+var opterator = "<%=opterator%>";
+var chargimgpath = "http://<%=posurl%>/sappic/";
+var opmode = "<%=opmode%>";
+var werkssaleflag = "";
+var autocompletelength=<%=autocompletewords%>;
+		 var autocompletedelay=<%=autocompletesecond%>;
+		 var salesorderid = "<%=salesorderid%>";
+		 var basepath = "<%=basePath%>";
+		 var ordertype="<%=ordertype%>";
+		 var posurl="<%=posurl%>";
+
+</script>
+  </head>
+  <body>
+  <div id="div_store">
+    <table width="800px" border="1" frame=hsides rules=rows>
+      <tbody align="left">
+       <tr class="logo_td">
+          <td align="left" width=300px>
+            <span><img src="logo/logo.jpg" width="100px" height="80px" /> </span>
+          </td>
+          <td width=250px>
+            <span valign="middle"><font size="6">售后服务单</font> </span>
+          </td>
+          <td width=250px>编号:${map.service_number }</td>
+        </tr>
+      </tbody>
+    </table>
+    <div id="div_1">
+      <table width="800px" border="1" frame=hsides rules=rows>
+        <tbody align="left">
+        <tr>
+          <td>
+            门店:${map.store_name }
+          </td>
+          <td>&nbsp;</td>
+          <td>&nbsp;</td>
+        </tr>
+          <tr>
+          <td>
+            顾客姓名:${map.member_name }
+          </td>
+          <td>
+            会员卡号:${map.member_cardnumber }
+          </td>
+          <td rowspan="4" class="inputleft"><img width="100px" height="80px" id="oldimg_id" src="sappic/${map.charg_image }" /></td>
+        </tr>
+        <tr>
+          <td>
+            电话:${map.telephone }
+          </td>
+          <td>
+            投诉单号:${map.complaints_number }
+          </td>
+          </tr>
+        <tr>
+          <td>
+            商品批次:${map.old_commodity_barcode }
+          </td>
+          <td>
+            品名:${map.trade_name }
+          </td>
+        </tr>
+        <tr>
+          <td>
+            原货品总重:${map.old_goods_weight }
+          </td>
+          <td>
+            原货品石料重:${map.old_stone_weight } ct
+          </td>
+        </tr>
+        <tr>
+          <td>
+            原货品证书号:${map.old_certificate_number }
+          </td>
+        <td>实收货品重量:${map.real_goods_weight }</td>
+        <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>
+            裸石证书类型:${map.luodan_certificate_type }
+          </td>
+          <td>
+            裸石证书号:${map.luodan_certificate_number }
+          </td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>
+            实收价:${map.clinch_price }
+          </td>
+          <td>
+            出售日期:${map.sell_date }
+          </td>
+        <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>
+            受理日期:${map.accept_date }
+          </td>
+          <td>
+            预计取货日期:${map.expected_pickup_date }
+          </td>
+        <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>
+            <span id="prepared_commodity_barcode_span"> 拟定批次:${map.prepared_commodity_barcode }</span>
+          </td>
+           <td>
+            <span class="ring_span">尺寸:${map.ring }</span>
+          </td>
+        <td rowspan="4" class="inputleft"><img width="100px" height="80px" id="expectimg_id" src="sappic/${map.new_charg_image }"/></td>
+        </tr>
+        <tr>
+          <td>
+            <span id="facelift_bag_span">款式:${map.faceliftname }</span>
+          </td>
+          <td>
+            工费:${map.mainstone_process_fees }
+          </td>
+          </tr>
+        <tr>
+          <td>
+            金料:${map.goldname }
+          </td>
+          <td>
+            金料损耗:${map.gold_material_loss }
+          </td>
+          </tr>
+        <tr>
+          <td>
+            金料成色:${map.gold_material_quality }
+          </td>
+          <td>
+            <span id="mf_mold_number_span">拟改款物料号:${map.mf_mold_number }</span>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            加工费是否免费:${map.isfree_process_fees }
+          </td>
+          <td></td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>
+            是否含副石:${map.isincluding_vicestone }
+          </td>
+          <td>
+            是副石石料:${map.vicestone }
+          </td>
+        <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>
+            是否做证书:${map.isdo_certificate }
+          </td>
+          <td>
+            预计费用:${map.expected_cost }
+          </td>
+        <td>&nbsp;</td>
+        </tr>
+        <tr class="isdo_certificate_tr">
+          <td>
+            证书类型:${map.cername }
+          </td>
+          <td>
+            证书费用:${map.certificate_cost }
+          </td>
+        <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>
+            专柜受理人:${map.accept_people_first }
+          </td>
+          <td>
+            备注:${map.remark1 }
+          </td>
+        <td>&nbsp;</td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div id="div_2">
+      <table width="800px" id="addtable" border="1">
+        <tbody align="left">
+         <tr>
+            <td colspan="5" align="center">
+              <font class="stephead"><span id="secondstep"> 总部处理 </spa></font>
+            </td>
+          </tr>
+         
+         <tr>
+          <td rowspan="5" width="100px">
+            质量部收货
+          </td>
+          <td>
+            质量部收货日期:${map.dept_receive_date }
+          </td>
+          <td rowspan="4"  class="inputleft"><img src="sappic/${map.new_charg_image }" width="100px" height="80px" />
+          </td>
+        </tr>
+        <tr>
+          <td>
+            货品外观:${map.goods_outward }
+          </td>
+        </tr>
+        <tr>
+         <td>
+           货品重量:${map.old_goods_weight }
+          </td>
+        </tr>
+        <tr class="trbottom">
+         <td>
+            石料重量:${map.old_stone_weight }
+          </td>
+        </tr>
+        <tr>
+          <td>
+            石料检测:${map.stone_detection }
+          </td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>
+            采购部收货
+          </td>
+          <td>
+            交采购部日期:${map.to_purchase_date }
+          </td>
+          <td>
+            采购部接收人:${map.purchase_receive_people }
+          </td>
+        </tr>
+        <tr>
+          <td rowspan="2">
+            工厂收货
+          </td>
+          <td>
+            加工厂:${map.process_factory }
+          </td>
+          <td>
+            工厂收货人:${map.factory_receive_people }
+          </td>
+        </tr>
+        <tr class="trbottom">
+         <td>
+            工厂收货日期:${map.factory_receive_date }
+          </td>
+          <td>
+            工厂预计出货日期:${map.factory_expected_ship_date }
+          </td>
+        </tr>
+
+        <tr class="gcch">
+          <td rowspan="6" class="gcch">
+            工厂出货
+          </td>
+          <td class="gcch">
+            原货品金重:${map.old_gold_weight }
+          </td>
+          <td class="gcch">
+            新货品金重:${map.new_gold_weight }
+          </td>
+        </tr>
+        <tr class="gcch">
+          <td class="gcch">
+           原货品金价:${map.old_gold_price }</td>
+          <td class="gcch">
+            新货品金价:${map.new_gold_price }
+          </td>
+        </tr>
+        <tr class="gcch">
+          <td class="gcch">
+            主石料加工费:${map.mainstone_process_fees }
+          </td>
+          <td class="gcch">
+            工厂收取副石费用:${map.vicestone_cost }
+          </td>
+        </tr>
+        <tr class="gcch">
+         <td class="gcch">
+            副石数量:${map.mf_stone_amount }
+          </td>
+          <td class="gcch">
+            副石料加工费:${map.total_vicestone_process_fees }
+          </td>
+        </tr>
+        <tr class="gcch">
+          <td class="gcch">
+            起版费:${map.version_cost }
+          </td>
+          <td class="gcch"class="gcch">&nbsp;</td>
+        </tr>
+        <tr class="trbottom" class="gcch">
+         <td class="gcch">
+            金料损耗:${map.gold_material_loss }
+          </td>
+          <td class="gcch">
+            <span id="real_facelift_amount_span"> 实际产生金额:${map.real_facelift_amount }</span>
+          </td>
+        </tr>
+        <tr>
+        
+        </tr>
+        <!-- 收取顾客费用 -->
+        <tr>
+          <td rowspan="6">
+            收取顾客费用
+          </td>
+          <td>
+            原货品金重:${map.old_gold_weight_cus }
+          </td>
+          <td>
+            新货品金重:${map.new_gold_weight_cus }
+          </td>
+        </tr>
+        <tr>
+           <td>
+           原货品金价:${map.old_gold_price_cus }</td>
+          <td>
+            新货品金价:${map.new_gold_price_cus }
+          </td>
+        </tr>
+        <tr>
+          <td>
+            主石料加工费:${map.mainstone_process_fees_cus }
+          </td>
+          <td>
+            收取顾客副石费用:${map.vicestone_cost_cus }
+          </td>
+        </tr>
+        <tr>
+           <td>
+            副石料加工费:${map.total_vicestone_process_fees_cus }
+          </td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>
+            起版费:${map.version_cost_cus }
+          </td>
+          <td>
+            证书费用:${map.certificate_cost }
+          </td>
+        </tr>
+        <tr class="trbottom">
+        <td>
+            金料损耗:${map.gold_material_loss_cus }
+          </td>
+          <td>
+            <span id="real_facelift_amount_span"> 收取顾客费用:${map.real_repair_amount_cus }</span>
+          </td>
+        </tr>
+        <tr>
+          <td rowspan="9">
+            质量部检测
+          </td>
+        </tr>
+        <tr>
+         <td>
+            服务类型:${map.servicename }
+          </td>
+          <td>
+            <span id="prepared_commodity_barcode_span">拟定批次:${map.prepared_commodity_barcode }</span>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <span id="mf_mold_number_span">供应商模具号:${map.mf_mold_number }</span>
+          </td>
+          <td>
+            <span id="mf_gold_material_span">金料:${map.goldname }</span>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <span id="mf_stone_span">石料:${map.mf_stone }</span>
+          </td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>
+            石料种类:${map.mf_stone_kind }
+          </td>
+          <td>
+            石料颜色:${map.mf_stone_color }
+          </td>
+        </tr>
+        <tr>
+          <td>
+            石料规格:${map.mf_stone_format }
+          </td>
+          <td>
+            石料净度:${map.mf_stone_clarity }
+          </td>
+        </tr>
+        <tr>
+          <td>
+            石料重量:${map.mf_stone_weight }
+          </td>
+          <td>
+            <span class="new_certificate_number_span">新证书号:${map.new_certificate_number }</span>
+          </td>
+        </tr>
+        <tr class="peidui_tr">
+            <td>
+              <span class="facelift_ring_span"> 尺寸:${map.ring } </span>
+            </td>
+            <td>
+              <span class="new_commodity_barcode_span"> 新批次:${map.new_commodity_barcode_span }</span>
+            </td>
+        </tr>
+        <tr>
+          <td>
+            工厂维修结果:${map.factory_repair_result }
+          </td>
+          <td>
+            <span class="failed_reason_span"></span>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            &nbsp;
+          </td>
+          <td>
+            邮寄日期:${map.mailing_date }
+          </td>
+          <td>
+            &nbsp;
+          </td>
+        </tr>
+          <tr>
+            <td colspan="3" align="center">
+              <font class="stephead"> 门店确认 </font>
+            </td>
+          </tr>
+           <tr>
+           <td width="100px">&nbsp;</td>
+          <td>
+            到柜日期:${map.to_cabinet_date }</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>&nbsp;</td>
+          <td>满意度反馈:${map.satisfaction }</td>
+          <td>
+            不满意原因:${map.not_satisfied_reason }</td>
+        </tr>
+         <tr>
+         <td>&nbsp;</td>
+          <td>
+            应收金额:${map.real_facelift_amount_cus }</td>
+         <td>&nbsp;</td>
+        </tr>
+         <tr>
+          <td>&nbsp;</td>
+          <td>实收顾客金额:${map.real_customer_amount }</td>
+          <td>
+           顾客取货日期:${map.customer_pickup_date }</td>
+        </tr>
+        <tr>
+          <td>&nbsp;</td>
+            <td>货品状态:${map.description }</td>
+          <td>
+           &nbsp;
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div id="signature" style="display: none" >
+      <table width="800px" border="1" frame=hsides rules=rows>
+        <tbody align="left">
+          <tr>
+            <td colspan="2">
+              顾客确认______________
+            </td>
+          </tr>
+          <tr>
+            <td colspan="2">
+              取货确认______________
+            </td>
+          </tr>
+          <tr class="rightinfo">
+            <td>&nbsp;</td>
+            <td align="right">
+              <div>
+                全国免费服务热线：400-716-0096
+              </div>
+              <div>
+                姚氏珠宝-中国珠宝首饰业驰名品牌
+              </div>
+              <div>
+                欢迎登陆品牌网站：www.zljewelry.com
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <input type="hidden" id="service_type" value="${map.service_type }" />
+    </div>
+    </div>
+    <!-- 打印给工厂或采购部 -->
+    <div id="div_qdept" style="display:none">
+    <table width="800px" border="1">
+    <tr>
+      <td colspan="3" rowspan="3">顾客资料</td>
+      <td colspan="13">顾客改款下单表</td>
+    </tr>
+    <tr><td colspan="6">下单单号：</td><td colspan="7">制单日期：</td></tr>
+    <tr><td>客户名称:</td><td colspan="2">顾客改款</td><td colspan="3">要求到货日期：</td><td></td><td></td><td></td><td></td><td></td><td></td><td>${map.expect_picture }</td></tr>
+    
+    <tr><td>改款单号</td><td>姓名</td><td>电话</td><td>模具号(标签号)</td><td>首饰名称</td><td>采购下单数</td>
+    <td>金料</td><td>金料总量</td><td>石料名称</td><td>石料重量</td><td>石料净度</td><td>石料颜色</td><td>石料粒数</td>
+    <td>尺寸</td><td>工厂</td><td>备注</td></tr>
+    
+    <tr><td>${map.service_number }</td><td>${map.member_name }</td><td>${map.telephone }</td><td>${map.mf_mold_number }</td><td>${map.trade_name }</td><td>1</td>
+    <td>${map.gold_material }</td><td>${map.old_gold_weight }</td><td>${map.mf_stone }</td><td>${map.mf_stone_weight }</td>
+    <td>${map.mf_stone_clarity }</td><td>${map.mf_stone_color }</td><td>${map.mf_stone_amount }</td>
+    <td>${map.ring }</td><td>${map.process_factory }</td><td>${map.remark }</td></tr>
+    <tr class="factorysign"><td colspan="16">工厂收货人______________________</td></tr>
+    <tr class="factorysign"><td colspan="16">工厂收货日期______________________</td></tr>
+    <tr class="factorysign"><td colspan="16">工厂预计出货日期______________________</td></tr>
+    <tr class="stocksign"><td colspan="16">采购部接收人______________________</td></tr>
+    <tr class="stocksign"><td colspan="16">采购部接收日期______________________</td></tr>
+    </table>
+    </div>
+  </body>
+</html>
+<script type="text/javascript">
+$(document).ready(function(){
+	var store_num = "<%= session.getAttribute("store_num")%>";
+	if(store_num != 1000){
+		$(".gcch").css('display','none');
+	}
+	
+   var whichp = "<%=request.getAttribute("whichp")%>";
+   if(whichp != ""){
+     if(whichp == "s"){
+       $("#signature").css('display','block');
+       $("#div_2").css('display','none');
+       $("#div_3").css('display','none');
+       $(".rightinfo").show();
+       $(".logo_td").show();
+       window.print();
+     }else if(whichp == "f"){
+       $("#div_store").css('display','none');
+       $("#div_qdept").css('display','block');
+       $(".factorysign").show();
+       $(".stocksign").hide();
+       window.print();
+     }else if(whichp == "p"){
+       $("#div_store").css('display','none');
+       $("#div_qdept").css('display','block');
+       $(".factorysign").hide();
+       $(".stocksign").show();
+       window.print();
+     }else if(whichp == "sssss"){
+       $("#div_qdept").css('display','block');
+       $("#signature").css('display','none');
+       $("#div_1").css('display','none');
+       $("#div_3").css('display','none');
+       $(".rightinfo").hide();
+       $(".logo_td").hide();
+       $("#secondstep").text('改款下单表');
+       window.print();
+     }
+   }
+   faceLinkage();
+   function faceLinkage(){
+    var v = $("#service_type").val();
+    var _clinch_price = $("#clinch_price").val();
+    var _real_facelift_amount = $("#tempamount").val();
+     if(v == '配对'){
+       $("#mf_mold_number_span").text('配对模具号:');
+       $("#mf_gold_material_span").text('配对金料:');
+       $("#mf_stone_span").text('配对石料:');
+       $("#mf_stone_amount_span").text('配对石料数量:');
+       $("#mf_stone_detail_span").text('配对石料信息:');
+       $("#facelift_ring_span").css('display','none');
+       $("#old_gold_weight_span").css('display','none');
+       $("#new_commodity_barcode_span").css('display','none');
+       $("#real_facelift_amount_span").text('配对实际产生金额:');
+       if(_real_facelift_amount ==''){//配对实际产生金额
+          $("#real_facelift_amount").val(_clinch_price/2);
+       }
+       $(".formula_tb").hide();//计算区域
+     }else if(v == '改款'){
+       $("#mf_mold_number_span").text('改款模具号:');
+       $("#mf_gold_material_span").text('改款金料:');
+       $("#mf_stone_span").text('改款石料:');
+       $("#mf_stone_span").val('钻石');
+       $("#mf_stone_amount_span").text('改款石料数量:');
+       $("#mf_stone_detail_span").text('改款石料信息:');
+       $("#facelift_ring_span").css('display','block');
+       $("#old_gold_weight_span").css('display','block');
+       $("#new_commodity_barcode_span").css('display','block');
+       $("#real_facelift_amount").val(_real_facelift_amount);//改款实际产生金额
+       $(".formula_tb").show();//计算区域
+     }
+  }
+    //维修记录
+    loadFailedRecord();
+    function loadFailedRecord(){
+    var _service_number = "${map.service_number }";
+    if(_service_number!=""){
+        $.getJSON(
+        "longhaul/pos/aftersales/aftersales.ered?reqCode=getFailedReason&postType=1&random="
+            + Math.random(), {
+          werks : WERKS,
+          service_number : _service_number,
+          after_type : 2
+        }, function(data) {
+          if (data == "") {
+            //jAlert('无数据存在!', '提示', function(r) { });
+            return;
+          }
+          $.each(data, function(key, val) {
+            stylcss = key % 2 == 0 ? "failed_reason_tr" : "failed_reason_tr";
+            row = "<tr class=" + stylcss + ">";
+            var factory_receive_date = val.factory_receive_date == null? "&nbsp;": val.factory_receive_date;
+            row = row + "<td>返修记录"+(key+1)+"</td><td>工厂收货日期：" + factory_receive_date + "</td>";
+            var failed_reason = val.failed_reason == null? "&nbsp;": val.failed_reason;
+            row = row + "<td>不合格原因：" + val.failed_reason + "</td>";
+            row = row + "</tr>"
+            $("#addtable tr:eq(30)").after(row);
+          });
+        });
+      }
+    }
+ });
+</script>

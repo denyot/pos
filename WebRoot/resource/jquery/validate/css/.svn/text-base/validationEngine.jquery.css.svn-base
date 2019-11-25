@@ -1,0 +1,48 @@
+.formError { display: block;  padding-bottom: 13px;  position: absolute;  top: -40px;  z-index:99997;}
+
+			#debugMode{
+				background:#000;
+				position:fixed;
+				width:100%; height:200px;
+				top:0; left:0;
+				overflow:scroll;
+				opacity:0.8;
+				display:block;
+				padding:10px;
+				color:#fff;
+				font-size:14px;
+				z-index:99998;
+			}
+		
+			.ajaxSubmit{ padding:20px; background:#55ea55;border:1px solid #999;display:none}
+.formError .formErrorContent { background: none repeat scroll 0 0 #fff; border: 1px solid #e60900; /*border-radius: 4px 4px 4px 4px;*/ box-shadow: 0 0 2px #444; padding: 4px 16px; text-shadow: none; color:#b00000;}
+			.greenPopup .formErrorContent {background:#33be40;}
+			
+			.blackPopup .formErrorContent {background:#393939;color:#FFF;}
+			
+.formError .formErrorArrow { bottom: 0; height: 15px; left: 20px; position: absolute; width: 15px; z-index: 5001;}
+
+			.formError .formErrorArrowBottom{top:0;margin:-6px;}
+			
+.formError .formErrorArrow div { background: none repeat scroll 0 0 #fff; border-left: 2px solid #e60900; border-right: 2px solid #e60900; box-shadow: 0 2px 3px #9d9d9d; display: block; height: 1px; margin: 0 auto;}
+
+					.formError .formErrorArrowBottom div{
+						box-shadow: none;
+						-moz-box-shadow: none;
+						-webkit-box-shadow: none;
+					}
+					
+				.greenPopup .formErrorArrow div{background:#33be40;}
+				.blackPopup .formErrorArrow div{background:#393939;color:#FFF;}
+
+				
+.formError .formErrorArrow .line10 { border: medium none; width: 15px;}
+.formError .formErrorArrow .line9 { border: medium none; width: 13px;}
+.formError .formErrorArrow .line8 { width: 11px;}
+.formError .formErrorArrow .line7 { width: 9px;}
+.formError .formErrorArrow .line6 { width: 7px;}
+.formError .formErrorArrow .line5 { width: 5px;}
+.formError .formErrorArrow .line4 { width: 3px;}
+.formError .formErrorArrow .line3 { border-bottom: 0 solid #e60900; border-left: 2px solid #e60900; border-right: 2px solid #e60900; width: 1px;}
+.formError .formErrorArrow .line2 { background: none repeat scroll 0 0 #e60900; border: medium none; width: 3px;}
+.formError .formErrorArrow .line1 { background: none repeat scroll 0 0 #e60900; border: medium none; width: 1px;}

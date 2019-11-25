@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts-config PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 1.2//EN" "http://struts.apache.org/dtds/struts-config_1_3.dtd">
+<struts-config>
+	<!-- 配置ActionFormBean -->
+	<form-beans>
+		<!-- 公共Form -->
+		<form-bean name="commonActionForm" type="org.eredlab.g4.rif.web.CommonActionForm" />
+	</form-beans>
+	<action-mappings type="org.apache.struts.action.ActionMapping">
+		<!-- Action映射 -->
+
+		<!-- 营业员管理 -->
+		<action name="commonActionForm" parameter="reqCode" path="/assistant/assistantSystem" type="cn.longhaul.pos.assistant.web.AssistantSystemAction">
+			<forward name="assistantSystem" path="/assistant/addAssistant.jsp" />
+			<forward name="assistantSearch" path="/assistant/orderlist.jsp" />
+			<forward name="authorization" path="/authorization.jsp" />
+		</action>
+
+	<!-- 订单管理 -->
+		<action name="commonActionForm" parameter="reqCode" path="/order/orderSystem" type="cn.longhaul.pos.order.web.OrderSystemAction">
+			<forward name="orderSystem" path="/order/ordersystem.jsp" />
+			<forward name="orderSearch" path="/order/orderlist.jsp" />
+			<forward name="printOrder" path="/order/printorder.jsp" />
+			<forward name="authorization" path="/authorization.jsp" />
+			<forward name="orderSystemOut" path="/order/orderOut.jsp"></forward>
+			<forward name="orderSystemIn" path="/order/orderIn.jsp"></forward>
+			<forward name="orderSystemOutIn" path="/order/orderOutIn.jsp"></forward>
+		</action>
+	<!-- 每日金价 -->
+		<action name="commonActionForm" parameter="reqCode" path="/dailygold/dailyGoldSystem" type="cn.longhaul.pos.dailygold.web.DailyGoldSystemAction">
+			<forward name="dailyGoldSystem" path="/dailygold/dalyGoldInfo.jsp" />
+			<forward name="authorization" path="/authorization.jsp" />
+		</action>
+	<!-- 会员管理 -->
+		<action name="commonActionForm" parameter="reqCode" path="/member/memberSystem" type="cn.longhaul.pos.member.web.MemberSystemAction">
+			<forward name="dailyGoldSystem" path="/member/dalyGoldInfo.jsp" />
+			<forward name="authorization" path="/authorization.jsp" />
+		</action>
+	<!-- 库存管理 -->
+		<action name="commonActionForm" parameter="reqCode" path="/stock/stockSystem" type="cn.longhaul.pos.stock.web.StockSystemAction">
+			<forward name="start" path="/stock/receiveGoods.jsp" />
+			<forward name="authorization" path="/authorization.jsp" />
+			<forward name="stockTransferView" path="/stock/stockTransferSearch.jsp" />
+			<forward name="stockTransferExamine" path="/stock/stockTransferExamine.jsp" />
+		</action>
+	<!-- 选款下单管理 -->
+		<action name="commonActionForm" parameter="reqCode" path="/choiceorder/choiceOrderSystem" type="cn.longhaul.pos.choiceorder.web.ChoiceOrderSystemAction">
+			<forward name="authorization" path="/authorization.jsp" />
+			<forward name="view" path="/choiceorder/choiceorder.jsp" />
+			<forward name="viewforheadquarters" path="/choiceorder/choiceorderforheadquarters.jsp" />
+			<forward name="viewforgift" path="/choiceorder/giftchoiceorder.jsp" />
+		</action>
+
+	<!-- 同步管理 -->
+		<action name="commonActionForm" parameter="reqCode" path="/synchro/synchroSystem" type="cn.longhaul.pos.synchro.web.SynchroAction">
+			<forward name="authorization" path="/authorization.jsp" />
+		</action>
+
+		<!-- 售后管理 -->
+		<action name="commonActionForm" parameter="reqCode" path="/aftersales/aftersales" type="cn.longhaul.pos.aftersales.web.AftersalesAction">
+			<forward name="repairlist" path="/aftersales/repairlist.jsp" />
+			<forward name="alllist" path="/aftersales/alllist.jsp" />
+			<forward name="two" path="/aftersales/repairtwo.jsp" />
+			<forward name="three" path="/aftersales/repairthree.jsp" />
+			<forward name="detail" path="/aftersales/repairprint.jsp" />
+			<forward name="faceliftlist" path="/aftersales/faceliftlist.jsp" />
+			<forward name="ftwo" path="/aftersales/facelifttwo.jsp" />
+			<forward name="fdetail" path="/aftersales/faceliftprint.jsp" />
+			<forward name="authorization" path="/authorization.jsp" />
+			<forward name="cwsk" path="/aftersales/financial.jsp" />
+			<forward name="cwfk" path="/aftersales/financialfk1.jsp" />
+			<forward name="print1" path="/aftersales/repair_print.jsp" />
+			<forward name="print2" path="/aftersales/facelift_print.jsp" />
+		</action>
+
+	<!-- 报表管理 -->
+		<action name="commonActionForm" parameter="reqCode" path="/report/reportSystem" type="cn.longhaul.pos.report.web.ReportSystemAction">
+			<forward name="authorization" path="/authorization.jsp" />
+			<forward name="salesStatistics" path="/report/salesStatistics.jsp" />
+		</action>
+		
+		
+			<!-- 品牌管理 -->
+		<action name="commonActionForm" path="/brand" scope="request" validate="false" parameter="reqCode"
+			type="cn.longhaul.pos.storerange.web.ManagerAction">
+			<forward name="brandlist" path="/report/brandManager.jsp" />
+			<forward name="brandsale" path="/report/brandsale.jsp" />
+			<forward name="querybrandsale" path="/report/querybrandsale.jsp" />
+			<forward name="brandsale2" path="/report/brandsale2.jsp" />
+		</action>  		
+
+		<action name="commonActionForm" parameter="reqCode" validate="false" path="/redirect" type="cn.longhaul.pos.Redirect">
+			<forward name="authorization" path="/authorization.jsp" />
+			<forward name="url" path="/${url}"  />
+		</action>
+		
+		<!-- 首页消息管理 -->
+		<action name="commonActionForm" parameter="reqCode" path="/index/indexSystem" type="cn.longhaul.pos.index.web.IndexSystemAction">
+		</action>
+
+	</action-mappings>
+</struts-config>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="dataSourceStorageLocal">
+    <data-source name="ysprd@localhost" uuid="6edb9390-6662-4696-a9a3-ae6be75a329f">
+      <database-info product="" version="" jdbc-version="" driver-name="" driver-version="" />
+      <introspection-schemas>*:ysprd</introspection-schemas>
+    </data-source>
+  </component>
+</project>

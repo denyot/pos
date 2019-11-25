@@ -1,0 +1,35 @@
+body {
+  color: #4f6b72;
+  background: #E6EAE9;
+  font-family: 宋体, Arial;
+  font-size: 12px;
+  margin-left: 0px;
+  margin-top: 0px;
+  margin-right: 0px;
+  margin-bottom: 0px;
+}
+table {
+  background-color: #FFFFFF;
+  text-align: left;
+  border: 1px solid #C1DAD7;
+  border-collapse: collapse;
+  margin: auto;
+}
+td{
+cellspacing:0;
+line-height:150%;
+}
+.printTable { 
+  background-color:#FFFFFF;
+  text-align:left;
+  border:0px solid #C1DAD7;   
+  border-collapse:collapse;  
+}
+tbody{
+ align:left;
+}
+.stephead {
+  color: #FF3030;
+  font-family: 宋体, Arial;
+  font-size: 20px;
+}

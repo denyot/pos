@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<!-- 系统监控手工映射SQL语句 -->
+<sqlMap namespace="RFCMonitor">
+	<typeAlias alias="dto"
+		type="org.eredlab.g4.ccl.datastructure.impl.BaseDto" />
+
+	<insert id="insertRFCInfo" parameterClass="dto">
+		INSERT INTO sap_rfcinvokedmsg
+		(funcname, starttime, endtime, costtime, exceptionmsg, inparam, outparam)
+		VALUES (#funcname#, #starttime#, #endtime#, #costtime#, #exceptionmsg#,
+		#inparam#,#outparam#)
+	</insert>
+	
+	<insert id="insertStartRFCInfo" parameterClass="dto">
+		INSERT INTO sap_rfcinvokedmsg
+		(id, funcname, starttime, inparam,remoteaddr)
+		VALUES ( #id#, #funcname#, #starttime#,#inparam#,#remoteaddr#)
+	</insert>
+	
+	<update id="saveEndRFCInfo" parameterClass="dto">
+		update sap_rfcinvokedmsg
+		SET  endtime = #endtime#, costtime = #costtime#, 
+		exceptionmsg = #exceptionmsg#, outparam = #outparam# 
+		where id = #id#
+	</update>
+	
+	<select id="getMaxId" parameterClass="map" resultClass="int">
+		SELECT IFNULL(MAX(id) + 1,100001) from sap_rfcinvokedmsg
+	</select>
+	
+
+	<select id="getRfcInvokedInfo" parameterClass="dto" resultClass="dto">
+		SELECT id, funcname, starttime, endtime, 
+		costtime, exceptionmsg, inparam, outparam, remoteaddr 
+		from sap_rfcinvokedmsg where 1=1 
+		<dynamic>
+			<isNotEmpty property="id" prepend="and">
+				id = #id#
+			</isNotEmpty>
+			<isNotEmpty property="funcname" prepend="and">
+				funcname LIKE #funcname#
+			</isNotEmpty>
+			<isNotEmpty property="starttime" prepend="and">
+				starttime <![CDATA[>=]]> #starttime#
+			</isNotEmpty>
+			<isNotEmpty property="endtime" prepend="and">
+				endtime <![CDATA[<=]]> #endtime#
+			</isNotEmpty>
+			<isNotEmpty property="ltcosttime" prepend="and">
+				costtime <![CDATA[<=]]> #ltcosttime#
+			</isNotEmpty>
+			<isNotEmpty property="mtcosttime" prepend="and">
+				costtime <![CDATA[>=]]> #mtcosttime#
+			</isNotEmpty>
+		</dynamic>
+		
+		order by endtime desc
+	</select>
+	
+	<select id="getRfcInvokedInfoForPageCount" parameterClass="dto" resultClass="int">
+		SELECT count(*)
+		FROM sap_rfcinvokedmsg where 1=1
+		<dynamic>
+			<isNotEmpty property="id" prepend="and">
+				id = #id#
+			</isNotEmpty>
+			<isNotEmpty property="funcname" prepend="and">
+				funcname LIKE #funcname#
+			</isNotEmpty>
+			<isNotEmpty property="starttime" prepend="and">
+				starttime <![CDATA[>=]]> #starttime#
+			</isNotEmpty>
+			<isNotEmpty property="endtime" prepend="and">
+				endtime <![CDATA[<=]]> #endtime#
+			</isNotEmpty>
+			<isNotEmpty property="ltcosttime" prepend="and">
+				costtime <![CDATA[<=]]> #ltcosttime#
+			</isNotEmpty>
+			<isNotEmpty property="mtcosttime" prepend="and">
+				costtime <![CDATA[>=]]> #mtcosttime#
+			</isNotEmpty>
+		</dynamic>
+	</select>
+	
+	
+	
+	<delete id="clearAllMsg" parameterClass="map">
+		delete from sap_rfcinvokedmsg
+	</delete>
+	
+	
+	
+</sqlMap>

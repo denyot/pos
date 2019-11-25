@@ -1,0 +1,409 @@
+$(function () {
+//切换
+    $("#service_type").change(function() {
+        var _step = $("#step").val()
+        var _service_type = $("#service_type").val();
+        if(_service_type=="2"){
+          window.location.href=basepath
+                + "longhaul/pos/aftersales/faceliftone.jsp?&postType=1&retype=facelift"
+                + "&step=" + _step
+                + "&WERKS=" + WERKS;
+        }else{
+         window.location.href=basepath
+                + "longhaul/pos/aftersales/repairone.jsp?postType=1&retype=repair"
+                + "&step=" + _step
+                + "&WERKS=" + WERKS;
+        }
+      });
+  //查询基础信息
+  var optionis="<option value='是'>是</option>";
+  var optionno="<option value='否'>否</option>";
+  $("#isincluding_vicestone").append($(optionno));
+  $("#isincluding_vicestone").append($(optionis));
+  $("#isfree_process_fees").append($(optionno));
+  $("#isfree_process_fees").append($(optionis));  
+  $("#isdo_certificate").append($(optionno));
+  $("#isdo_certificate").append($(optionis));
+  
+  //基础信息
+  getFaceliftbagInfo();
+  getGoldmaterialInfo();
+  getCertificateInfo();
+  getLuodanCertificateInfo();
+  //改款款式
+  function getFaceliftbagInfo() {
+    $("#facelift_bag").append("<option value=''>请选择</option>");
+    $.getJSON("longhaul/pos/aftersales/aftersales.ered?reqCode=initFaceliftbagInfo&postType=1", function (data) {
+      $.each(data, function (key, val) {
+        $("#facelift_bag").append($("<option value=" + val.code + "-"+ val.price1 + ">" + val.style + "</option>"));
+      });
+    });
+  }
+  $('#facelift_bag').click(function(){
+        var str = $(this).children('option:selected').val();//value的值
+        var _old_stone_weight = $("#old_stone_weight").val();
+        if(_old_stone_weight==''){
+           jAlert('请先输入原货品石料重!', '提示');
+           return false;
+        }
+        var price = str.substr(str.indexOf('-') + 1,str.lenght);
+        if(_old_stone_weight>=0.001&&_old_stone_weight<=0.499){
+          $("#facelift_labor_charge").val(price);
+        }else if(_old_stone_weight>=0.5&&_old_stone_weight<=0.999){
+          $("#facelift_labor_charge").val(price*2);
+        }else if(_old_stone_weight>=1){
+          $("#facelift_labor_charge").val(price*3);
+        }else{
+          //
+        }
+    });
+   //金料
+  function getGoldmaterialInfo() {
+    $("#gold_material").append("<option value=''>请选择</option>");
+    $.getJSON("longhaul/pos/aftersales/aftersales.ered?reqCode=initGoldmaterialInfo&postType=1", function (data) {
+      $.each(data, function (key, val) {
+        $("#gold_material").append($("<option value=" + val.code + "-"+ val.loss + ">" + val.name + "</option>"));
+      });
+    });
+  }
+   $('#gold_material').change(function(){
+        var str = $(this).children('option:selected').val();//value的值
+        var loss = str.substr(str.indexOf('-') + 1,str.lenght);
+        $("#gold_material_loss").val(loss);
+    });
+   //证书
+  function getCertificateInfo() {
+    $("#certificate_type").append("<option value=''>请选择</option>");
+    $.getJSON("longhaul/pos/aftersales/aftersales.ered?reqCode=initCertificateInfo&postType=1", function (data) {
+      $.each(data, function (key, val) {
+        $("#certificate_type").append($("<option value=" + val.code + "-"+ val.certificatecost + ">" + val.name + "</option>"));
+      });
+    });
+  }
+     //裸石证书
+  function getLuodanCertificateInfo() {
+    $("#luodan_certificate_type").append("<option value=''>请选择</option>");
+    $.getJSON("longhaul/pos/aftersales/aftersales.ered?reqCode=initLuodanCerInfo&postType=1", function (data) {
+      $.each(data, function (key, val) {
+        $("#luodan_certificate_type").append($("<option value=" + val.code + ">" + val.name + "</option>"));
+      });
+    });
+  }
+  $('#certificate_type').change(function(){
+        var str = $(this).children('option:selected').val();//value的值
+        var cost = str.substr(str.indexOf('-') + 1,str.lenght);
+        $("#certificate_cost").val(cost);
+    });
+  $('#isincluding_vicestone').change(function(){
+        var se = $(this).children('option:selected').val();//value的值
+        if(se == '是'){
+          $("#vicestone_process_fees").val(5);
+        }else if(se == '否'){
+          $("#vicestone_process_fees").val('');
+        }
+    });
+   $(".isdo_certificate_tr").hide();
+   $('#isdo_certificate').change(function(){
+        var se = $(this).children('option:selected').val();//value的值
+        if(se == '是'){
+          $('.isdo_certificate_tr').show();
+        }else if(se == '否'){
+          $('.isdo_certificate_tr').hide();
+        }
+    });
+	//自动填充
+ $("#vipid").keydown(function(event) {
+    if (event.keyCode == 13) {
+      var _checkrownum = $("#tablecontent tr").length - 2;
+      if (_checkrownum > 0) {
+
+      }
+      if ($.trim($("#vipid").val()) != "") {
+        $("#vipid").autocomplete("close");
+        getvipidbyuser();
+      }
+    }
+  }).autocomplete({
+    source : function(request, response) {
+      $.ajax({
+        url : "longhaul/pos/aftersales/aftersales.ered?reqCode=getVipRecord&option=auto&postType=1&werks=" + WERKS + "&random=" + Math.random() + "",
+        dataType : "json",
+        data : "vipid=" + $("#vipid").val() + "",
+        success : function(data) {
+          if (data == "") {
+            jAlert('输入卡号不存在!!', '提示', function(r) {
+              $("#vipid").focus();
+              $("#vipid").val("");
+              $("#vipname").val("");
+              $("#tel").val("");
+            });
+          }
+          response($.map(data, function(item) {
+            var kunnr = item.hybh == null ? "" : item.hybh;
+            var vipid = item.hykh == null ? "" : item.hykh;
+            var tel = item.sj == null ? "" : item.sj;
+            var info = {
+              label : kunnr,
+              kunnr : kunnr,//客户号
+              vipid : vipid,
+              tel : tel
+            };
+            return {
+              label : "客户号:" + kunnr + "VIPID:" + vipid + "电话:" + tel + ""
+              //label : "客户号:" + vipid + "电话:" + tel + ""
+            };
+          }));
+        }
+      });
+    },
+    delay : autocompletedelay,
+    minLength : autocompletelength,
+    maxLength : 15,
+    open : function(event, ui) {
+    },
+    select : function(event, ui) {
+    },
+    close : function(event, ui) {
+    },
+    destroy : function(event, ui) {
+    },
+    focus : function(event, ui) {
+    },
+    change : function(event, ui) {
+    },
+    search : function(event, ui) {
+    },
+    create : function(event, ui) {
+    }
+  });
+  //回车查询
+  function getvipidbyuser() {
+    $.ajaxSetup({
+      error : function(error, e) {
+        jAlert("访问服务器错误信!<font color='red'>" + x.responseText + "</font>", '提示', function(r) {
+        });
+        return false;
+      }
+    });
+    tempvipid = $("#vipid").val();
+    //_kunnr = tempvipid.substring(tempvipid.indexOf("客户号:") + 4, tempvipid.indexOf("VIPID:"));
+    //_kunnr = tempvipid.indexOf("客户号:") > -1 ? _kunnr : tempvipid;
+    _vipid = tempvipid.substring(tempvipid.indexOf("VIPID:") + 6, tempvipid.indexOf("电话:"));
+    //viptype = tempvipid.indexOf("客户号:") > -1 ? "kunnr=" : "vipid=";
+    $.ajax({
+      url : "longhaul/pos/aftersales/aftersales.ered?reqCode=getVipRecord&option=user&postType=1&werks=" + WERKS + "&random=" + Math.random() + "",
+      dataType : "json",
+      data : "vipid=" + _vipid + "",
+      success : function(data) {
+        if (data == "") {
+          jAlert('输入卡号不存在!', '提示', function(r) {
+            $("#vipid").focus();
+            $("#vipid").val("");
+            $("#vipname").val("");
+          });
+        }
+        $.map(data, function(item) {
+          var kunnr = item.hybh == null ? "" : item.hybh;
+          var vipid = item.hykh == null ? "" : item.hykh;
+          var tel = item.sj == null ? "" : item.sj;
+          var vipname = item.hyxm == null ? "" : item.hyxm;
+          var info = {
+            label : kunnr,
+            kunnr : kunnr,//客户号
+            vipid : vipid,
+            tel : tel
+          };
+          $("#vipid").val(vipid);
+          $("#tel").val(tel);
+          $("#vipname").val(vipname);
+          $("#charg").attr("disabled", false);
+          $("#charg").attr("readOnly", false);
+          $("#charg").addClass("inputkey");
+          $("#charg").focus();
+        });
+      }
+    });
+    $("#vipid").autocomplete({
+      disabled : false
+    });
+  }
+  //商品条码
+  $("#charg").keydown(function(event) {
+    if (event.keyCode == 13) {
+      if ($.trim($("#charg").val()) != "") {
+        $("#charg").autocomplete("close");
+        getchargbyuser();
+      }
+    }
+  }).autocomplete({
+    source : function(request, response) {
+      _charg = $("#charg").val().toUpperCase();
+      $.ajax({
+        url : "longhaul/pos/aftersales/aftersales.ered?reqCode=getMateriel&postType=1&option=auto&werks=" + WERKS + "&random=" + Math.random() + "",
+        dataType : "json",
+        data : "charg=" + $.trim(_charg),
+        success : function(data) {
+          if (data == "") {
+            var chargalertstr = "输入条码不存在!";
+            //chargalertstr = _chargtype == "gift" ? "输入物料编码不存在!" : chargalertstr
+            jAlert(chargalertstr, '提示', function(r) {
+              clearcharginfo();
+            });
+          }
+          response($.map(data, function(item) {
+            var charg = item.charg == null ? "" : item.charg; 
+            var sptm = item.sptm == null ? "" : item.sptm; // 物料号
+            var spmc = item.spmc == null ? "" : item.spmc; // 产品名称
+            var sptp = item.sptp == null ? "" : item.sptp; // 产品如图片
+            var info = {
+              charg : charg,
+              sptm : sptm,
+              spmc : spmc,
+              sptp : sptp
+            };
+            // return info;
+            return {
+              label : charg + "->" + spmc
+            };
+          }));
+        }
+      });
+    },
+    delay : autocompletedelay,
+    minLength : autocompletelength,
+    maxLength : 15,
+    open : function(event, ui) {
+    },
+    select : function(event, ui) {
+    },
+    close : function(event, ui) {
+    },
+    destroy : function(event, ui) {
+    },
+    focus : function(event, ui) {
+    },
+    change : function(event, ui) {
+    },
+    search : function(event, ui) {
+    },
+    create : function(event, ui) {
+    }
+  });
+  // 用户回车选择商品名
+  function getchargbyuser() {
+    tempchargNo = $("#charg").val();
+    _mycharg = tempchargNo.substring(0, tempchargNo.indexOf("->"));
+    _charg = tempchargNo.indexOf("->") > 0 ? _mycharg : tempchargNo;
+    _charg = _charg.toUpperCase();
+    $("#charg").val(_charg);
+    $.ajaxSetup({
+      error : function(x, e) {
+        jAlert("访问服务器错误信!<font color='red'>" + x.responseText + "</font>", '提示', function(r) {
+        });
+        return false;
+      }
+    });
+    $.ajax({
+      url : "longhaul/pos/aftersales/aftersales.ered?reqCode=getMateriel&option=user&postType=1&werks=" + WERKS + "&random=" + Math.random() + "",
+      dataType : "json",
+      data : "charg=" + $.trim(_charg),
+      success : function(data) {
+        if (data == "") {
+          var chargalertstr = "输入条码不存在!!";
+          //chargalertstr = _chargtype == "gift" ? "输入物料编码不存在!" : chargalertstr
+          jAlert(chargalertstr, '提示', function(r) {
+            clearcharginfo();
+          });
+        }
+        $.map(data, function(item) {
+            var charg = item.charg == null ? "" : item.charg; 
+            var sptm = item.sptm == null ? "" : item.sptm; // 物料号
+            var spmc = item.spmc == null ? "" : item.spmc; // 产品名称
+            var sptp = item.sptp == null ? "" : item.sptp; // 产品如图片
+            var info = {
+              charg : charg,
+              sptm : sptm,
+              spmc : spmc,
+              sptp : sptp
+            };
+          chosecharginfo(info, "user");
+        });
+        $("#clinch_price").addClass("inputkey");
+        $("#clinch_price").focus();
+      }
+    });
+    //关闭自动完成
+    $("#charg").autocomplete({
+      disabled : false
+    });
+    
+  }
+  //选择商品条码
+  function chosecharginfo(item, type) {
+    if (type = "") {
+      charginfo = ui.item;
+    } else {
+      charginfo = item;
+    }
+    _product_image = charginfo.sptp;
+    $("#trade_name").val(charginfo.spmc);//商品名称
+    $("#product_image").val("sappic/" + _product_image);
+    $("img").attr("src", "sappic/" + _product_image);
+    $("#product_image_tr").css("display","block");
+    $("#product_image_div").css("display","block");
+  }
+  // 清理商品相关信息
+  function clearcharginfo() {
+    $("#charg").focus();
+    $("#charg").val("");
+    $("#trade_name").val("");
+    $("#product_image").val("");
+    $("#charg").addClass("inputkey");
+  }
+   //form提交
+    $("#faceliftSubmitBtn").click(function() {
+      if($("#vipname").val()==''||$("#trade_name").val()==''){
+        jAlert('请输入顾客姓名或品名后再操作!', '提示');
+        return false;
+      }
+      var params=$('#firstForm').serialize(); //这里直接就序列化了表单里面的值；很方便  
+       $.ajax({  
+               url :'longhaul/pos/aftersales/aftersales.ered?reqCode=saveInfo&postType=1&retype=fa', 
+               type:'post',    
+               dataType:'json',   
+               data:params,    
+               error: function(XMLHttpRequest, textStatus, errorThrown){
+                  jAlert(XMLHttpRequest+textStatus+errorThrown+'操作错误,请与系统管理员联系!', '提示');
+                },
+               success:print//回传函数
+        });
+        //是否打印
+        function print(data){
+         if($.trim(data.success) == 'true'){
+         //写单号
+         $("#rnumber").val(data.repair_number);
+                    jConfirm('是否打印!', '操作成功', function(r) {
+                       var url = "longhaul/pos/aftersales/aftersales.ered?reqCode=getFaceliftById&postType=1&step=fprint&repair_number="+data.repair_number;
+                       if(r)
+                       window.open(url);
+                      });
+                 }else{
+                   jAlert('操作失败!', '提示');
+                 }
+        }
+           
+		});
+    //打印
+  $("#showRepairPrint").click(function() {
+    var rnumber = $("#rnumber").val();
+    if(rnumber == ''){
+      jAlert('当前没有可打印的信息，请提交信息后打印!', '提示');
+      return false;
+    }
+    var url = "longhaul/pos/aftersales/aftersales.ered?reqCode=getFaceliftById&postType=1&step=fprint&facelift_number="+rnumber;
+    window.open(url);
+    //$("#rnumber").val('');
+  });
+  
+});
+

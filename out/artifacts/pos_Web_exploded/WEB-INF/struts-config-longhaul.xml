@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts-config PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 1.2//EN" "http://struts.apache.org/dtds/struts-config_1_3.dtd">
+<struts-config>
+	<!-- 配置ActionFormBean -->
+	<form-beans>
+		<!-- 公共Form -->
+		<form-bean name="commonActionForm" type="org.eredlab.g4.rif.web.CommonActionForm" />
+	</form-beans>
+
+	<!-- Action映射 -->
+	<action-mappings type="org.apache.struts.action.ActionMapping">
+		<!-- SAP 系统连接配置 -->
+		<action name="commonActionForm" path="/sapRfcParam" scope="request"
+			validate="false" parameter="reqCode" type="cn.longhaul.sap.web.SapRfcParamAction">
+			<forward name="manageRfcParamView" path="/sap/manageRfcParam.jsp" />
+		</action>
+		<action name="commonActionForm" path="/sapRfcDefine" scope="request"
+			validate="false" parameter="reqCode" type="cn.longhaul.sap.web.SapRfcDefineAction">
+			<forward name="manageRfcDefineView" path="/sap/manageRfcDefine.jsp" />
+		</action>	
+		
+		
+	    <action name="commonActionForm" path="/jobMange" scope="request"
+			validate="false" parameter="reqCode" type="cn.longhaul.job.web.JobManger">
+			<forward name="jobmanager" path="/job/jobManger.jsp" />
+			<forward name="reportmanager" path="/job/reportManger.jsp" />
+			<forward name="emailmanager" path="/job/emailManager.jsp" />			
+		</action>	
+		
+	    <action name="commonActionForm" path="/authority" scope="request"
+			validate="false" parameter="reqCode" type="cn.longhaul.authority.web.ManagerAction">
+			<forward name="tocdemanager" path="/authority/tcodeManger.jsp" />			
+		</action>	
+				
+		<!-- 加载应用 -->
+		<action name="commonActionForm" path="/appManage" scope="request"
+			validate="false" parameter="reqCode" type="cn.longhaul.job.web.AppManager">
+			<forward name="appmanager" path="/job/appManager.jsp" />
+		</action>	
+		<!--  执行方件或命令 -->
+		<action name="commonActionForm" path="/execFileMange" scope="request"
+			validate="false" parameter="reqCode" type="cn.longhaul.job.web.ExecFileManage">
+			<forward name="execfile" path="/job/execFile.jsp" />
+		</action>	
+		
+			
+		<action name="commonActionForm" path="/sapRfcConfig" scope="request"
+			validate="false" parameter="reqCode" type="cn.longhaul.sap.web.SapRfcConfigAction">
+			<forward name="mapRfc" path="/sap/sapRfcMap.jsp">
+			</forward>
+			<forward name="rfcSearch" path="/sap/sapRfcSearch.jsp">
+			</forward>
+			<forward name="searchData" path="/sap/sapRfcSearchData.jsp">
+			</forward>
+			<forward name="rfcUserJobDefault" path="/sap/sapJobDefault.jsp">
+			</forward>
+		</action>
+		<action  name="commonActionForm"  parameter="reqCode" path="/orderSystem"
+			type="cn.longhaul.ordersystem.web.OrderSystemAction">
+			<forward name="orderSystem" path="/order/ordersystem.jsp" />
+			<forward name="orderSearch" path="/order/orderlist.jsp" />
+			<forward name="authorization" path="/order/authorization.jsp" />
+		</action>
+		
+	</action-mappings>
+</struts-config>

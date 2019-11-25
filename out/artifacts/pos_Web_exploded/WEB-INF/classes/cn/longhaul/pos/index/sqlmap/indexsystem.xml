@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="indexsystem">
+	<typeAlias alias="dto" type="org.eredlab.g4.ccl.datastructure.impl.BaseDto" />
+	<!--首页公告栏更改 -->
+	<update id="saveNotice" parameterClass="map">
+		update aig_indexinfo set value = #value# where name = 'notice'
+  	</update>
+  	
+  	<!-- 获取公告栏信息 -->
+  	<select id="getNotice" resultClass="String">
+		select value from aig_indexinfo where name = 'notice'
+  	</select>
+  	
+  	<!-- 调入验收待收货 -->
+  	<select id="getTransInCount" parameterClass="map" resultClass="Integer">
+		select count(outid) from aig_storagetransferheader where inwerks = #werks# and status = '2'
+  	</select>
+  	
+  	<!-- 已审核发货 -->
+  	<select id="getTransOutCount" parameterClass="map" resultClass="Integer">
+		select count(outid) from aig_storagetransferheader where outwerks = #werks# and ( status = '12' OR status = '1')
+  	</select>
+  	
+  	<!-- 货品退货待发货 
+  	<select id="getReturnOutCount" parameterClass="map" resultClass="Integer">
+		select value from aig_indexinfo where name = 'notice'
+  	</select>
+	-->
+</sqlMap>

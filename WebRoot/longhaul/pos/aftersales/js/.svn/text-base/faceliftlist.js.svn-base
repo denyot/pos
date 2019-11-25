@@ -1,0 +1,317 @@
+$(function() {
+//切换
+    $("#service_type").change(function() {
+        var _step = $("#step").val()
+        var _service_type = $("#service_type").val();
+        if(_service_type=="2"){
+          window.location.href=basepath
+                + "longhaul/pos/aftersales/aftersales.ered?reqCode=aftersalesStart&postType=1&retype=face"
+                + "&step=" + _step
+                + "&WERKS=" + WERKS
+                + "&userid=" + opterator
+                + "&posurl=" + posurl
+                + "&password=" + password;
+        }else{
+         window.location.href=basepath
+                + "longhaul/pos/aftersales/aftersales.ered?reqCode=aftersalesStart&postType=1&retype=repair"
+                + "&step=" + _step
+                + "&WERKS=" + WERKS
+                + "&userid=" + opterator
+                + "&posurl=" + posurl
+                + "&password=" + password;
+        }
+      });
+	var currentPage = 1;
+	var totalPage = 0;
+	$(document).keydown(function(e) {
+				var target = e.target;
+				var tag = e.target.tagName.toUpperCase();
+				if (e.keyCode == 13) {
+					getOrderPageCount();
+				}
+			});
+//绑定日期
+	$("#start_time").datepicker({
+				changeMonth : true,
+				changeYear : true
+			});
+	$("#end_time").datepicker({
+				changeMonth : true,
+				changeYear : true
+			});
+
+	getOrderPageCount();
+//鼠标经过
+	$("#faceliftlisttable tr").live('mouseover', function() {
+				$(this).addClass("trover");
+			});
+
+	$("#faceliftlisttable tr").live('mouseout', function() {
+				$(this).removeClass("trover");
+			});
+
+	// 分页查询
+	function getorderbypage(page, pageSize) {
+		$("#faceliftlisttable tr").each(function(index) {
+					if (index != 0)
+						$(this).remove();
+				});
+		$('#faceliftheadlist td').addClass('tdclass'); // 增加td样式
+		_facelift_number = $("#facelift_number").val();//查询条件
+		_facelift_number = _facelift_number == null ? "" : _facelift_number;
+		_member_name = encodeURI($("#member_name").val(),"utf-8");
+		_status = $("#status").val();
+		_start_time = $.trim($('#start_time').val());
+		_end_time = $.trim($('#end_time').val());
+		_step = $("#step").val();
+		$.getJSON(
+				"longhaul/pos/aftersales/aftersales.ered?reqCode=getAftersalesList&postType=1&retype=fa&random="
+						+ Math.random(), {
+					werks : WERKS,
+					facelift_number : _facelift_number,
+					"member_name" : _member_name,
+					"status" : _status,
+					"start_time" : _start_time,
+					"end_time" : _end_time,
+					"page" : page,
+					"pageSize" : pageSize,
+					"step" : _step
+				}, function(data) {
+					if (data == "") {
+						jAlert('无数据存在!', '提示', function(r) {
+									$("#search").val("查询");
+									$("#search").attr("disabled", false);
+								});
+						return;
+					}
+					$.each(data, function(key, val) {
+						stylcss = key % 2 == 0 ? "triped1" : "triped2";
+						row = "<tr class=" + stylcss + ">";
+						var _herf = basepath
+								+ "/longhaul/pos/aftersales/aftersales.ered?reqCode=getFaceliftById&postType=1&facelift_number="
+								+ val.facelift_number + "&WERKS=" + WERKS
+								+ "&userid=" + opterator
+								+ "&opmode=view&posurl=" + posurl
+								+ "&password=" + password;
+						row = row + "<td align='center'><input name='useroption' id='useroption' type='checkbox' value='"
+								+ key + "'/></td>";
+								//改款单号
+						var facelift_number = val.facelift_number == null? "&nbsp;": val.facelift_number;
+						row = row + "<td><a href='" + _herf
+								+ "' target='_blank'><div id=facelift_number"
+								+ key + "> " + facelift_number
+								+ "</div></a></td>";
+						var store_name = val.store_name == null? "&nbsp;": val.store_name;
+						row = row + "<td><div id=store_name" + key + ">"+ store_name + "</div></td>";
+						var member_cardnumber = val.member_cardnumber == null? "&nbsp;": val.member_cardnumber;
+						row = row + "<td>" + val.member_cardnumber + "</td>";
+						var member_name = val.member_name == null? "&nbsp;": val.member_name;
+						row = row + "<td>" + val.member_name + "</td>";
+						var old_commodity_barcode = val.old_commodity_barcode == null? "&nbsp;": val.old_commodity_barcode;
+						row = row + "<td>" + val.old_commodity_barcode + "</td>";
+						var trade_name = val.trade_name == null? "&nbsp;": val.trade_name;
+						row = row + "<td>" + val.trade_name + "</td>";
+						row = row + "<td>&nbsp;</td>";
+						var description = val.description == null? "&nbsp;": val.description;
+						row = row + "<td>" + val.description + "</td>";
+						row = row + "</tr>"
+						$(row).insertAfter($("#faceliftlisttable tr:eq(" + key
+								+ ")"));
+						$("#search").val("查询");
+						$("#search").attr("disabled", false);
+					});
+
+				});
+	}
+//选择行
+	$("#opcontrol").click(function() {
+				if ($(this).attr("checked") == "checked") {
+					$("input[name='useroption']").attr("checked", "true");
+				} else {
+					$("input[name='useroption']").removeAttr("checked");
+				}
+			})
+	$("#search").click(function() {
+				$("#search").val("正在查询");
+				$("#search").attr("disabled", true);
+				getOrderPageCount();
+				$("#opcontrol").attr("checked", false);
+			})
+
+	$("#pageSize").change(function() {
+				getOrderPageCount();
+			})
+//修改
+	$("#update").click(function(event) {
+		var _facelift_number = "";
+		$("input[name='useroption']:checked").each(function() {
+					var usedkey = $(this).val();
+					_facelift_number = $("#facelift_number" + usedkey).text();
+				})
+		if ($("input[name='useroption']:checked").size() == 0) {
+			jAlert('请选择项目!', '提示', function(r) {
+					});
+			return;
+		}
+		if ($("input[name='useroption']:checked").size() > 1) {
+			jAlert('每次只可修改一条记录', '提示', function(r) {
+						return;
+					});
+
+		} else {
+			if (_facelift_number != "") {
+				window.open(basepath
+								+ "/longhaul/pos/aftersales/aftersales.ered?reqCode=getFaceliftById&postType=1"
+								+ "&step=" + $("#step").val()
+								+ "&facelift_number=" + _facelift_number
+								+ "&WERKS=" + WERKS
+								+ "&userid=" + opterator
+								+ "&posurl=" + posurl
+								+ "&password=" + password + "&opmode=EDIT");
+			} else {
+				jAlert('请重新选择!', '提示', function(r) {
+						});
+				return;
+			}
+		}
+	});
+//查看
+	$("#view").click(function(event) {
+		var _facelift_number = "";
+		$("input[name='useroption']:checked").each(function() {
+					var usedkey = $(this).val();
+					_facelift_number = $("#facelift_number" + usedkey).text();
+				})
+		if ($("input[name='useroption']:checked").size() == 0) {
+			jAlert('请选择项目!', '提示', function(r) {
+					});
+			return;
+		}
+		if ($("input[name='useroption']:checked").size() > 1) {
+			jAlert('每次只可查看一条详细记录!', '提示', function(r) {
+						return;
+					});
+		} else {
+			window
+					.open(basepath
+							+ "/longhaul/pos/aftersales/aftersales.ered?reqCode=getFaceliftById&postType=1&step=detail"
+							+ "&facelift_number=" + _facelift_number
+							+ "&WERKS=" + WERKS 
+							+ "&userid=" + opterator 
+							+ "&opmode=view&password=" + password
+							+ "&posurl=" + posurl + "&password=" + password);
+		}
+	});
+//统计总数
+	function getOrderPageCount() {
+		getorderbypage(0, $("#pageSize").val());
+		// $('.pagination').die();
+		var pageCount = 0;
+		$('#faceliftheadlist td').addClass('tdclass'); // 增加td样式
+		_facelift_number = $("#facelift_number").val();//查询条件
+    _facelift_number = _facelift_number == null ? "" : _facelift_number;
+    _member_name = $("#member_name").val();
+    _status = $("#status").val();
+    _start_time = $.trim($('#start_time').val());
+    _end_time = $.trim($('#end_time').val());
+		$.post(
+				"longhaul/pos/aftersales/aftersales.ered?reqCode=getFaceliftPageCount&postType=1&random="
+						+ Math.random(), {
+					werks : WERKS.substring(0, WERKS.length - 1),
+          facelift_number : _facelift_number,
+          "member_name" : _member_name,
+          "status" : _status,
+          "start_time" : _start_time,
+          "end_time" : _end_time,
+          "pageSize" : $("#pageSize").val()
+				}, function(data) {
+					$('#pageOpr').die().unbind().clearQueue().jqPagination({
+								// link_string : '/?page={page_number}',
+								// current_page: 1, //设置当前页 默认为1
+								max_page : parseInt(data), // 设置最大页 默认为1
+								page_string : '当前第{current_page}页,共{max_page}页',
+								paged : function(page) {
+									getorderbypage(page - 1, $("#pageSize")
+													.val());
+								}
+							});
+				});
+	}
+	 //导出
+  $("#export").click(function(event) {
+    getExcelFaceliftbypage(0, $("#pageSize").val());
+  });
+  function getExcelFaceliftbypage(page, pageSize) {
+    _facelift_number = $("#facelift_number").val();//查询条件
+    _facelift_number = _facelift_number == null ? "" : _facelift_number;
+    _member_name = encodeURI($("#member_name").val(),"utf-8");
+    _status = $("#status").val();
+    _start_time = $.trim($('#start_time').val());
+    _end_time = $.trim($('#end_time').val());
+    _step = "export";
+     window.location.href=basepath + "longhaul/pos/aftersales/aftersales.ered?reqCode=getAftersalesList&postType=1&retype=fa&random="
+            + Math.random()
+            + "&werks=" + WERKS
+            + "&facelift_number=" + _facelift_number
+            + "&member_name=" + _member_name
+            + "&status=" + _status
+            + "&start_time=" + _start_time
+            + "&end_time=" + _end_time
+            + "&page=" + page
+            + "&pageSize=" + pageSize
+            + "&step=" + _step
+  }
+//删除
+$("#del").click(function(event) {
+    var _facelift_number = "";
+    $("input[name='useroption']:checked").each(function() {
+      var usedkey = $(this).val();
+      _facelift_number = $.trim($("#facelift_number" + usedkey).text());
+    })
+
+    if ($("input[name='useroption']:checked").size() == 0) {
+      jAlert('请选择项目!', '提示', function(r) {
+          });
+      return;
+    }
+    jConfirm('确认要删除记录吗?', '提示', function(r) {
+      if (r == true) {
+        $("#del").val("正在删除");
+        $("#del").attr("disabled", true);
+        $.ajaxSetup({
+              error : function(x, e) {
+                alert("访问服务器错误请刷新页面!\n" + x.responseText);
+                $("#del").val("正在删除");
+                $("#del").attr("disabled", false);
+                return false;
+              }
+            });
+        $.ajax({
+              url : "longhaul/pos/aftersales/aftersales.ered?reqCode=delInfo&postType=1&retype=fa",
+              cache : false,
+              data : {
+                facelift_number : _facelift_number
+              },
+              type : 'post',
+              dataType : 'json',
+              success : function(data) {
+                var message = "";
+                if($.trim(data.success) == 'true'){
+                   jAlert("删除成功!", '提示', function(r) {
+                      getorderbypage(0, $("#pageSize").val());
+                    });
+                }else{
+                   jAlert('删除失败,请联系管理员!', '提示');
+                }
+                $("#del").val("删除");
+                $("#del").attr("disabled", false);
+                $("#opcontrol").attr("checked", false);
+              }
+            });
+      } else {
+        return false;
+      }
+    });
+  });
+
+});

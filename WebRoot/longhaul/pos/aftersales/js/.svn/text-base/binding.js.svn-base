@@ -1,0 +1,255 @@
+$(function () {
+  $("#firstForm").validationEngine({
+    validationEventTriggers : "blur",
+    inlineValidation : true,
+    scroll : false,
+    success : false,
+    promptPosition : "topRight"
+  });
+  $("#secondForm").validationEngine({
+    validationEventTriggers : "blur",
+    inlineValidation : true,
+    scroll : false,
+    success : false,
+    promptPosition : "topRight"
+  });
+  $("#thirdForm").validationEngine({
+    validationEventTriggers : "blur",
+    inlineValidation : true,
+    scroll : false,
+    success : false,
+    promptPosition : "topRight"
+  });
+
+  $("[name='member_name']").addClass("validate[required]");
+  $("[name='member_name']").focus(function() {
+    $("[name='member_name']").validationEngine("hidePrompt");
+  });
+  $("[name='trade_name']").addClass("validate[required]");
+  $("[name='trade_name']").focus(function() {
+    $("[name='trade_name']").validationEngine("hidePrompt");
+  });
+  $("[name='telephone']").addClass("validate[required]");
+  $("[name='telephone']").focus(function() {
+    $("[name='telephone']").validationEngine("hidePrompt");
+  });
+  $("[name='expected_pickup_date']").addClass("validate[required]");
+  $("[name='expected_pickup_date']").focus(function() {
+    $("[name='expected_pickup_date']").validationEngine("hidePrompt");
+  });
+  $("[name='after_ss_project']").addClass("validate[required]");
+  $("[name='after_ss_project']").focus(function() {
+    $("[name='after_ss_project']").validationEngine("hidePrompt");
+  });
+  $("[name='expected_repair_costs']").addClass("validate[required,custom[number]]");
+  $("[name='expected_repair_costs']").focus(function() {
+    $("[name='expected_repair_costs']").validationEngine("hidePrompt");
+  });
+  $("[name='accept_people_first']").addClass("validate[required]");
+  $("[name='accept_people_first']").focus(function() {
+    $("[name='accept_people_first']").validationEngine("hidePrompt");
+  });
+  
+//数字
+  $("[name='old_stone_weight']").addClass("validate[custom[number]]");
+  $("[name='old_stone_weight']").focus(function() {
+      $("[name='old_stone_weight']").validationEngine("hidePrompt");
+  });
+  $("[name='old_goods_weight']").addClass("validate[custom[number]]");
+  $("[name='old_goods_weight']").focus(function() {
+    $("[name='old_goods_weight']").validationEngine("hidePrompt");
+  });
+  $("[name='clinch_price']").addClass("validate[custom[number]]");
+  $("[name='clinch_price']").focus(function() {
+    $("[name='clinch_price']").validationEngine("hidePrompt");
+  });
+  $("[name='real_goods_weight']").addClass("validate[custom[number]]");
+  $("[name='real_goods_weight']").focus(function() {
+    $("[name='real_goods_weight']").validationEngine("hidePrompt");
+  });
+  $("[name='store_repair_costs']").addClass("validate[custom[number]]");
+  $("[name='store_repair_costs']").focus(function() {
+    $("[name='store_repair_costs']").validationEngine("hidePrompt");
+  });
+  $("[name='gold_loss_ratio']").addClass("validate[custom[number]]");
+  $("[name='gold_loss_ratio']").focus(function() {
+    $("[name='gold_loss_ratio']").validationEngine("hidePrompt");
+  });
+  $("[name='repair_charges']").addClass("validate[custom[number]]");
+  $("[name='repair_charges']").focus(function() {
+    $("[name='repair_charges']").validationEngine("hidePrompt");
+  });
+  $("[name='canadian_gold']").addClass("validate[custom[number]]");
+  $("[name='canadian_gold']").focus(function() {
+  $("[name='canadian_gold']").validationEngine("hidePrompt");
+  });
+  $("[name='gole_price']").addClass("validate[custom[number]]");
+  $("[name='gole_price']").focus(function() {
+    $("[name='gole_price']").validationEngine("hidePrompt");
+  });
+  $("[name='stone_costs']").addClass("validate[custom[number]]");
+  $("[name='stone_costs']").focus(function() {
+    $("[name='stone_costs']").validationEngine("hidePrompt");
+  });
+  $("[name='stone_process_fees']").addClass("validate[custom[number]]");
+  $("[name='stone_process_fees']").focus(function() {
+    $("[name='stone_process_fees']").validationEngine("hidePrompt");
+  });
+  $("[name='replacement_cost']").addClass("validate[custom[number]]");
+  $("[name='replacement_cost']").focus(function() {
+    $("[name='replacement_cost']").validationEngine("hidePrompt");
+  });
+  $("[name='repair_charges_cus']").addClass("validate[custom[number]]");
+  $("[name='repair_charges_cus']").focus(function() {
+    $("[name='repair_charges_cus']").validationEngine("hidePrompt");
+  });
+  $("[name='canadian_gold_cus']").addClass("validate[custom[number]]");
+  $("[name='canadian_gold_cus']").focus(function() {
+    $("[name='canadian_gold_cus']").validationEngine("hidePrompt");
+  });
+  $("[name='gole_price_cus']").addClass("validate[custom[number]]");
+  $("[name='gole_price_cus']").focus(function() {
+    $("[name='gole_price_cus']").validationEngine("hidePrompt");
+  });
+  $("[name='stone_costs_cus']").addClass("validate[custom[number]]");
+  $("[name='stone_costs_cus']").focus(function() {
+    $("[name='stone_costs_cus']").validationEngine("hidePrompt");
+  });
+  $("[name='stone_process_fees_cus']").addClass("validate[custom[number]]");
+  $("[name='stone_process_fees_cus']").focus(function() {
+    $("[name='stone_process_fees_cus']").validationEngine("hidePrompt");
+  });
+  $("[name='replacement_cost_cus']").addClass("validate[custom[number]]");
+  $("[name='replacement_cost_cus']").focus(function() {
+    $("[name='replacement_cost_cus']").validationEngine("hidePrompt");
+  });
+  $("[name='repair_after_weight']").addClass("validate[custom[number]]");
+  $("[name='repair_after_weight']").focus(function() {
+    $("[name='repair_after_weight']").validationEngine("hidePrompt");
+  });
+   $("[name='loss_value']").addClass("validate[custom[number]]");
+  $("[name='loss_value']").focus(function() {
+    $("[name='loss_value']").validationEngine("hidePrompt");
+  });
+  $("[name='loss_rate']").addClass("validate[custom[number]]");
+  $("[name='loss_rate']").focus(function() {
+    $("[name='loss_rate']").validationEngine("hidePrompt");
+  });
+  $("[name='real_customer_amount']").addClass("validate[custom[number]]");
+  $("[name='real_customer_amount']").focus(function() {
+    $("[name='real_customer_amount']").validationEngine("hidePrompt");
+  });
+  $("[name='expected_cost']").addClass("validate[custom[number]]");
+  $("[name='expected_cost']").focus(function() {
+    $("[name='expected_cost']").validationEngine("hidePrompt");
+  });
+  $("[name='old_gold_weight']").addClass("validate[custom[number]]");
+  $("[name='old_gold_weight']").focus(function() {
+    $("[name='old_gold_weight']").validationEngine("hidePrompt");
+  });
+  $("[name='new_gold_weight']").addClass("validate[custom[number]]");
+  $("[name='new_gold_weight']").focus(function() {
+    $("[name='new_gold_weight']").validationEngine("hidePrompt");
+  });
+  $("[name='old_gold_price']").addClass("validate[custom[number]]");
+  $("[name='old_gold_price']").focus(function() {
+    $("[name='old_gold_price']").validationEngine("hidePrompt");
+  });
+  $("[name='new_gold_price']").addClass("validate[custom[number]]");
+  $("[name='new_gold_price']").focus(function() {
+    $("[name='new_gold_price']").validationEngine("hidePrompt");
+  });
+  $("[name='mainstone_process_fees']").addClass("validate[custom[number]]");
+  $("[name='mainstone_process_fees']").focus(function() {
+    $("[name='mainstone_process_fees']").validationEngine("hidePrompt");
+  });
+  $("[name='vicestone_cost']").addClass("validate[custom[number]]");
+  $("[name='vicestone_cost']").focus(function() {
+    $("[name='vicestone_cost']").validationEngine("hidePrompt");
+  });
+  $("[name='mf_stone_amount']").addClass("validate[custom[number]]");
+  $("[name='mf_stone_amount']").focus(function() {
+    $("[name='mf_stone_amount']").validationEngine("hidePrompt");
+  });
+  $("[name='total_vicestone_process_fees']").addClass("validate[custom[number]]");
+  $("[name='total_vicestone_process_fees']").focus(function() {
+    $("[name='total_vicestone_process_fees']").validationEngine("hidePrompt");
+  });
+  $("[name='version_cost']").addClass("validate[custom[number]]");
+  $("[name='version_cost']").focus(function() {
+    $("[name='version_cost']").validationEngine("hidePrompt");
+  });
+  $("[name='gold_material_loss']").addClass("validate[custom[number]]");
+  $("[name='gold_material_loss']").focus(function() {
+    $("[name='gold_material_loss']").validationEngine("hidePrompt");
+  });
+  $("[name='old_gold_weight_cus']").addClass("validate[custom[number]]");
+  $("[name='old_gold_weight_cus']").focus(function() {
+    $("[name='old_gold_weight_cus']").validationEngine("hidePrompt");
+  });
+  $("[name='new_gold_weight_cus']").addClass("validate[custom[number]]");
+  $("[name='new_gold_weight_cus']").focus(function() {
+    $("[name='new_gold_weight_cus']").validationEngine("hidePrompt");
+  });
+  $("[name='old_gold_price_cus']").addClass("validate[custom[number]]");
+  $("[name='old_gold_price_cus']").focus(function() {
+    $("[name='old_gold_price_cus']").validationEngine("hidePrompt");
+  });
+  $("[name='new_gold_price_cus']").addClass("validate[custom[number]]");
+  $("[name='new_gold_price_cus']").focus(function() {
+    $("[name='new_gold_price_cus']").validationEngine("hidePrompt");
+  });
+  $("[name='mainstone_process_fees_cus']").addClass("validate[custom[number]]");
+  $("[name='mainstone_process_fees_cus']").focus(function() {
+    $("[name='mainstone_process_fees_cus']").validationEngine("hidePrompt");
+  });
+  $("[name='vicestone_cost_cus']").addClass("validate[custom[number]]");
+  $("[name='vicestone_cost_cus']").focus(function() {
+    $("[name='vicestone_cost_cus']").validationEngine("hidePrompt");
+  });
+  $("[name='total_vicestone_process_fees_cus']").addClass("validate[custom[number]]");
+  $("[name='total_vicestone_process_fees_cus']").focus(function() {
+    $("[name='total_vicestone_process_fees_cus']").validationEngine("hidePrompt");
+  });
+  $("[name='version_cost_cus']").addClass("validate[custom[number]]");
+  $("[name='version_cost_cus']").focus(function() {
+    $("[name='version_cost_cus']").validationEngine("hidePrompt");
+  });
+  $("[name='certificate_cost']").addClass("validate[custom[number]]");
+  $("[name='certificate_cost']").focus(function() {
+    $("[name='certificate_cost']").validationEngine("hidePrompt");
+  });
+  $("[name='gold_material_loss_cus']").addClass("validate[custom[number]]");
+  $("[name='gold_material_loss_cus']").focus(function() {
+    $("[name='gold_material_loss_cus']").validationEngine("hidePrompt");
+  });
+  $("[name='real_facelift_amount_cus']").addClass("validate[custom[number]]");
+  $("[name='real_facelift_amount_cus']").focus(function() {
+    $("[name='real_facelift_amount_cus']").validationEngine("hidePrompt");
+  });
+  $("[name='mf_stone_weight']").addClass("validate[custom[number]]");
+  $("[name='mf_stone_weight']").focus(function() {
+    $("[name='mf_stone_weight']").validationEngine("hidePrompt");
+  });
+  $("[name='cw_receive_amount']").addClass("validate[custom[number]]");
+  $("[name='cw_receive_amount']").focus(function() {
+    $("[name='cw_receive_amount']").validationEngine("hidePrompt");
+  });
+  //$("#firstForm [name='trade_name']").addClass("validate[required,minSize[6],maxSize[16]]");
+  //$("#firstForm [name='trade_name']").focus(function() {
+  //$("#firstForm [name='trade_name']").validationEngine("hidePrompt");
+  //});
+ 
+ //绑定日期
+
+});
+function bindingNumber(){
+  //if($("#old_stone_weight").val()!=""){
+	  //$("[name='old_stone_weight']").addClass("validate[custom[number]]");
+	  //$("[name='old_stone_weight']").focus(function() {
+	      //$("[name='old_stone_weight']").validationEngine("hidePrompt");
+	    //});
+  //}else{
+    //$("[name='old_stone_weight']").removeClass();
+  //}
+}

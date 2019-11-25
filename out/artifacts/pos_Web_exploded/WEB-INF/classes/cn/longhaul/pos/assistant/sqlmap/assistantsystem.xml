@@ -1,0 +1,276 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="assistantsystem">
+	<typeAlias alias="dto"
+		type="org.eredlab.g4.ccl.datastructure.impl.BaseDto" />
+	<!--订单原因 -->
+	<select id="getAssistantPosition" parameterClass="map"
+		resultClass="dto">
+		select * from aig_assistant_position where store_number =
+		#store_number#
+	</select>
+
+	<update id="saveAssistantInfo" parameterClass="map">
+		INSERT INTO
+		aig_assistant_info
+		(store_number,store_inital, assistant_name, telephone, idno,position,
+		remark, rzsj)
+		VALUES (#store_number#, #store_number#, #assistant_name1#, #telephone1#,#idno#, #position#,
+		#remark1#, #rzsj#)
+	</update>
+	
+	<insert id="insertAssistantInfo" parameterClass="map">
+		INSERT INTO
+		aig_assistant_info
+		(store_number,store_inital, assistant_name, telephone,idno, position, rzsj ,status)
+		VALUES (#store_number#, #store_inital#, #assistant_name#, #telephone#,#idno#, #position#, #rzsj#,1)
+			
+	</insert>
+
+	<update id="savePosition" parameterClass="map">
+		INSERT INTO
+		aig_assistant_position
+		(store_number, degreename, remark)
+		VALUES (#store_number#, #degreename#, #remark#)
+	</update>
+
+	<select id="getAssistantInfo" parameterClass="map" resultClass="dto">
+		SELECT assistantno, (select NAME1 from z_rfc_store_06_it_t001w where
+		z_rfc_store_06_it_t001w.WERKS=a.store_number) store_number,
+		assistant_name, telephone,position,(select degreename from
+		aig_assistant_position where aig_assistant_position.id=a.position)
+		position_name,
+		remark FROM aig_assistant_info a where store_number=#store_number#
+	</select>
+
+	<select id="getTotalAssistantCount" parameterClass="map"
+		resultClass="int">
+		SELECT count(*)
+		FROM aig_assistant_info where store_number=#store_number#
+	</select>
+
+
+	<delete id="delAssistantInfo" parameterClass="map">
+		delete from aig_assistant_info where store_number=#store_number#
+		and assistantno in
+		<iterate open="(" close=")" property="assistantnoses"
+			conjunction=",">
+			#assistantnoses[]#
+		</iterate>
+	</delete>
+
+	<delete id="delPosotion" parameterClass="map">
+		delete from aig_assistant_position where store_number=#store_number#
+		and id in
+		<iterate open="(" close=")" property="position" conjunction=",">
+			#position[]#
+		</iterate>
+	</delete>
+
+	<update id="updateAssistantInfo" parameterClass="map">
+		UPDATE
+		aig_assistant_info
+		SET assistant_name = #assistant_name#,
+		telephone = #telephone#, position = #position#, remark = #remark#
+		WHERE store_number = #store_number# and store_number= #store_number#
+	</update>
+
+	<update id="xgAssistantInfo" parameterClass="map">
+		update
+		aig_assistant_info
+		set assistant_name = #name1#,
+		telephone = #telephone#,
+		rzsj = #rzsj#,
+		remark = #remark#,
+		status = #zt#,
+		lzsj = #lzsj# where
+		assistantno = #id1#
+		<dynamic>
+			<isNotEmpty property="store_number" prepend="and">
+				<isEqual property="store_number" compareValue="1000" >
+					1=1
+				</isEqual>
+				<isNotEqual property="store_number" compareValue="1000" >
+					store_number= #store_number#
+				</isNotEqual>
+			</isNotEmpty>
+		</dynamic>
+	</update>
+	
+	<select id="getAssistanInfo" parameterClass="map" resultClass="dto">
+		select distinct * ,(select degreename from aig_assistant_position where a.position = id) degreename,
+		(select max(jssj) from aig_promotion where assno = a.assistantno) jssj,
+		(select zwname from aig_promotion where assno = a.assistantno and jssj = (select max(jssj) from aig_promotion where assno = a.assistantno) limit 1) zwname
+		from aig_assistant_info a
+		where (a.store_inital = #werks# or a.store_number = #werks#)
+		<dynamic>
+			<isNotEmpty property="rzsj">
+				<isNotEmpty property="injsj" prepend="and">
+					a.rzsj between
+					#rzsj# and #injsj#
+				</isNotEmpty>
+			</isNotEmpty>
+			<isNotEmpty property="lzsj">
+				<isNotEmpty property="outjsj" prepend="and">
+					a.lzsj between
+					#lzsj# and #outjsj#
+				</isNotEmpty>
+			</isNotEmpty>
+			<isNotEmpty property="assistant_name" prepend="and">
+				a.assistant_name like '%$assistant_name$%'
+			</isNotEmpty>
+			<isNotEmpty property="jszw" prepend="and">
+			<!--  c.zwname like '%$jszw$%'-->
+				(select count(id) from aig_promotion where zwname like '%$jszw$%' and assno = a.assistantno) >0
+			</isNotEmpty>
+			<isNotEmpty property="statuscombo" prepend="and">
+				<isEqual property="statuscombo" compareValue="4">
+					store_number =#werks# and a.store_inital !=#werks#
+				</isEqual>
+				<isNotEqual property="statuscombo" compareValue="4">
+					a.status =
+					#statuscombo#
+				</isNotEqual>
+			</isNotEmpty>
+			
+		</dynamic>
+	</select>
+	
+	<select id="getAssistanInfocount" parameterClass="map" resultClass="Integer">
+		select count(*)
+		from aig_assistant_info a
+		where (a.store_inital = #werks# or a.store_number = #werks#)
+		<dynamic>
+			<isNotEmpty property="rzsj">
+				<isNotEmpty property="injsj" prepend="and">
+					a.rzsj between
+					#rzsj# and #injsj#
+				</isNotEmpty>
+			</isNotEmpty>
+			<isNotEmpty property="lzsj">
+				<isNotEmpty property="outjsj" prepend="and">
+					a.lzsj between
+					#lzsj# and #outjsj#
+				</isNotEmpty>
+			</isNotEmpty>
+			<isNotEmpty property="assistant_name" prepend="and">
+				a.assistant_name like '%$assistant_name$%'
+			</isNotEmpty>
+			<isNotEmpty property="jszw" prepend="and">
+			<!--  c.zwname like '%$jszw$%'-->
+				(select count(id) from aig_promotion where zwname like '%$jszw$%' and assno = a.assistantno) >0
+			</isNotEmpty>
+			<isNotEmpty property="statuscombo" prepend="and">
+				<isEqual property="statuscombo" compareValue="4">
+					store_number =#werks# and a.store_inital !=#werks#
+				</isEqual>
+				<isNotEqual property="statuscombo" compareValue="4">
+					a.status =
+					#statuscombo#
+				</isNotEqual>
+			</isNotEmpty>
+			
+		</dynamic>
+	</select>
+	
+	<select id="getAssistant" parameterClass="map" resultClass="dto">
+		select distinct * ,(select degreename from aig_assistant_position where a.position = id) degreename,
+		(select max(jssj) from aig_promotion where assno = a.assistantno) jssj,
+		(select zwname from aig_promotion where assno = a.assistantno and jssj = (select max(jssj) from aig_promotion where assno = a.assistantno) limit 1) zwname,
+		(select name1 from z_rfc_store_06_it_t001w where a.store_inital = werks ) storename
+		from aig_assistant_info a where 1=1
+		<dynamic>
+			<isNotEmpty property="rzsj">
+				<isNotEmpty property="injsj" prepend="and">
+					a.rzsj between
+					#rzsj# and #injsj#
+				</isNotEmpty>
+			</isNotEmpty>
+			<isNotEmpty property="lzsj">
+				<isNotEmpty property="outjsj" prepend="and">
+					a.lzsj between
+					#lzsj# and #outjsj#
+				</isNotEmpty>
+			</isNotEmpty>
+			<isNotEmpty property="assistant_name" prepend="and">
+				a.assistant_name like '%$assistant_name$%'
+			</isNotEmpty>
+			<isNotEmpty property="jszw" prepend="and">
+			<!--  c.zwname like '%$jszw$%'-->
+				(select count(id) from aig_promotion where zwname like '%$jszw$%' and assno = a.assistantno) >0
+			</isNotEmpty>
+			<isNotEmpty property="statuscombo" prepend="and">
+					a.status =
+					#statuscombo#
+			</isNotEmpty>
+			<isNotEmpty property="storename" prepend="and">
+				(select count(name1) from z_rfc_store_06_it_t001w where name1 like '%$storename$%' and a.store_inital = werks)
+			</isNotEmpty>
+		</dynamic>
+	</select>
+	
+	<select id="getAssistantcount" parameterClass="map" resultClass="Integer">
+		select  count(*) 
+		from aig_assistant_info a where 1=1
+		<dynamic>
+			<isNotEmpty property="rzsj">
+				<isNotEmpty property="injsj" prepend="and">
+					a.rzsj between
+					#rzsj# and #injsj#
+				</isNotEmpty>
+			</isNotEmpty>
+			<isNotEmpty property="lzsj">
+				<isNotEmpty property="outjsj" prepend="and">
+					a.lzsj between
+					#lzsj# and #outjsj#
+				</isNotEmpty>
+			</isNotEmpty>
+			<isNotEmpty property="assistant_name" prepend="and">
+				a.assistant_name like '%$assistant_name$%'
+			</isNotEmpty>
+			<isNotEmpty property="jszw" prepend="and">
+			<!--  c.zwname like '%$jszw$%'-->
+				(select count(id) from aig_promotion where zwname like '%$jszw$%' and assno = a.assistantno) >0
+			</isNotEmpty>
+			<isNotEmpty property="statuscombo" prepend="and">
+					a.status =
+					#statuscombo#
+			</isNotEmpty>
+			<isNotEmpty property="storename" prepend="and">
+				(select count(name1) from z_rfc_store_06_it_t001w where name1 like '%$storename$%' and a.store_inital = werks)
+			</isNotEmpty>
+		</dynamic>
+	</select>
+
+	<select id="getAssistantStatus" resultClass="dto">
+		select * from
+		aig_assistant_status
+	</select>
+	
+	<insert id="addAssistantPromotion" parameterClass="map">
+		insert into aig_promotion (jssj,assno,zwname) values(#sj#,#no#,(select degreename from aig_assistant_position where id = #zw#));
+	</insert>
+	
+	<update id="upAssistantPosition" parameterClass="map">
+		update aig_assistant_info set position = #zw# where assistantno = #no#
+	</update>
+	<select id="getWerksInfo" resultClass="dto" parameterClass="dto">
+		select werks,name1 from z_rfc_store_06_it_t001w where vkorg=#vkorg#
+	</select>
+	
+	<insert id="addAssistantscheduling" parameterClass="map">
+		insert into aig_assistant_scheduling (outtime,assno,inwerks,outwerks) values(#dlsj#,#dlno#,#md#,#werks#);
+	</insert>
+	
+	<update id="upAssiatantByAssid" parameterClass="map">
+		update aig_assistant_info set status = #status#,store_number = #md# where assistantno = #dlno#
+	</update>
+	
+	<select id="getWerksByWerksName" resultClass="String" parameterClass="String">
+		select werks from z_rfc_store_06_it_t001w where name1 = #name1# limit 1
+	</select>
+	
+	<select id="getZwByZwname" resultClass="String" parameterClass="dto">
+		select id from aig_assistant_position where degreename = #position# and store_number = #store_number# limit 1
+	</select>
+</sqlMap>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMapConfig PUBLIC "-//iBATIS.com//DTD SQL Map Config 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-config-2.dtd">
+<!-- 业务系统的SQL映射文件装载 -->
+<sqlMapConfig>
+	<settings useStatementNamespaces="true" />
+	<sqlMap resource="cn/longhaul/sap/system/sqlmap/System.xml" />
+	<sqlMap resource="cn/longhaul/sap/sqlmap/SyncBase.xml" />
+	<sqlMap resource="cn/longhaul/sap/sqlmap/SapRfcParam.xml" />
+	<sqlMap resource="cn/longhaul/sap/sqlmap/SapRfcDefine.xml" />
+	<sqlMap resource="cn/longhaul/job/sqlmap/job.xml" />
+	<sqlMap resource="cn/longhaul/job/expression/sqlmap/expression.xml" />
+	<sqlMap resource="cn/longhaul/ordersystem/sqlmap/ordersystemaig.xml" />
+	<sqlMap resource="cn/longhaul/pos/order/sqlmap/ordersystemaig.xml" />
+	<sqlMap resource="cn/longhaul/pos/order/sqlmap/ordersystem.xml" />
+	<sqlMap resource="cn/longhaul/pos/assistant/sqlmap/assistantsystem.xml" />
+	<sqlMap resource="cn/longhaul/pos/dailygold/sqlmap/dailygoldsystem.xml" />
+	<sqlMap resource="cn/longhaul/pos/member/sqlmap/membersystem.xml" />
+	<sqlMap resource="cn/longhaul/pos/stock/sqlmap/stocksystem.xml" />
+	<sqlMap resource="cn/longhaul/authority/sqlmap/manager.xml" />
+	<sqlMap resource="cn/longhaul/pos/choiceorder/sqlmap/choiceOrderSystem.xml" />
+	<sqlMap resource="cn/longhaul/pos/aftersales/sqlmap/basicinfo.xml" />
+	<sqlMap resource="cn/longhaul/pos/aftersales/sqlmap/aftersales.xml" />
+	<sqlMap resource="cn/longhaul/pos/common/sqlmap/common.xml" />
+	<sqlMap resource="cn/longhaul/pos/report/sqlmap/reportSystem.xml" />
+	<sqlMap resource="cn/longhaul/pos/index/sqlmap/indexsystem.xml" />
+	<sqlMap resource="cn/longhaul/pos/synchro/sqlmap/synchroystem.xml" />
+	<sqlMap resource="cn/longhaul/pos/member/service/user.xml"/>
+</sqlMapConfig>

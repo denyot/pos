@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="posordersystemaig">
+	<typeAlias alias="dto"
+		type="org.eredlab.g4.ccl.datastructure.impl.BaseDto" />
+	<select id="getuserconfiger" parameterClass="map" resultClass="dto">
+		  select * from  aig_ordersystemconfiger  where 1=1
+		  <isNotEmpty prepend="and" property="userid">
+				userid= #userid# 
+		 </isNotEmpty>
+	</select>
+	
+	<insert id="saveuserconfiger" parameterClass="dto">
+		  insert into  aig_ordersystemconfiger (userid,autocompletewords,autocompletesecond)
+		  values (#userid#,#autocompletewords#,#autocompletesecond#)
+	</insert>
+	 <update id="updateuserconfiger"  parameterClass="dto">
+	       update aig_ordersystemconfiger set  autocompletewords = #autocompletewords# 
+	       ,autocompletesecond=#autocompletesecond# where userid = #userid#
+	 </update>
+</sqlMap>
